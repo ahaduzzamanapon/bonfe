@@ -11,3 +11,5 @@ Route::resource('designations', 'DesignationController');
 
 
 Route::resource('districts', 'DistrictController');
+
+Route::resource('chairmen', 'ChairmanController');

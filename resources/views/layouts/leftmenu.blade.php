@@ -40,12 +40,12 @@
 {{-- Settings --}}
 @if(can('settings'))
 <li class="nav-item">
-    <a class="nav-link {!! (Request::is('siteSettings*') || Request::is('districts*') ? 'active' : '' )|| (Request::is('designations*') ? 'active' : '' ) !!}" data-bs-toggle="collapse" href="#settings_menu" role="button" aria-expanded="false" aria-controls="settings_menu">
+    <a class="nav-link {!! (Request::is('siteSettings*') || Request::is('districts*') ? 'active' : '' )|| (Request::is('designations*') || Request::is('chairmen*') ? 'active' : '' ) !!}" data-bs-toggle="collapse" href="#settings_menu" role="button" aria-expanded="false" aria-controls="settings_menu">
         <i class="icon im im-icon-Gear"></i>
         <span class="item-name">Settings</span>
         <i class="right-icon im im-icon-Arrow-Right"></i>
     </a>
-    <ul class="sub-nav collapse {!! (Request::is('siteSettings*')|| Request::is('designations*') || Request::is('designations*') || Request::is('termAndConditions*') || Request::is('companies*') || Request::is('locations*') || Request::is('accountLedgers*') || Request::is('customers*') || Request::is('suppliers*') || Request::is('paymentMethods*') ? 'show' : '' ) !!}" id="settings_menu" data-bs-parent="#sidebar-menu">
+    <ul class="sub-nav collapse {!! (Request::is('siteSettings*')|| Request::is('designations*')  || Request::is('districts*') || Request::is('chairmen*') ? 'show' : '' ) !!}" id="settings_menu" data-bs-parent="#sidebar-menu">
         @if(can('site_settings'))
         <li class="nav-item">
             <a class="nav-link {!! Request::is('siteSettings*') ? 'active' : '' !!}" href="{{ route('siteSettings.index') }}">
@@ -70,6 +70,15 @@
                 <i class="icon im im-icon-Structure"></i>
                 <i class="sidenav-mini-icon"> D </i>
                 <span class="item-name">Districts</span>
+            </a>
+        </li>
+        @endif
+        @if(can('chairmen'))
+        <li class="nav-item">
+            <a class="nav-link {!! Request::is('chairmen*') ? 'active' : '' !!}" href="{{ route('chairmen.index') }}">
+                <i class="icon im im-icon-Student-Hat"></i>
+                <i class="sidenav-mini-icon"> C </i>
+                <span class="item-name">Chairmen</span>
             </a>
         </li>
         @endif

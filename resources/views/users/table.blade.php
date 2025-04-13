@@ -11,7 +11,6 @@
                 <th>Emp Id</th>
                 <th>Name</th>
                 <th>Group</th>
-                <th>Designation</th>
                 <th>Email</th>
                 <th>Action</th>
             </tr>
@@ -23,7 +22,6 @@
             <td>{{ $users->emp_id }}</td>
             <td>{{ $users->name }} {{ $users->last_name }}</td>
             <td>{{ $users->role }}</td>
-            <td>{{ $users->designation }}</td>
             <td>{{ $users->email }}</td>
                 <td>
                     <div class='btn-group'>

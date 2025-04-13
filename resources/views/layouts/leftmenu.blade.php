@@ -40,12 +40,12 @@
 {{-- Settings --}}
 @if(can('settings'))
 <li class="nav-item">
-    <a class="nav-link {!! (Request::is('siteSettings*') || Request::is('designations*') ? 'active' : '' ) !!}" data-bs-toggle="collapse" href="#settings_menu" role="button" aria-expanded="false" aria-controls="settings_menu">
+    <a class="nav-link {!! (Request::is('siteSettings*') || Request::is('districts*') ? 'active' : '' )|| (Request::is('designations*') ? 'active' : '' ) !!}" data-bs-toggle="collapse" href="#settings_menu" role="button" aria-expanded="false" aria-controls="settings_menu">
         <i class="icon im im-icon-Gear"></i>
         <span class="item-name">Settings</span>
         <i class="right-icon im im-icon-Arrow-Right"></i>
     </a>
-    <ul class="sub-nav collapse {!! (Request::is('siteSettings*') || Request::is('designations*') || Request::is('termAndConditions*') || Request::is('companies*') || Request::is('locations*') || Request::is('accountLedgers*') || Request::is('customers*') || Request::is('suppliers*') || Request::is('paymentMethods*') ? 'show' : '' ) !!}" id="settings_menu" data-bs-parent="#sidebar-menu">
+    <ul class="sub-nav collapse {!! (Request::is('siteSettings*')|| Request::is('designations*') || Request::is('designations*') || Request::is('termAndConditions*') || Request::is('companies*') || Request::is('locations*') || Request::is('accountLedgers*') || Request::is('customers*') || Request::is('suppliers*') || Request::is('paymentMethods*') ? 'show' : '' ) !!}" id="settings_menu" data-bs-parent="#sidebar-menu">
         @if(can('site_settings'))
         <li class="nav-item">
             <a class="nav-link {!! Request::is('siteSettings*') ? 'active' : '' !!}" href="{{ route('siteSettings.index') }}">
@@ -61,6 +61,15 @@
                 <i class="icon im im-icon-Teacher"></i>
                 <i class="sidenav-mini-icon"> D </i>
                 <span class="item-name">Designations</span>
+            </a>
+        </li>
+        @endif
+        @if(can('districts'))
+        <li class="nav-item">
+            <a class="nav-link {!! Request::is('districts*') ? 'active' : '' !!}" href="{{ route('districts.index') }}">
+                <i class="icon im im-icon-Structure"></i>
+                <i class="sidenav-mini-icon"> D </i>
+                <span class="item-name">Districts</span>
             </a>
         </li>
         @endif

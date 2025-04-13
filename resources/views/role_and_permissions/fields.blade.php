@@ -26,7 +26,7 @@
 @endphp
 
 <div class="col-md-12">
-    <div class="accordion" id="permissionsAccordion">
+    <div class="accordion" id="permissionsAccordion" style="display: flex;gap: 10px;flex-direction: column;margin-bottom: 16px;">
         @foreach ($per as $permission)
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading{{ $permission->id }}">

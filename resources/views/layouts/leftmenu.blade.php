@@ -40,7 +40,7 @@
 {{-- Settings --}}
 @if(can('settings'))
 <li class="nav-item">
-    <a class="nav-link {!! (Request::is('siteSettings*') || Request::is('designations*') || Request::is('termAndConditions*') || Request::is('companies*') || Request::is('locations*') || Request::is('accountLedgers*') || Request::is('customers*') || Request::is('suppliers*') || Request::is('paymentMethods*') ? 'active' : '' ) !!}" data-bs-toggle="collapse" href="#settings_menu" role="button" aria-expanded="false" aria-controls="settings_menu">
+    <a class="nav-link {!! (Request::is('siteSettings*') || Request::is('designations*') ? 'active' : '' ) !!}" data-bs-toggle="collapse" href="#settings_menu" role="button" aria-expanded="false" aria-controls="settings_menu">
         <i class="icon im im-icon-Gear"></i>
         <span class="item-name">Settings</span>
         <i class="right-icon im im-icon-Arrow-Right"></i>
@@ -50,6 +50,7 @@
         <li class="nav-item">
             <a class="nav-link {!! Request::is('siteSettings*') ? 'active' : '' !!}" href="{{ route('siteSettings.index') }}">
                 <i class="icon im im-icon-Settings-Window"></i>
+                <i class="sidenav-mini-icon"> S </i>
                 <span class="item-name">Site Settings</span>
             </a>
         </li>
@@ -58,6 +59,7 @@
         <li class="nav-item">
             <a class="nav-link {!! Request::is('designations*') ? 'active' : '' !!}" href="{{ route('designations.index') }}">
                 <i class="icon im im-icon-Teacher"></i>
+                <i class="sidenav-mini-icon"> D </i>
                 <span class="item-name">Designations</span>
             </a>
         </li>

@@ -43,6 +43,10 @@
     <link rel="stylesheet" href="{{ asset('assets/css/rtl.min.css?v=5.0.0') }}" />
     <link rel="stylesheet" href="{{ asset('fonts/iconmind.css') }}">
 
+    @include('layouts/datatables_css')
+
+    
+
     <style>
       .btn:hover {
         color: #ffffff !important;
@@ -232,6 +236,9 @@ aria-expanded="false" aria-label="Toggle navigation">
 
     <!-- App Script -->
     <script src="{{ asset('assets/js/hope-ui.js') }}" defer></script>
+
+    @include('layouts/datatables_js')
+
 
 
 </body>

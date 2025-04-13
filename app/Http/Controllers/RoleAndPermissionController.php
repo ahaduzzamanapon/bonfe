@@ -23,7 +23,7 @@ class RoleAndPermissionController extends AppBaseController
     public function index(Request $request)
     {
         /** @var RoleAndPermission $roleAndPermissions */
-        $roleAndPermissions = RoleAndPermission::paginate(10);
+        $roleAndPermissions = RoleAndPermission::all();
 
         return view('role_and_permissions.index')
             ->with('roleAndPermissions', $roleAndPermissions);

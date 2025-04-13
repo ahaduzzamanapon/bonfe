@@ -22,7 +22,7 @@ class DesignationController extends AppBaseController
     public function index(Request $request)
     {
         /** @var Designation $designations */
-        $designations = Designation::paginate(10);
+        $designations = Designation::all();
 
         return view('designations.index')
             ->with('designations', $designations);

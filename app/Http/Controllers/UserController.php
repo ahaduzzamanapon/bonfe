@@ -15,7 +15,7 @@ class UserController extends Controller
         $users = User::select('users.*', 'roles.name as role', 'designations.desi_name as designation')
             ->leftjoin('roles', 'users.group_id', '=', 'roles.id')
             ->leftjoin('designations', 'users.designation_id', '=', 'designations.id')
-            ->paginate(10);
+            ->get();
 
         return view('users.index')
             ->with('users', $users);

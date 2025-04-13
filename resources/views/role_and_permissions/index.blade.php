@@ -32,10 +32,5 @@ Role And Permissions @parent
             @include('role_and_permissions.table')
         </div>
     </div>
-    <div class="text-center">
-        
-        @include('adminlte-templates::common.paginate', ['records' => $roleAndPermissions])
-
-    </div>
 </div>
 @endsection

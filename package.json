@@ -1,0 +1,43 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "npm run development",
+        "development": "mix",
+        "watch": "mix watch",
+        "watch-poll": "mix watch -- --watch-options-poll=1000",
+        "hot": "mix watch --hot",
+        "prod": "npm run production",
+        "production": "mix --production"
+    },
+    "devDependencies": {
+        "axios": "^0.21",
+        "laravel-mix": "^6.0.43",
+        "lodash": "^4.17.19",
+        "postcss": "8.3.1",
+        "sass": "^1.32.5",
+        "sass-loader": "8.*"
+    },
+    "dependencies": {
+        "@fortawesome/fontawesome-free": "^5.13.0",
+        "@ttskch/select2-bootstrap4-theme": "^1.4.0",
+        "animate.css": "^4.1.0",
+        "bootstrap": "^4.6.0",
+        "bootstrapvalidator": "^0.5.4",
+        "chart.js": "^2.9.4",
+        "datatables.net": "^1.10.24",
+        "datatables.net-bs4": "^1.10.24",
+        "datatables.net-buttons": "^1.6.2",
+        "datatables.net-buttons-bs4": "^1.6.2",
+        "jasny-bootstrap": "^4.0.0",
+        "jquery": "^3.6.0",
+        "jquery-backstretch": "^2.1.18",
+        "metismenu": "^3.0.6",
+        "pdfmake": "^0.1.65",
+        "perfect-scrollbar": "1.5.0",
+        "popper.js": "^1.16.1",
+        "select2": "^4.0.13",
+        "sweetalert2": "^9.13.4",
+        "toastr": "^2.1.4",
+        "wenk": "^1.0.8"
+    }
+}

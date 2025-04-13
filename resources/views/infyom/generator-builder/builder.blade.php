@@ -1,4 +1,4 @@
-@extends('layouts.default')
+@extends('layouts.ager.default')
 {{-- Page title --}}
 @section('title')
 Crud Builder @parent

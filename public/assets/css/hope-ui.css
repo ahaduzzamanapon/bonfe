@@ -106,7 +106,7 @@ body {
   --bs-gray-700: #495057;
   --bs-gray-800: #343a40;
   --bs-gray-900: #ffffff;
-  --bs-primary: #3a57e8;
+  --bs-primary: #39ca16;
   --bs-secondary: #001F4D;
   --bs-success: #1aa053;
   --bs-info: #079aa2;
@@ -21590,7 +21590,6 @@ body.offcanvas-active {
   max-height: 92vh;
 }
 .sidebar .sidebar-header {
-  border-bottom: 1px solid var(--bs-border-color);
   margin-bottom: 0.5rem;
 }
 .sidebar .sidebar-logo {

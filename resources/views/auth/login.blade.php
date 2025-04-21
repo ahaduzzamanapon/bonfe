@@ -1,121 +1,176 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="en">
 
 <head>
     <title>Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="{{ asset('img/favicon.ico')}}" />
-    <!--page level css -->
-    <link href="{{ asset('css/bootstrap.min.css')}}" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ asset('img/favicon.ico') }}" />
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
 
+        .login-card {
+            background: #ffffff;
+            padding: 30px 40px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
 
-    <link href="{{ asset('vendors/bootstrapvalidator/css/bootstrapValidator.min.css')}}" rel="stylesheet" />
-    <link href="{{ asset('css/auth.css')}}" rel="stylesheet">
-    <!--end of page level css-->
+        .login-card .logo {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-bottom: -12px;
+            gap: 11px;
+        }
+
+        .login-card .logo img {
+            width: 70px;
+            height: 70px;
+        }
+
+       
+       
+        .logo-text span {
+            font-size: 21px;
+            font-weight: 900;
+            color: black;
+        }
+        .form-group {
+            position: relative;
+            margin-bottom: 1.8rem;
+        }
+
+        .form-control {
+            border: 1px solid #39ca16;
+            border-radius: 10px;
+            padding: 12px 12px 12px 61px;
+            font-size: 1rem;
+            background-color: #ffffff;
+            color: #333;
+        }
+
+        .form-control::placeholder {
+            color: #777;
+        }
+
+        .form-control:focus {
+            border-color: #39ca16;
+            background-color: #fff;
+            box-shadow: none;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 0px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            color: #fff;
+            background-color: #39ca16;
+            border: 1px solid #39ca16;
+            border-radius: 10px 0px 0px 10px;
+            padding: 5px 0px 0px 0px;
+            width: 45px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: #39ca16;
+            border: none;
+            padding: 0.75rem;
+            font-weight: 600;
+            border-radius: 12px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #39ca16;
+        }
+
+        .invalid-feedback {
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            color: #dc3545;
+        }
+
+        .login-footer {
+    font-size: 0.75rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+    flex-wrap: wrap;
+    gap: 10px;
+    color: #777;
+    text-align: -webkit-center;
+}
+        
+    </style>
 </head>
 
-<body id="sign-up" class="login_backimg">
-    <div class="container mt-3rem">
-        <div class="card ">
-            <div class="row ">
-                <div class="col-lg-6 col-12 card-align bg-white">
-                    <div class="row">
-                        <div class="col-12  signup-form">
-                            <div class="card-header border-bottom-0">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h2 class="text-center">
-                                            <?php
-                                            $setting = DB::table('sitesettings')->first();
-                                            ?>
-
-                                            <span>{{ !empty($setting) ? $setting->name : 'Title' }}</span>
-                                        </h2>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body pt-0">
-                                <div class="row">
-                                    <div class="col-md-12 signup-header-text">
-                                        <span class="active fs-18">SIGN IN</span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12">
-                                        <form action="{{ route('login') }}" id="authentication" method="post"
-                                            class="sign_validator">
-                                            @csrf
-                                            <div class="form-group">
-                                                <label for="email"> {{ __('E-Mail Address') }}</label>
-                                                <input type="email"
-                                                    class="form-control  form-control-lg @error('email') is-invalid @enderror"
-                                                    id="email" name="email" placeholder="E-mail"
-                                                    value="{{ old('email') }}" required />
-                                                @error('email')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                                @enderror
-                                            </div>
-
-
-                                            <div class="form-group">
-                                                <label for="password">{{ __('Password') }}</label>
-                                                <input type="password"
-                                                    class="form-control form-control-lg @error('password') is-invalid @enderror"
-                                                    id="password" name="password" placeholder="Password" required />
-
-                                                @error('password')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                                @enderror
-                                            </div>
-
-                                            <div class="form-group checkbox d-none">
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" name="remember"
-                                                        id="remember" {{ old('remember') ? 'checked' : '' }}>
-                                                    <label class="custom-control-label" for="remember">Remember
-                                                        Me</label>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="form-group">
-                                                <input type="submit" value="{{ __('Sign In') }}"
-                                                    class="btn btn-primary btn-block" />
-                                            </div>
-
-                                        </form>
-                                        <div class="d-none">New Member?
-                                            <a href="{{ route('register')}}">
-                                                <strong>Sign Up</strong>
-                                            </a>
-                                            | <small><a href="{{ route('password.request') }}"
-                                                    class="text-decoration-none text-muted">Forgot your
-                                                    password?</a></small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
+<body>
+    <div class="login-card">
+        <div class="logo text-center">
+            <img src="{{ asset('images/Picture1.jpg') }}" alt="Logo">
+            <div class="logo-text">
+                <span>Board of Non-Formal Education</span>
             </div>
         </div>
+        <div style="justify-self: center;margin-bottom: 15px;padding: 0px 38px 0px 38px;cursor: pointer;">
+           <span class="text-center" style="font-weight: 650;font-size: 19px;">Sign In</span>
+        </div>
 
+        <form action="{{ route('login') }}" method="POST" class="sign_validator">
+            @csrf
 
+            <div class="form-group">
+                <i class="bi bi-envelope input-icon"></i>
+                <input type="email" id="email" name="email"
+                    class="form-control @error('email') is-invalid @enderror"
+                    placeholder="Email address" value="{{ old('email') }}" required />
+                @error('email')
+                    <span class="invalid-feedback d-block" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <i class="bi bi-lock input-icon"></i>
+                <input type="password" id="password" name="password"
+                    class="form-control @error('password') is-invalid @enderror"
+                    placeholder="Password" required />
+                @error('password')
+                    <span class="invalid-feedback d-block" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">{{ __('Sign In') }}</button>
+            </div>
+        </form>
+
+        <div class="login-footer">
+            <span class="text-center">Developed by: <strong><a href="https://mysoftheaven.com">Mysoftheaven (BD) Ltd.</a></strong></span>
+        </div>
     </div>
-    <!-- begining of page level js -->
-    <script src="{{ asset('js/app.js')}}" type="text/javascript"></script>
-
-    <script src="{{ asset('vendors/bootstrapvalidator/js/bootstrapValidator.min.js')}}" type="text/javascript"></script>
-    <script type="text/javascript" src="{{asset('vendors/jquery.backstretch/js/jquery.backstretch.js')}}"></script>
-    <script type="text/javascript" src="{{asset('js/pages/register.js')}}"></script>
-
 </body>
 
 </html>

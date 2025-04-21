@@ -12,8 +12,9 @@ class UserController extends Controller
     public function index(Request $request)
     {
         /** @var User $users */
-        $users = User::select('users.*', 'roles.name as role', 'designations.desi_name as designation')
+        $users = User::select('users.*', 'roles.name as role', 'designations.desi_name as designation','districts.name_en as district')
             ->leftjoin('roles', 'users.group_id', '=', 'roles.id')
+            ->leftjoin('districts', 'users.district_id', '=', 'districts.id')
             ->leftjoin('designations', 'users.designation_id', '=', 'designations.id')
             ->get();
 

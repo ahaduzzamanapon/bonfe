@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('last_name')->nullable();
             $table->string('email')->nullable();
             $table->string('designation_id')->nullable();
+            $table->string('district_id')->nullable();
             $table->date('date_of_birth')->nullable();
             $table->date('date_of_join')->nullable();
             $table->string('gender')->nullable();

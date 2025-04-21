@@ -1,7 +1,7 @@
 <!-- Name Bn Field -->
 <div class="col-md-3">
     <div class="form-group">
-        {!! Form::label('name_bn', 'Name Bn:',['class'=>'control-label']) !!}
+        {!! Form::label('name_bn', 'Name Bn',['class'=>'control-label']) !!}
         {!! Form::text('name_bn', null, ['class' => 'form-control']) !!}
     </div>
 </div>
@@ -10,7 +10,7 @@
 <!-- Name En Field -->
 <div class="col-md-3">
     <div class="form-group">
-        {!! Form::label('name_en', 'Name En:',['class'=>'control-label']) !!}
+        {!! Form::label('name_en', 'Name En',['class'=>'control-label']) !!}
         {!! Form::text('name_en', null, ['class' => 'form-control']) !!}
     </div>
 </div>

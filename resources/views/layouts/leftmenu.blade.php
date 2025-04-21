@@ -5,6 +5,12 @@
         <span class="item-name">Dashboard</span>
     </a>
 </li>
+<li class="nav-item">
+    <a class="nav-link {!! Request::is('students*') ? 'active' : '' !!}" aria-current="page" href="{{ route('students.index') }}" >
+        <i class="icon im im-icon-Student-Hat"></i>
+        <span class="item-name">Students</span>
+    </a>
+</li>
 
 {{-- Users Management --}}
 @if(can('user_management'))
@@ -79,6 +85,15 @@
                 <i class="icon im im-icon-Student-Hat"></i>
                 <i class="sidenav-mini-icon"> C </i>
                 <span class="item-name">Chairmen</span>
+            </a>
+        </li>
+        @endif
+        @if(can('occupations'))
+        <li class="nav-item">
+            <a class="nav-link {!! Request::is('occupations*') ? 'active' : '' !!}" href="{{ route('occupations.index') }}">
+                <i class="icon im im-icon-Structure"></i>
+                <i class="sidenav-mini-icon"> O </i>
+                <span class="item-name">Occupations</span>
             </a>
         </li>
         @endif

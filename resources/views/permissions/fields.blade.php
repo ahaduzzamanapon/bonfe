@@ -1,7 +1,7 @@
 <!-- Name Field -->
 <div class="col-md-3">
     <div class="form-group">
-        {!! Form::label('name', 'Name:',['class'=>'control-label']) !!}
+        {!! Form::label('name', 'Name',['class'=>'control-label']) !!}
         {!! Form::text('name', null, ['class' => 'form-control','onkeyup' => 'auto_capitalize(this)']) !!}
     </div>
 </div>
@@ -10,7 +10,7 @@
 <!-- Key Field -->
 <div class="col-md-3">
     <div class="form-group">
-        {!! Form::label('key', 'Key:',['class'=>'control-label']) !!}
+        {!! Form::label('key', 'Key',['class'=>'control-label']) !!}
         {!! Form::text('key', null, ['class' => 'form-control']) !!}
     </div>
 </div>
@@ -19,7 +19,7 @@
 <!-- Cat Id Field -->
 <div class="col-md-3">
     <div class="form-group">
-        {!! Form::label('cat_id', 'Cat Id:',['class'=>'control-label']) !!}
+        {!! Form::label('cat_id', 'Cat Id',['class'=>'control-label']) !!}
         {!! Form::select('cat_id', $Permission, null, ['class' => 'form-control']) !!}
     </div>
 </div>

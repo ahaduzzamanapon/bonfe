@@ -13,3 +13,7 @@ Route::resource('designations', 'DesignationController');
 Route::resource('districts', 'DistrictController');
 
 Route::resource('chairmen', 'ChairmanController');
+
+Route::resource('students', 'StudentController');
+
+Route::resource('occupations', 'OccupationController');

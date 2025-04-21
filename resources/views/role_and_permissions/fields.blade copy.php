@@ -1,14 +1,14 @@
 <!-- Name Field -->
 <div class="col-md-3">
     <div class="form-group">
-        {!! Form::label('name', 'Name:',['class'=>'control-label']) !!}
+        {!! Form::label('name', 'Name',['class'=>'control-label']) !!}
         {!! Form::text('name', null, ['class' => 'form-control']) !!}
     </div>
 </div>
 <!-- Key Field -->
 <div class="col-md-3">
     <div class="form-group">
-        {!! Form::label('key', 'Key:',['class'=>'control-label']) !!}
+        {!! Form::label('key', 'Key',['class'=>'control-label']) !!}
         {!! Form::text('key', null, ['class' => 'form-control']) !!}
     </div>
 </div>

@@ -127,6 +127,38 @@
    }
 
    </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+@php
+    $total_students = DB::table('students')
+    ->count();
+    $total_passed_students = DB::table('students')
+    ->where('exam_status', 'Passed')
+    ->count();
+    $total_failed_students = $total_students - $total_passed_students;
+
+    $waiting_for_chairman = DB::table('students')
+    ->where('exam_status', 'Passed')
+    ->where('status', 'Waiting for Chairman Approval')
+    ->count();
+
+    $waiting_for_district = DB::table('students')
+    ->where('exam_status', 'Passed')
+    ->where('status', 'Waiting for District Admin Approval')
+    ->count();
+
+    $generated_certificate = DB::table('students')
+    ->where('exam_status', 'Passed')
+    ->where('status', 'Chairman Approved')
+    ->count();
+@endphp
+
+
+
+
+
+
     <section class="content">
         <div class="dashboard_cards_header">
             <div class="dashboard_card">
@@ -136,7 +168,7 @@
                         <i class="icon im im-icon-User"></i>
                      </div>
                      <div class="card-content">
-                        <h3>1</h3>
+                        <h3>{{ $total_students }}</h3>
                         <p>Total Students</p>
                      </div>
                   </div>
@@ -149,7 +181,7 @@
                         <i class="icon im im-icon-Map-Marker"></i>
                      </div>
                      <div class="card-content">
-                        <h3>64</h3>
+                        <h3>{{ $total_passed_students }}</h3>
                         <p>Total Passed</p>
                      </div>
                   </div>
@@ -162,13 +194,132 @@
                         <i class="icon im im-icon-Map"></i>
                      </div>
                      <div class="card-content">
-                        <h3>64</h3>
+                        <h3>{{ $total_students - $total_passed_students }}</h3>
                         <p>Total Failed </p>
                      </div>
                   </div>
                </a>
             </div>
+            <div class="dashboard_card">
+               <a href="#" style="text-decoration: none!important;"> 
+                  <div class="custom-card ">
+                     <div class="card-icon fuchsia">
+                        <i class="icon im im-icon-Map"></i>
+                     </div>
+                     <div class="card-content">
+                        <h3>{{ $waiting_for_chairman }}</h3>
+                        <p>Waiting for Chairmen Approval</p>
+                     </div>
+                  </div>
+               </a>
+            </div>
+            <div class="dashboard_card">
+               <a href="#" style="text-decoration: none!important;"> 
+                  <div class="custom-card ">
+                     <div class="card-icon aqua">
+                        <i class="icon im im-icon-Map"></i>
+                     </div>
+                     <div class="card-content">
+                        <h3>{{ $waiting_for_district }}</h3>
+                        <p>Waiting for District Approval</p>
+                     </div>
+                  </div>
+               </a>
+            </div>
+            <div class="dashboard_card">
+               <a href="#" style="text-decoration: none!important;"> 
+                  <div class="custom-card ">
+                     <div class="card-icon orange">
+                        <i class="icon im im-icon-Map"></i>
+                     </div>
+                     <div class="card-content">
+                        <h3>{{ $generated_certificate }}</h3>
+                        <p>Generated Certificate</p>
+                     </div>
+                  </div>
+               </a>
+            </div>
+            <div class="col-md-12">
+               <div class="row">
+                  <div class="col-md-6">
+                     <div style="width: 100%; max-width: 400px; margin: 30px auto;">
+                        <canvas id="studentPieChart"></canvas>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                     <div style="width: 100%; max-width: 400px; margin: 30px auto;">
+                        <canvas id="studentapprovalPieChart"></canvas>
+                    </div>
+                  </div>
+                 
+               </div>
+            </div>
+           
+           
          </div>
     </section>
+
+    <script>
+      const ctx = document.getElementById('studentPieChart').getContext('2d');
+  
+      const studentPieChart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+              labels: ['Passed', 'Failed'],
+              datasets: [{
+                  label: 'Students Status',
+                  data: [{{ $total_passed_students }}, {{ $total_failed_students }}],
+                  backgroundColor: ['#007bff', '#dc3545'],
+                  borderColor: ['#ffffff', '#ffffff'],
+                  borderWidth: 2
+              }]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  legend: {
+                      position: 'bottom',
+                      labels: {
+                          font: {
+                              size: 14
+                          }
+                      }
+                  }
+              }
+          }
+      });
+  </script>
+    <script>
+      const ctx2 = document.getElementById('studentapprovalPieChart').getContext('2d');
+  
+      const studentapprovalPieChart = new Chart(ctx2, {
+          type: 'pie',
+          data: {
+              labels: ['Waiting for Chairman', 'Waiting for District', 'Generated Certificate'],
+              datasets: [{
+                  label: 'Students Status',
+                  data: [{{ $waiting_for_chairman }}, {{ $waiting_for_district }}, {{ $generated_certificate }}],
+                  backgroundColor: ['#007bff', '#28a745', '#dc3545'],
+                  borderColor: ['#ffffff', '#ffffff', '#ffffff'],
+                  borderWidth: 2
+              }]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  legend: {
+                      position: 'bottom',
+                      labels: {
+                          font: {
+                              size: 14
+                          }
+                      }
+                  }
+              }
+          }
+      });
+  </script>
+  
+
 @stop
 

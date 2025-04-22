@@ -31,10 +31,10 @@ Students @parent
 
                 <a class="btn  selection:pull-right {{ Request::is('students') ? 'active btn-primary' : '' }}" href="{{ route('students.index') }}">All Students</a>
                 @if(can('district_admin'))
-                <a class="btn  pull-right {{ Request::is('students_waiting_for_district_approval') ? 'active btn-primary' : '' }}" href="{{ route('students.students_waiting_for_district_approval') }}">District Approval</a>
+                <a class="btn  pull-right {{ Request::is('students_waiting_for_district_approval') ? 'active btn-primary' : '' }}" href="{{ route('students.students_waiting_for_district_approval') }}">Waiting for District Approval</a>
                 @endif
                 @if (can('chairman'))
-                <a class="btn  pull-right {{ Request::is('students_waiting_for_chairman_approval') ? 'active btn-primary' : '' }}" href="{{ route('students.students_waiting_for_chairman_approval') }}">Chairman Approval</a>
+                <a class="btn  pull-right {{ Request::is('students_waiting_for_chairman_approval') ? 'active btn-primary' : '' }}" href="{{ route('students.students_waiting_for_chairman_approval') }}">Waiting for Chairman Approval</a>
                 @endif
             </div>
             @include('students.table')

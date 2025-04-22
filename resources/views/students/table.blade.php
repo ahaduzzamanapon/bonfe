@@ -67,7 +67,7 @@
                                     href="{{ route('students.chairman_approve', [$student->id]) }}"><i
                                         class="im im-icon-Approved-Window"></i> Approve</a>
                             @endif
-                            @if ($student->status != 'Chairman Approved')
+                            @if ($student->exam_status == 'Pending')
                                 {!! Form::open(['route' => ['students.destroy', $student->id], 'method' => 'delete']) !!}
                                 {!! Form::button('<i class="im im-icon-Remove"></i> Delete', [
                                     'type' => 'submit',

@@ -131,27 +131,48 @@
 
 
 @php
-    $total_students = DB::table('students')
-    ->count();
-    $total_passed_students = DB::table('students')
-    ->where('exam_status', 'Passed')
-    ->count();
-    $total_failed_students = $total_students - $total_passed_students;
+   $total_students = DB::table('students');
+   if(!can('chairman') && can('district_admin')) {
+      $total_students = $total_students->where('students.district_id', auth()->user()->district_id);
+   }
+   $total_students = $total_students->count();
 
-    $waiting_for_chairman = DB::table('students')
-    ->where('exam_status', 'Passed')
-    ->where('status', 'Waiting for Chairman Approval')
-    ->count();
+
+   $total_passed_students = DB::table('students')
+   ->where('exam_status', 'Passed');
+   if(!can('chairman') && can('district_admin')) {
+      $total_passed_students = $total_passed_students->where('students.district_id', auth()->user()->district_id);
+   }
+   $total_passed_students = $total_passed_students->count();
+
+   $total_failed_students = $total_students - $total_passed_students;
+
+   $waiting_for_chairman = DB::table('students')
+   ->where('exam_status', 'Passed')
+   ->where('status', 'Waiting for Chairman Approval');
+   if(!can('chairman') && can('district_admin')) {
+      $waiting_for_chairman = $waiting_for_chairman->where('students.district_id', auth()->user()->district_id);
+   }
+   $waiting_for_chairman = $waiting_for_chairman->count();
 
     $waiting_for_district = DB::table('students')
     ->where('exam_status', 'Passed')
-    ->where('status', 'Waiting for District Admin Approval')
-    ->count();
-
+    ->where('status', 'Waiting for District Admin Approval');
+    if(!can('chairman') && can('district_admin')) {
+      $waiting_for_district = $waiting_for_district->where('students.district_id', auth()->user()->district_id);
+   }
+   $waiting_for_district = $waiting_for_district ->count();
     $generated_certificate = DB::table('students')
     ->where('exam_status', 'Passed')
     ->where('status', 'Chairman Approved')
     ->count();
+    if(!can('chairman') && can('district_admin')) {
+      $generated_certificate = DB::table('students')
+      ->where('exam_status', 'Passed')
+      ->where('status', 'Chairman Approved')
+      ->where('students.district_id', auth()->user()->district_id)
+      ->count();
+   }
 @endphp
 
 
@@ -162,7 +183,7 @@
     <section class="content">
         <div class="dashboard_cards_header">
             <div class="dashboard_card">
-               <a href="#" style="text-decoration: none!important;">
+               <a href="{{ route('students.index') }}" style="text-decoration: none!important;">
                   <div class="custom-card">
                      <div class="card-icon teal">
                         <i class="icon im im-icon-User"></i>
@@ -175,7 +196,7 @@
                </a>
             </div>
             <div class="dashboard_card">
-               <a href="#" style="text-decoration: none!important;">
+               <a href="{{ route('students.index') }}" style="text-decoration: none!important;">
                   <div class="custom-card">
                      <div class="card-icon blue">
                         <i class="icon im im-icon-Map-Marker"></i>
@@ -188,7 +209,7 @@
                </a>
             </div>
             <div class="dashboard_card">
-               <a href="#" style="text-decoration: none!important;"> 
+               <a href="{{ route('students.index') }}" style="text-decoration: none!important;"> 
                   <div class="custom-card ">
                      <div class="card-icon green">
                         <i class="icon im im-icon-Map"></i>
@@ -201,7 +222,7 @@
                </a>
             </div>
             <div class="dashboard_card">
-               <a href="#" style="text-decoration: none!important;"> 
+               <a href="{{ route('students.students_waiting_for_chairman_approval') }}" style="text-decoration: none!important;"> 
                   <div class="custom-card ">
                      <div class="card-icon fuchsia">
                         <i class="icon im im-icon-Map"></i>
@@ -214,7 +235,7 @@
                </a>
             </div>
             <div class="dashboard_card">
-               <a href="#" style="text-decoration: none!important;"> 
+               <a href="{{ route('students.students_waiting_for_district_approval') }}" style="text-decoration: none!important;"> 
                   <div class="custom-card ">
                      <div class="card-icon aqua">
                         <i class="icon im im-icon-Map"></i>
@@ -226,8 +247,10 @@
                   </div>
                </a>
             </div>
+
+
             <div class="dashboard_card">
-               <a href="#" style="text-decoration: none!important;"> 
+               <a href="{{ route('students.index') }}" style="text-decoration: none!important;"> 
                   <div class="custom-card ">
                      <div class="card-icon orange">
                         <i class="icon im im-icon-Map"></i>
@@ -239,6 +262,9 @@
                   </div>
                </a>
             </div>
+
+
+
             <div class="col-md-12">
                <div class="row">
                   <div class="col-md-6">

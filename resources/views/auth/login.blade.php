@@ -18,6 +18,22 @@
             min-height: 100vh;
         }
 
+        .btn-primary:not(:disabled):not(.disabled):active,
+        .btn-primary:not(:disabled):not(.disabled).active,
+        .show>.btn-primary.dropdown-toggle {
+            color: #fff;
+            background-color: rgb(90 144 18);
+            border-color: rgba(0, 125.25, 60.3055555556, 0.7803921569);
+        }
+
+        .btn-primary:focus,
+        .btn-primary.focus {
+            color: #fff;
+            background-color: rgb(95 149 22);
+            border-color: rgb(95 149 22);
+            box-shadow: 0 0 0 0 rgba(55.1239573679, 203.2673772011, 126.4522706209, 0.5);
+        }
+
         .login-card {
             background: #ffffff;
             padding: 30px 40px;
@@ -40,13 +56,14 @@
             height: 70px;
         }
 
-       
-       
+
+
         .logo-text span {
             font-size: 27px;
             font-weight: 900;
             color: black;
         }
+
         .form-group {
             position: relative;
             margin-bottom: 1.8rem;
@@ -110,19 +127,18 @@
         }
 
         .login-footer {
-    font-size: 0.75rem;
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid #eee;
-    flex-wrap: wrap;
-    gap: 10px;
-    color: #777;
-    /* text-align: -webkit-center; */
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-        
+            font-size: 0.75rem;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            flex-wrap: wrap;
+            gap: 10px;
+            color: #777;
+            /* text-align: -webkit-center; */
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
     </style>
 </head>
 
@@ -135,7 +151,7 @@
             </div>
         </div>
         <div style="justify-self: center;margin-bottom: 15px;padding: 0px 38px 0px 38px;cursor: pointer;">
-           <span class="text-center" style="font-weight: 650;font-size: 19px;">Sign In</span>
+            <span class="text-center" style="font-weight: 650;font-size: 19px;">Sign In</span>
         </div>
 
         <form action="{{ route('login') }}" method="POST" class="sign_validator">
@@ -144,8 +160,8 @@
             <div class="form-group">
                 <i class="bi bi-envelope input-icon"></i>
                 <input type="email" id="email" name="email"
-                    class="form-control @error('email') is-invalid @enderror"
-                    placeholder="Email address" value="{{ old('email') }}" required />
+                    class="form-control @error('email') is-invalid @enderror" placeholder="Email address"
+                    value="{{ old('email') }}" required />
                 @error('email')
                     <span class="invalid-feedback d-block" role="alert">
                         <strong>{{ $message }}</strong>
@@ -156,8 +172,7 @@
             <div class="form-group">
                 <i class="bi bi-lock input-icon"></i>
                 <input type="password" id="password" name="password"
-                    class="form-control @error('password') is-invalid @enderror"
-                    placeholder="Password" required />
+                    class="form-control @error('password') is-invalid @enderror" placeholder="Password" required />
                 @error('password')
                     <span class="invalid-feedback d-block" role="alert">
                         <strong>{{ $message }}</strong>

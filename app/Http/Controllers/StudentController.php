@@ -102,7 +102,11 @@ class StudentController extends AppBaseController
     public function show($id)
     {
         /** @var Student $student */
-        $student = Student::find($id);
+        $student = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
+        ->join('districts', 'students.district_id', '=', 'districts.id')
+        ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
+        ->where('students.id', $id)
+        ->first();
 
         if (empty($student)) {
             Flash::error('Student not found');

@@ -84,13 +84,13 @@
             -webkit-box-shadow: none;
             box-shadow: none;
             color: #000;
-            height: 53px;
+            height: 40px;
         }
 
         .sidebar.navs-rounded-all .sidebar-body .nav-item .nav-link {
             -webkit-border-radius: 0.25rem;
             border-radius: 0.25rem;
-            height: 53px;
+            height: 40px;
         }
 
         .sidebar .sidebar-body {
@@ -109,7 +109,7 @@
             -webkit-box-shadow: none;
             box-shadow: none;
             color: #000000;
-            height: 53px;
+            height: 40px;
         }
 
         .text-dark {
@@ -174,15 +174,23 @@
             overflow-y: scroll;
         }
 
-        .table {
+        /* .table {
             font-size: 13px;
             overflow: auto;
-        }
+        } */
 
         .dropdown-item {
             border: 1px solid #828282;
             border-radius: 9px;
             margin: 4px;
+        }
+
+        .btn-primary:not(:disabled):not(.disabled).active,
+        .btn-primary:not(:disabled):not(.disabled):active,
+        .show>.btn-primary.dropdown-toggle {
+            color: #fff;
+            background-color: #8dc641;
+            border-color: #8dc641;
         }
     </style>
 
@@ -206,7 +214,7 @@
             <a href="{{ url('/') }}" class="navbar-brand">
                 <div class="logo-main">
                     <img src="{{ !empty($setting) ? asset($setting->logo) : 'assets/images/Picture1.jpg' }} "
-                        class="img-fluid" alt="logo" style="height: 40px;">
+                        class="img-fluid" alt="logo" style="height: 58px;width: 65px;">
                 </div>
                 <span class="logo-title">উপ-আনুষ্ঠানিক <br> শিক্ষা বোর্ড, ঢাকা</span>
             </a>
@@ -233,7 +241,8 @@
         </div>
         <div class="sidebar-footer"
             style="bottom: 0;position: absolute;border: 1px solid #8dc641;width: 100%;padding: 7px;color: black;font-size: 12px;background: #8dc641;font-weight: bold;">
-            Developed by - <a href="https://mysoftheaven.com" target="_blank">Mysoftheaven (BD) Ltd.</a>
+            Developed by - <a href="https://mysoftheaven.com" target="_blank" style="color: white;">Mysoftheaven (BD)
+                Ltd.</a>
         </div>
     </aside>
     <main class="main-content">

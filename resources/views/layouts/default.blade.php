@@ -42,6 +42,11 @@
     <!-- RTL Css -->
     <link rel="stylesheet" href="{{ asset('assets/css/rtl.min.css?v=5.0.0') }}" />
     <link rel="stylesheet" href="{{ asset('fonts/iconmind.css') }}">
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     @include('layouts/datatables_css')
 
@@ -97,8 +102,9 @@
             border: 1px solid #808080;
         }
 
-        .sidebar.sidebar-default .nav-link:not(.static-item).active, .sidebar.sidebar-default .nav-link:not(.static-item)[aria-expanded="true"] {
-            background: #b2eda6;
+        .sidebar.sidebar-default .nav-link:not(.static-item).active,
+        .sidebar.sidebar-default .nav-link:not(.static-item)[aria-expanded="true"] {
+            background: #c9e6a1;
             border-left: 5px solid #56d53b;
             -webkit-box-shadow: none;
             box-shadow: none;
@@ -122,8 +128,8 @@
             -ms-flex: 1 1 auto;
             flex: 1 1 auto;
             padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);
-            color: var(--bs-card-color);
-            font-size: 12px;
+            color: #000000;
+            /* font-size: 13px!important; */
         }
 
         .page-item.active .page-link {
@@ -132,19 +138,51 @@
             background-color: #39ca16;
             border-color: #39ca16;
         }
-        .sidebar.sidebar-default
-    .nav-link:not(.static-item):hover:not(.active):not([aria-expanded="true"]) {
-    background: #b2eda6;
-    color: #000000;
-    -webkit-box-shadow: unset;
-    box-shadow: unset;
-}
+
+        .table thead tr th {
+            text-transform: Capitalize;
+            letter-spacing: 0.2px;
+            background-color: var(--bs-body-bg);
+            color: #3a3a3a;
+        }
+
+        .sidebar.sidebar-default .nav-link:not(.static-item):hover:not(.active):not([aria-expanded="true"]) {
+            background: #c9e6a1;
+            color: #000000;
+            -webkit-box-shadow: unset;
+            box-shadow: unset;
+        }
+
+        .sidebar-base .nav-item:not(.static-item) {
+            padding-left: 0;
+        }
+
         label {
-    display: inline-block;
-    font-size: 16px;
-    color: #3b3b3b;
-    font-weight: 300;
-}
+            display: inline-block;
+            font-size: 16px;
+            color: #000000;
+            font-weight: 500;
+        }
+
+        .card {
+            -webkit-box-shadow: 0 10px 30px 0 rgba(17, 38, 146, 0.05);
+            box-shadow: 0 0px 4px 3px rgb(0 0 0 / 5%);
+            margin-bottom: 2rem;
+            border: 1px solid #acacac;
+            min-height: 89vh;
+
+        }
+
+        .table {
+            font-size: 13px;
+            overflow: auto;
+        }
+
+        .dropdown-item {
+            border: 1px solid #828282;
+            border-radius: 9px;
+            margin: 4px;
+        }
     </style>
 
 </head>
@@ -159,9 +197,11 @@
         </div>
     </div> --}}
 
+    @include('all_modal')
+
     <aside class="sidebar sidebar-default sidebar-white sidebar-base navs-rounded-all">
         <div class="sidebar-header d-flex align-items-center justify-content-start"
-            style="background: #b2eda6;height: 58px;border-bottom: 2px solid;">
+            style="background: #8dc641;height: 58px;border-bottom: 2px solid;">
             <a href="{{ url('/') }}" class="navbar-brand">
                 <div class="logo-main">
                     <img src="{{ !empty($setting) ? asset($setting->logo) : 'assets/images/Picture1.jpg' }} "
@@ -181,10 +221,10 @@
                 </i>
             </div>
         </div>
-        <div class="sidebar-body pt-0 data-scrollbar">
+        <div class="sidebar-body pt-0">
             <div class="sidebar-list">
                 <!-- Sidebar Menu Start -->
-                <ul class="navbar-nav iq-main-menu" id="sidebar-menu">
+                <ul class="navbar-nav iq-main-menu" id="sidebar-menu" style="height: 82vh;overflow-y: scroll;">
                     @include('layouts/leftmenu')
                 </ul>
                 <!-- Sidebar Menu End -->
@@ -198,7 +238,7 @@
     <main class="main-content">
         <div class="position-relative iq-banner">
             <!--Nav Start-->
-            <nav class="nav navbar navbar-expand-xl navbar-light iq-navbar" style="background: #b2eda6;padding: 0;">
+            <nav class="nav navbar navbar-expand-xl navbar-light iq-navbar" style="background: #683091;padding: 0;">
                 <div class="container-fluid navbar-inner">
                     <a href="../dashboard/index.html" class="navbar-brand">
                         <h4 class="logo-title"></h4>
@@ -337,6 +377,37 @@
 
     <!-- App Script -->
     <script src="{{ asset('assets/js/hope-ui.js') }}" defer></script>
+
+
+
+    <script>
+        $(document).ready(function() {
+            var dateFields = document.querySelectorAll('.date');
+            dateFields.forEach(function(dateField) {
+                date_fixer(dateField.id);
+            });
+        });
+    </script>
+
+    <script>
+        function date_fixer(id) {
+
+            const dateField = document.getElementById(id);
+            var dateValue = dateField.value;
+            console.log('dateValue', dateValue);
+
+            // if(dateValue == ''){
+            //     dateValue = '{{ date('Y-m-d') }}';
+            // }
+            date_ayy = dateValue.split('-');
+            daValue = date_ayy[2] + '-' + date_ayy[1] + '-' + date_ayy[0];
+            flatpickr(`#${id}`, {
+                dateFormat: "d-m-Y",
+                allowInput: true,
+                defaultDate: daValue
+            });
+        }
+    </script>
 
     @include('layouts/datatables_js')
 

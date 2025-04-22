@@ -1,6 +1,6 @@
 <script>
     $(document).ready(function() {
-        var table = $('.table').DataTable();
+        var table = $('.table_data').DataTable();
 
         // Clear the search box and redraw the table
         table.search('').draw();

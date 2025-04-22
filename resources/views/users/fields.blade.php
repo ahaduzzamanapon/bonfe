@@ -237,6 +237,14 @@
         <img id="imagePreview" src="{{ isset($user) ? asset($user->image) : '' }}" alt="Image Preview" style="display:none; margin-top:10px; max-width:100%; height:auto;" />
     </div>
 </div>
+<!-- Signature Field -->
+<div class="col-md-3">
+    <div class="form-group">
+        {!! Form::label('signature', 'Signature',['class'=>'control-label']) !!}
+        {!! Form::file('signature', ['onchange' => 'previewImage(event)','accept' => 'image/*']) !!}
+        <img id="signaturePreview" src="{{ isset($user) ? asset($user->signature) : '' }}" alt="Signature Preview" style="display:none; margin-top:10px; max-width:100%; height:auto;" />
+    </div>
+</div>
 <div class="clearfix"></div>
 
 

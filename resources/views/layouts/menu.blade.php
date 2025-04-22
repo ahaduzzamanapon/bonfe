@@ -26,3 +26,17 @@
     </a>
 </li>
 
+<li class="{!! (Request::is('assessmentVenues*') ? 'active' : '' ) !!}">
+    <a href="{{ route('assessmentVenues.index') }}">
+        <span class="mm-text ">Assessment Venues</span>
+        <span class="menu-icon"><i class="im im-icon-Structure"></i></span>
+    </a>
+</li>
+
+<li class="{!! (Request::is('assessmentCenters*') ? 'active' : '' ) !!}">
+    <a href="{{ route('assessmentCenters.index') }}">
+        <span class="mm-text ">Assessment Centers</span>
+        <span class="menu-icon"><i class="im im-icon-Structure"></i></span>
+    </a>
+</li>
+

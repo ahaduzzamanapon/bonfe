@@ -137,7 +137,7 @@
                      </div>
                      <div class="card-content">
                         <h3>1</h3>
-                        <p>মোট সদস্য</p>
+                        <p>Total Students</p>
                      </div>
                   </div>
                </a>
@@ -150,7 +150,7 @@
                      </div>
                      <div class="card-content">
                         <h3>64</h3>
-                        <p>মোট জেলা</p>
+                        <p>Total Passed</p>
                      </div>
                   </div>
                </a>
@@ -163,7 +163,7 @@
                      </div>
                      <div class="card-content">
                         <h3>64</h3>
-                        <p>মোট ইউনিয়ন</p>
+                        <p>Total Failed </p>
                      </div>
                   </div>
                </a>

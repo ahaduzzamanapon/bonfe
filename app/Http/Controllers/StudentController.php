@@ -22,8 +22,14 @@ class StudentController extends AppBaseController
     public function index(Request $request)
     {
         /** @var Student $students */
-        $students = Student::paginate(10);
-
+        $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
+            ->join('districts', 'students.district_id', '=', 'districts.id')
+            ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
+            ->orderBy('id', 'desc');
+        if(!can('chairman') && can('district_admin')) {
+            $students = $students->where('district_id', auth()->user()->district_id);
+        }
+        $students = $students-> paginate(10);
         return view('students.index')
             ->with('students', $students);
     }
@@ -95,6 +101,7 @@ class StudentController extends AppBaseController
 
             return redirect(route('students.index'));
         }
+        // dd($student);
 
         return view('students.edit')->with('student', $student);
     }
@@ -139,17 +146,55 @@ class StudentController extends AppBaseController
     {
         /** @var Student $student */
         $student = Student::find($id);
-
         if (empty($student)) {
             Flash::error('Student not found');
-
             return redirect(route('students.index'));
         }
-
         $student->delete();
 
         Flash::success('Student deleted successfully.');
 
         return redirect(route('students.index'));
+    }
+
+    public function submit_exam_result(Request $request){
+        $student = Student::find($request->studentId);
+        $student->exam_status = $request->examResult;
+        $student->status ='Waiting for District Admin Approval';
+        $student->save();
+        return response()->json([
+            'success' => true,
+            'message' => "Result submitted successfully",
+            'data' => $student
+        ]);
+    }
+    public function forward_to_chairman($studentId){
+        $student = Student::find($studentId);
+        $student->districts_admin_status = "Approved";
+        $student->districts_admin_id = auth()->user()->id;
+        $student->status ='Waiting for Chairman Approval';
+        $student->save();
+        Flash::success('Student forwarded to Chairman successfully.');
+
+        return back();
+        }
+    public function chairman_approve($studentId){
+        $student = Student::find($studentId);
+        $student->chairmen_status = "Approved";
+        $student->chairmen_id = auth()->user()->id;
+        $student->status ='Chairman Approved';
+        $student->save();
+        Flash::success('Operation completed successfully.');
+        return back();
+    }
+    public function generate_certificate($studentId){
+        $student = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
+            ->join('districts', 'students.district_id', '=', 'districts.id')
+            ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
+            ->orderBy('id', 'desc')
+            ->where('students.id', $studentId)
+            ->first();
+
+        return view('students.generate_certificate')->with('student', $student);
     }
 }

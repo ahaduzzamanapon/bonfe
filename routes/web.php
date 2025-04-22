@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AttendenceController;
-use App\Http\Controllers\SalesController;
+use App\Http\Controllers\StudentController;
 
 
 include 'demo.php';
@@ -54,6 +54,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('tableCheck', 'AppBaseController@tableCheck');
 
     include 'web_builder.php';
+
+    Route::post('submit_exam_result', 'StudentController@submit_exam_result')->name('submit_exam_result');
+    Route::get('forward_to_chairman/{id}', 'StudentController@forward_to_chairman')->name('students.forward_to_chairman');
+    Route::get('chairman_approve/{id}', 'StudentController@chairman_approve')->name('students.chairman_approve');
+    Route::get('generate_certificate/{id}', 'StudentController@generate_certificate')->name('students.generate_certificate');
+
+
+
 
 });
 Route::get('empty_table', 'JoshController@emptyTable');

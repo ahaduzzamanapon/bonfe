@@ -79,7 +79,7 @@
             </a>
         </li>
         @endif
-        @if(can('chairmen'))
+        {{-- @if(can('chairmen'))
         <li class="nav-item">
             <a class="nav-link {!! Request::is('chairmen*') ? 'active' : '' !!}" href="{{ route('chairmen.index') }}">
                 <i class="icon im im-icon-Student-Hat"></i>
@@ -87,13 +87,32 @@
                 <span class="item-name">Chairmen</span>
             </a>
         </li>
-        @endif
+        @endif --}}
+
         @if(can('occupations'))
         <li class="nav-item">
             <a class="nav-link {!! Request::is('occupations*') ? 'active' : '' !!}" href="{{ route('occupations.index') }}">
                 <i class="icon im im-icon-Structure"></i>
                 <i class="sidenav-mini-icon"> O </i>
                 <span class="item-name">Occupations</span>
+            </a>
+        </li>
+        @endif
+        @if(can('assessmentVenues'))
+        <li class="nav-item">
+            <a class="nav-link {!! Request::is('assessmentVenues*') ? 'active' : '' !!}" href="{{ route('assessmentVenues.index') }}">
+                <i class="icon im im-icon-Structure"></i>
+                <i class="sidenav-mini-icon"> AV </i>
+                <span class="item-name">Assessment Venues</span>
+            </a>
+        </li>
+        @endif
+        @if(can('assessmentCenters'))
+        <li class="nav-item">
+            <a class="nav-link {!! Request::is('assessmentCenters*') ? 'active' : '' !!}" href="{{ route('assessmentCenters.index') }}">
+                <i class="icon im im-icon-Structure"></i>
+                <i class="sidenav-mini-icon"> AC </i>
+                <span class="item-name">Assessment Centers</span>
             </a>
         </li>
         @endif

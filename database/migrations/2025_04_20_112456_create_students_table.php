@@ -32,6 +32,12 @@ class CreateStudentsTable extends Migration
             $table->string('assessment_venue');
             $table->string('assessment_center');
             $table->string('assessment_center_registration_number');
+            $table->string('status');
+            $table->string('exam_status');
+            $table->string('chairmen_id');
+            $table->string('chairmen_status');
+            $table->string('districts_admin_id');
+            $table->string('districts_admin_status');
             $table->timestamps();
         });
     }

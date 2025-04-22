@@ -17,3 +17,7 @@ Route::resource('chairmen', 'ChairmanController');
 Route::resource('students', 'StudentController');
 
 Route::resource('occupations', 'OccupationController');
+
+Route::resource('assessmentVenues', 'AssessmentVenueController');
+
+Route::resource('assessmentCenters', 'AssessmentCenterController');

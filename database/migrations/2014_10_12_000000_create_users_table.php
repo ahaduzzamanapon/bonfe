@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('phone_number')->nullable();
             $table->text('image')->nullable();
+            $table->text('signature')->nullable();
             $table->integer('salary')->nullable();
             $table->string('nid')->nullable();
             $table->integer('group_id')->nullable();

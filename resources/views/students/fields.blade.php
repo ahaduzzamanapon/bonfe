@@ -1,8 +1,15 @@
+@php
+    $Occupation = \App\Models\Occupation::all()->pluck('title','id')->prepend('Select Occupation', '')->toArray();
+    $AssessmentVenue = \App\Models\AssessmentVenue::all()->pluck('venue_name','id')->prepend('Select Venue', '')->toArray();
+    $AssessmentCenter = \App\Models\AssessmentCenter::all()->pluck('center_name','id')->prepend('Select Center', '')->toArray();
+@endphp
+
+
 <!-- Occupation Id Field -->
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('occupation_id', 'Occupation',['class'=>'control-label']) !!}
-        {!! Form::select('occupation_id', ['ইলেকট্রিক্যাল ইন্সট্রলেশন এন্ড মেইনটেন্যান্স' => 'ইলেকট্রিক্যাল ইন্সট্রলেশন এন্ড মেইনটেন্যান্স', 'কনজুউমার ইলেকট্রনিক্স' => 'কনজুউমার ইলেকট্রনিক্স'], null, ['class' => 'form-control']) !!}
+        {!! Form::select('occupation_id', $Occupation, null, ['class' => 'form-control']) !!}
     </div>
 </div>
 
@@ -94,18 +101,12 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('date_of_birth', 'Date Of Birth',['class'=>'control-label']) !!}
-        {!! Form::text('date_of_birth', null, ['class' => 'form-control','id'=>'date_of_birth']) !!}
+        {!! Form::text('date_of_birth', null, ['class' => 'form-control date','id'=>'date_of_birth']) !!}
     </div>
 </div>
-@section('footer_scripts')
-<script type="text/javascript">
-    $('#date_of_birth').datetimepicker({
-            format: 'YYYY-MM-DD HH:mm:ss',
-            useCurrent: true,
-            sideBySide: true
-        })
-</script>
-@endsection
+
+
+
 
 
 <!-- Mobile Number Field -->
@@ -130,25 +131,17 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('assessment_date', 'Assessment Date',['class'=>'control-label']) !!}
-        {!! Form::text('assessment_date', null, ['class' => 'form-control','id'=>'assessment_date']) !!}
+        {!! Form::text('assessment_date', null, ['class' => 'form-control date','id'=>'assessment_date']) !!}
     </div>
 </div>
-@section('footer_scripts')
-<script type="text/javascript">
-    $('#assessment_date').datetimepicker({
-            format: 'YYYY-MM-DD HH:mm:ss',
-            useCurrent: true,
-            sideBySide: true
-        })
-</script>
-@endsection
+
 
 
 <!-- Assessment Venue Field -->
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('assessment_venue', 'Assessment Venue',['class'=>'control-label']) !!}
-        {!! Form::select('assessment_venue', ['কক্সবাজার সরকারি টেকনিক্যাল স্কুল এন্ড কলেজ' => 'কক্সবাজার সরকারি টেকনিক্যাল স্কুল এন্ড কলেজ'], null, ['class' => 'form-control']) !!}
+        {!! Form::select('assessment_venue', $AssessmentVenue, null, ['class' => 'form-control']) !!}
     </div>
 </div>
 
@@ -157,12 +150,10 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('assessment_center', 'Assessment Center',['class'=>'control-label']) !!}
-        {!! Form::select('assessment_center', ['কক্সবাজার সরকারি টেকনিক্যাল স্কুল এন্ড কলেজ' => 'কক্সবাজার সরকারি টেকনিক্যাল স্কুল এন্ড কলেজ'], null, ['class' => 'form-control']) !!}
+        {!! Form::select('assessment_center', $AssessmentCenter, null, ['class' => 'form-control']) !!}
     </div>
 </div>
 
-
-<!-- Assessment Center Registration Number Field -->
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('assessment_center_registration_number', 'Assessment Center Registration Number',['class'=>'control-label']) !!}

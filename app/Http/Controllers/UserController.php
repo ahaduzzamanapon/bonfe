@@ -47,6 +47,16 @@ class UserController extends Controller
             $input['image'] = 'no-image.png';
         }
 
+        if ($request->hasFile('signature')) {
+            $file = $request->file('signature');
+            $folder = 'images/signature';
+            $customName = 'signature-'.time();
+            $input['signature'] = uploadFile($file, $folder, $customName);
+        }else{
+            $input['signature'] = 'no-image.png';
+        }
+
+
         if ($request->has('password')) {
             $input['password'] = bcrypt($request->password);
         }else{
@@ -116,6 +126,19 @@ class UserController extends Controller
         }else{
             unset($input['image']);
         }
+
+
+        if ($request->hasFile('signature')) {
+            $file = $request->file('signature');
+            $folder = 'images/signature';
+            $customName = 'signature-'.time();
+            $input['signature'] = uploadFile($file, $folder, $customName);
+        }else{
+            unset($input['signature']);
+        }
+
+
+
         if ($request->has('password') && !empty($request->password)) {
             $input['password'] = bcrypt($request->password);
         }else{

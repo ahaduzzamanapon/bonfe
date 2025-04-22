@@ -5,8 +5,7 @@
                 <th>Id</th>
         <th>Title</th>
         <th>Description</th>
-        <th>Created At</th>
-        <th>Updated At</th>
+        
                 <th>Action</th>
             </tr>
         </thead>
@@ -16,8 +15,7 @@
                 <td>{{ $occupation->id }}</td>
             <td>{{ $occupation->title }}</td>
             <td>{{ $occupation->description }}</td>
-            <td>{{ $occupation->created_at }}</td>
-            <td>{{ $occupation->updated_at }}</td>
+           
                 <td>
                     {!! Form::open(['route' => ['occupations.destroy', $occupation->id], 'method' => 'delete']) !!}
                     <div class='btn-group'>

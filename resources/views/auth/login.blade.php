@@ -23,7 +23,7 @@
             padding: 30px 40px;
             border-radius: 16px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
+            max-width: 590px;
             width: 100%;
         }
 
@@ -43,7 +43,7 @@
        
        
         .logo-text span {
-            font-size: 21px;
+            font-size: 27px;
             font-weight: 900;
             color: black;
         }
@@ -117,7 +117,10 @@
     flex-wrap: wrap;
     gap: 10px;
     color: #777;
-    text-align: -webkit-center;
+    /* text-align: -webkit-center; */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
         
     </style>
@@ -168,7 +171,8 @@
         </form>
 
         <div class="login-footer">
-            <span class="text-center">Developed by: <strong><a href="https://mysoftheaven.com">Mysoftheaven (BD) Ltd.</a></strong></span>
+            <span>Copyright © 2025 <strong>Board of Non-Formal Education</strong></span>
+            <span>Developed by: <strong><a href="https://mysoftheaven.com">Mysoftheaven (BD) Ltd.</a></strong></span>
         </div>
     </div>
 </body>

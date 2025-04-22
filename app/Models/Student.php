@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Eloquent as Model;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Schema;
+
 
 /**
  * Class Student
@@ -52,7 +55,13 @@ class Student extends Model
         'assessment_date',
         'assessment_venue',
         'assessment_center',
-        'assessment_center_registration_number'
+        'assessment_center_registration_number',
+        'status',
+        'exam_status',
+        'chairmen_id',
+        'chairmen_status',
+        'districts_admin_id',
+        'districts_admin_status',
     ];
 
     /**
@@ -100,6 +109,4 @@ class Student extends Model
         'mobile_number' => 'required',
         'assessment_date' => 'required'
     ];
-
-    
 }

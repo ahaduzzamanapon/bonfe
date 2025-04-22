@@ -6,7 +6,7 @@
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link {!! Request::is('students*') ? 'active' : '' !!}" aria-current="page" href="{{ route('students.index') }}" >
+    <a class="nav-link {!! Request::is('students*') || Request::is('students_waiting_for_chairman_approval') || Request::is('students_waiting_for_district_approval') ? 'active' : '' !!}" aria-current="page" href="{{ route('students.index') }}" >
         <i class="icon im im-icon-Student-Hat"></i>
         <span class="item-name">Students</span>
     </a>

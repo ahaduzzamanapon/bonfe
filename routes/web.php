@@ -62,6 +62,11 @@ Route::group(['middleware' => 'auth'], function () {
 
 
 
+    Route::get('students_waiting_for_district_approval', 'StudentController@students_waiting_for_district_approval')->name('students.students_waiting_for_district_approval');
+    Route::get('students_waiting_for_chairman_approval', 'StudentController@students_waiting_for_chairman_approval')->name('students.students_waiting_for_chairman_approval');
+
+
+
 
 });
 Route::get('empty_table', 'JoshController@emptyTable');

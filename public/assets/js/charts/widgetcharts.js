@@ -691,7 +691,7 @@
         name: "Desktops",
         data: [5, 30, 6, 20, 5, 18, 10]
       }],
-      colors: ["#39ca16"],
+      colors: ["#0aa699"],
       chart: {
         height: 60,
         sparkline: {

@@ -17,16 +17,16 @@
     </section>
     <style>
         
-   .custom-card {
-      display: flex;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 20px;
-      transition: transform 0.3s ease;
-      background-color: #fff;
-      min-height: 120px;
-   }
+        .custom-card {
+    display: flex;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+    background-color: #fff;
+    min-height: 90px;
+}
 
    .custom-card:hover {
       transform: translateY(-4px);
@@ -145,7 +145,7 @@
             <div class="dashboard_card">
                <a href="#" style="text-decoration: none!important;">
                   <div class="custom-card">
-                     <div class="card-icon" style="background: #57b942;">
+                     <div class="card-icon blue">
                         <i class="icon im im-icon-Map-Marker"></i>
                      </div>
                      <div class="card-content">
@@ -157,8 +157,8 @@
             </div>
             <div class="dashboard_card">
                <a href="#" style="text-decoration: none!important;"> 
-                  <div class="custom-card">
-                     <div class="card-icon" style="background: #758bf7;">
+                  <div class="custom-card ">
+                     <div class="card-icon green">
                         <i class="icon im im-icon-Map"></i>
                      </div>
                      <div class="card-content">

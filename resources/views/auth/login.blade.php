@@ -53,7 +53,7 @@
         }
 
         .form-control {
-            border: 1px solid #39ca16;
+            border: 1px solid #0aa699;
             border-radius: 10px;
             padding: 12px 12px 12px 61px;
             font-size: 1rem;
@@ -66,7 +66,7 @@
         }
 
         .form-control:focus {
-            border-color: #39ca16;
+            border-color: #0aa699;
             background-color: #fff;
             box-shadow: none;
         }
@@ -78,8 +78,8 @@
             transform: translateY(-50%);
             font-size: 1.2rem;
             color: #fff;
-            background-color: #39ca16;
-            border: 1px solid #39ca16;
+            background-color: #0aa699;
+            border: 1px solid #0aa699;
             border-radius: 10px 0px 0px 10px;
             padding: 5px 0px 0px 0px;
             width: 45px;
@@ -90,7 +90,7 @@
         }
 
         .btn-primary {
-            background: #39ca16;
+            background: #0aa699;
             border: none;
             padding: 0.75rem;
             font-weight: 600;
@@ -100,7 +100,7 @@
         }
 
         .btn-primary:hover {
-            background: #39ca16;
+            background: #0aa699;
         }
 
         .invalid-feedback {

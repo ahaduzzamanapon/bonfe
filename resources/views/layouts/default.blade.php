@@ -135,8 +135,8 @@
         .page-item.active .page-link {
             z-index: 1;
             color: #fff;
-            background-color: #39ca16;
-            border-color: #39ca16;
+            background-color: #0aa699;
+            border-color: #0aa699;
         }
 
         .table thead tr th {
@@ -154,7 +154,7 @@
         }
 
         .sidebar-base .nav-item:not(.static-item) {
-            padding-left: 0;
+            padding-left: 1rem;
         }
 
         label {
@@ -167,10 +167,11 @@
         .card {
             -webkit-box-shadow: 0 10px 30px 0 rgba(17, 38, 146, 0.05);
             box-shadow: 0 0px 4px 3px rgb(0 0 0 / 5%);
-            margin-bottom: 2rem;
+            /* margin-bottom: 2rem; */
             border: 1px solid #acacac;
-            min-height: 89vh;
-
+            min-height: 88vh;
+            margin: 0;
+            overflow-y: scroll;
         }
 
         .table {
@@ -231,7 +232,7 @@
             </div>
         </div>
         <div class="sidebar-footer"
-            style="bottom: 0;position: absolute;border: 1px solid #2dff00;width: 100%;padding: 7px;color: black;font-size: 13px;">
+            style="bottom: 0;position: absolute;border: 1px solid #8dc641;width: 100%;padding: 7px;color: black;font-size: 12px;background: #8dc641;font-weight: bold;">
             Developed by - <a href="https://mysoftheaven.com" target="_blank">Mysoftheaven (BD) Ltd.</a>
         </div>
     </aside>

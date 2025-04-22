@@ -27,8 +27,37 @@ class StudentController extends AppBaseController
             ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
             ->orderBy('id', 'desc');
         if(!can('chairman') && can('district_admin')) {
-            $students = $students->where('district_id', auth()->user()->district_id);
+            $students = $students->where('students.district_id', auth()->user()->district_id);
         }
+        $students = $students-> paginate(10);
+        return view('students.index')
+        ->with('students', $students);
+    }
+    public function students_waiting_for_district_approval(Request $request)
+    {
+        $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
+            ->join('districts', 'students.district_id', '=', 'districts.id')
+            ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
+            ->orderBy('id', 'desc');
+        if(!can('chairman') && can('district_admin')) {
+            $students = $students->where('students.district_id', auth()->user()->district_id);
+        }
+        $students = $students->where('students.status', 'Waiting for District Admin Approval');
+        $students = $students-> paginate(10);
+        return view('students.index')
+            ->with('students', $students);
+
+    }
+    public function students_waiting_for_chairman_approval(Request $request)
+    {
+        $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
+            ->join('districts', 'students.district_id', '=', 'districts.id')
+            ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
+            ->orderBy('id', 'desc');
+        if(!can('chairman') && can('district_admin')) {
+            $students = $students->where('students.district_id', auth()->user()->district_id);
+        }
+        $students = $students->where('students.status', 'Waiting for Chairman Approval');
         $students = $students-> paginate(10);
         return view('students.index')
             ->with('students', $students);

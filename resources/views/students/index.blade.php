@@ -17,9 +17,7 @@ Students @parent
 <!-- Main content -->
 <div class="content">
     <div class="clearfix"></div>
-
     @include('flash::message')
-
     <div class="clearfix"></div>
     <div class="card" width="88vw;">
         <section class="card-header">
@@ -29,6 +27,16 @@ Students @parent
             </span>
         </section>
         <div class="card-body table-responsive" >
+            <div class="form-group">
+
+                <a class="btn  selection:pull-right {{ Request::is('students') ? 'active btn-primary' : '' }}" href="{{ route('students.index') }}">All Students</a>
+                @if(can('district_admin'))
+                <a class="btn  pull-right {{ Request::is('students_waiting_for_district_approval') ? 'active btn-primary' : '' }}" href="{{ route('students.students_waiting_for_district_approval') }}">District Approval</a>
+                @endif
+                @if (can('chairman'))
+                <a class="btn  pull-right {{ Request::is('students_waiting_for_chairman_approval') ? 'active btn-primary' : '' }}" href="{{ route('students.students_waiting_for_chairman_approval') }}">Chairman Approval</a>
+                @endif
+            </div>
             @include('students.table')
         </div>
     </div>

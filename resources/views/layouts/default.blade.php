@@ -100,6 +100,11 @@
 
         .form-control {
             border: 1px solid #808080;
+            padding: 1px 13px;
+        }
+        .card-breadcrumb {
+            padding: 12px;
+            cursor: pointer;
         }
 
         .sidebar.sidebar-default .nav-link:not(.static-item).active,
@@ -171,13 +176,12 @@
             border: 1px solid #acacac;
             min-height: 88vh;
             margin: 0;
-            overflow-y: scroll;
         }
 
-        /* .table {
+        .table {
             font-size: 13px;
             overflow: auto;
-        } */
+        }
 
         .dropdown-item {
             border: 1px solid #828282;
@@ -192,13 +196,45 @@
             background-color: #8dc641;
             border-color: #8dc641;
         }
+
+        .badge {
+            font-size: 9px;
+            padding: 8px;
+        }
+
+        .pagination {
+            justify-content: flex-end;
+        }
+        .btn-primary {
+    --bs-btn-bg: #0aa699;
+    --bs-btn-border-color: #0aa699;
+    --bs-btn-hover-bg: var(--bs-primary-hover-bg);
+    --bs-btn-hover-border-color: var(--bs-primary-hover-border);
+    --bs-btn-active-bg: var(--bs-primary-active-bg);
+    --bs-btn-active-border-color: var(--bs-primary-active-border);
+    --bs-btn-disabled-bg: #0aa699;
+    --bs-btn-disabled-border-color: #0aa699;
+}
+.card .card-header {
+    margin-bottom: 0;
+    border: 0;
+    padding-bottom: 0;
+    -webkit-border-radius: var(--bs-border-radius-lg);
+    padding: 7px;
+    background: #8dc542;
+    border-top: 3px solid red;
+    margin: 0px;
+    border-radius: 6px 6px 0px 0;
+    color: white;
+}
     </style>
 
 </head>
 
 
 
-<body style="background: #f2fff0;">
+<body style="background: #d6e1ea;
+;">
     <!-- loader Start -->
     {{-- <div id="loading">
         <div class="loader simple-loader">

@@ -74,3 +74,6 @@ Route::get('remove_all_files', 'JoshController@remove_all_files');
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('{name?}', 'JoshController@showView');
 
+Route::get('qr_details/{id}', 'StudentController@qr_details')->name('students.qr_details');
+
+

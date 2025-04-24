@@ -68,7 +68,11 @@
 </div>
 
 @php
-    $districts = \App\Models\District::all()->pluck('name_en','id')->prepend('Select District', '')->toArray();
+    if(!can('chairman') && can('district_admin')) {
+        $districts = \App\Models\District::where('id', auth()->user()->district_id)->pluck('name_en','id')->toArray();
+    } else {
+        $districts = \App\Models\District::all()->pluck('name_en','id')->prepend('Select District', '')->toArray();
+    }
 @endphp
 <!-- district_id Field -->
 <div class="col-md-3">
@@ -154,7 +158,7 @@
     </div>
 </div>
 
-<div class="col-md-3">
+<div class="col-md-6">
     <div class="form-group">
         {!! Form::label('assessment_center_registration_number', 'Assessment Center Registration Number',['class'=>'control-label']) !!}
         {!! Form::text('assessment_center_registration_number', null, ['class' => 'form-control']) !!}

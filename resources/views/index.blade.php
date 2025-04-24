@@ -9,10 +9,10 @@
 @stop
 @section('content')
     <section class="content-header">
-        <h1>
+        <h3>
             Dashboard
-           
-        </h1>
+        </h3>
+        <br>
        
     </section>
     <style>
@@ -22,10 +22,10 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     overflow: hidden;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     transition: transform 0.3s ease;
     background-color: #fff;
-    min-height: 90px;
+    min-height: 89px;
 }
 
    .custom-card:hover {
@@ -103,9 +103,9 @@
    }
 
    .dashboard_card {
-      width: 30% !important;
-      margin: 10px !important;
-   }
+    width: 30% !important;
+    margin: 0px 15px !important;
+}
 
    .tiles-title {
       font-size: 18px !important;
@@ -265,15 +265,15 @@
 
 
 
-            <div class="col-md-12">
-               <div class="row">
-                  <div class="col-md-6">
-                     <div style="width: 100%; max-width: 400px; margin: 30px auto;">
+            <div class="col-md-12" style="padding: 8px 28px 1px 86px;">
+               <div class="row" style="gap: 50px;">
+                  <div class="col-md-5" style="box-shadow: 0px 0px 7px 1px #bababa;background: #ffffff;border-radius: 7px;">
+                     <div style="width: 100%; max-width: 270px; margin: 30px auto;">
                         <canvas id="studentPieChart"></canvas>
                     </div>
                   </div>
-                  <div class="col-md-6">
-                     <div style="width: 100%; max-width: 400px; margin: 30px auto;">
+                  <div class="col-md-5" style="box-shadow: 0px 0px 7px 1px #bababa;background: #ffffff;border-radius: 7px;">
+                     <div style="width: 100%; max-width: 320px; margin: 30px auto;">
                         <canvas id="studentapprovalPieChart"></canvas>
                     </div>
                   </div>

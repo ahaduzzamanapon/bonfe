@@ -8,11 +8,12 @@ Assessment Venues @parent
 @section('content')
 <!-- Content Header (Page header) -->
 <section class="content-header">
-    {{--<div aria-label="breadcrumb" class="card-breadcrumb">
-        <h1>Assessment Venues</h1>
+    <div aria-label="breadcrumb" class="card-breadcrumb">
+        <h5><a href="{{ url('/') }}"  style="text-decoration: none; color: black;">Dashboard</a> > Assessment Venues </h5>
     </div>
-    <div class="separator-breadcrumb border-top"></div>--}}
+    <div class="separator-breadcrumb border-top"></div>
 </section>
+
 
 <!-- Main content -->
 <div class="content">
@@ -30,12 +31,12 @@ Assessment Venues @parent
         </section>
         <div class="card-body table-responsive" >
             @include('assessment_venues.table')
-        </div>
-    </div>
-    <div class="text-center">
+            <div class="text-center">
+                
+                @include('adminlte-templates::common.paginate', ['records' => $assessmentVenues])
         
-        @include('adminlte-templates::common.paginate', ['records' => $assessmentVenues])
-
+            </div>
+        </div>
     </div>
 </div>
 @endsection

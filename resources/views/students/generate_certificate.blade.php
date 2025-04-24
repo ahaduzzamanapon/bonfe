@@ -19,7 +19,6 @@
         background-size: cover;
         width: 982px;
         height: 1397px;
-        border: 2px solid #000;
         position: relative;
       }
 
@@ -57,7 +56,7 @@
       .verified {
         position: absolute;
         bottom: 172px;
-        left: 50px;
+        left: 88px;
       }
 
       .chairman {
@@ -136,8 +135,9 @@ p{
         <p>
           Serial No. NSC-T&A-CBT&AM-L4-0000<br>
           Registration No.: RPL-T&A-CBT&AM-L4-M000<br>
-          Issued on: 15-04-2025<br>
-          <img src="http://bonfe.test/images/qr.png" alt="QR Code" width="100"> <!-- Replace with dynamic QR -->
+          Issued on: {{ date('d-m-Y') }}
+          <br>
+          {{ $qrCode }}
         </p>
       </div>
 

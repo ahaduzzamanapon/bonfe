@@ -6,145 +6,104 @@
 
 @section('content')
 <style>
-    body {
-        background-color: #f4f6f8;
-        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    .card {
-        border: none;
-        border-radius: 1.5rem;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+    .profile-card {
+        border-radius: 1rem;
         overflow: hidden;
     }
 
-    .card-header {
-        background: #8dc641;
-        color: #fff;
-        font-weight: 600;
-        font-size: 1.75rem;
-        text-align: center;
-    }
-
-    .card-body {
-        background-color: #ffffff;
+    .profile-header {
+        background: #8dc542;
+        color: white;
         padding: 2rem;
+        display: flex;
+        align-items: center;
     }
 
-    .card-body strong {
-        display: block;
-        font-size: 0.9rem;
-        color: #37474f;
-        margin-top: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+    .profile-header img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 4px solid white;
+        object-fit: cover;
+        margin-right: 2rem;
     }
 
-    .card-body span {
-        font-size: 1.05rem;
-        color: #555;
-        display: block;
-        margin-top: 0.2rem;
-    }
-
-    .card-footer {
-        background-color: #f0f4f8;
-        padding: 1.5rem 2rem;
-        text-align: right;
-    }
-
-    .btn-success {
-        background-color: #66bb6a;
-        border: none;
-        font-size: 1rem;
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.5rem;
-        transition: all 0.3s ease;
-    }
-
-    .btn-success:hover {
-        background-color: #57a05a;
-    }
-
-    @media (max-width: 768px) {
-        .card-body .row {
-            flex-direction: column;
-        }
-
-        .card-body .col-md-6 {
-            margin-bottom: 2rem;
-        }
+    .badge-custom {
+        font-size: 0.85rem;
     }
 </style>
-
 <div class="container my-5">
-    <div class="card">
-        <div class="card-header">
-            Student Details
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <strong>Occupation</strong>
-                    <span>{{ $student->occupation }}</span>
-
-                    <strong>Registration Number</strong>
-                    <span>{{ $student->registration_number }}</span>
-
-                    <strong>Candidate Id</strong>
-                    <span>{{ $student->candidate_id }}</span>
-
-                    <strong>Candidate Name</strong>
-                    <span>{{ $student->candidate_name }}</span>
-
-                    <strong>Father Name</strong>
-                    <span>{{ $student->father_name }}</span>
-
-                    <strong>Mother Name</strong>
-                    <span>{{ $student->mother_name }}</span>
-
-                    <strong>NID</strong>
-                    <span>{{ $student->nid }}</span>
-
-                   
-                </div>
-                <div class="col-md-6">
-                    <strong>District</strong>
-                    <span>{{ $student->district }}</span>
-
-                   
-
-                    <strong>Address</strong>
-                    <span>{{ $student->address }}</span> 
-
-                    <strong>Date of Birth</strong>
-                    <span>{{ $student->date_of_birth }}</span>
-
-                    <strong>Mobile Number</strong>
-                    <span>{{ $student->mobile_number }}</span>
-
-                    <strong>Email</strong>
-                    <span>{{ $student->email }}</span>
-
-                    <strong>Assessment Date</strong>
-                    <span>{{ $student->assessment_date }}</span>
-
-                    {{-- <strong>Assessment Venue</strong>
-                    <span>{{ $student->assessment_venue }}</span>
-
-                    <strong>Assessment Center</strong>
-                    <span>{{ $student->assessment_center }}</span> --}}
-
-                    <strong>Center Reg. No.</strong>
-                    <span>{{ $student->assessment_center_registration_number }}</span>
-
-                </div>
+    <div class="card profile-card shadow">
+        <div class="profile-header">
+            <img src="{{ asset('images/noimage.jpg') }}" alt="Student Photo">
+            <div>
+                <h4 class="mb-1">{{ $student->candidate_name }}</h4>
+                <p class="mb-0">Reg. No: <strong>{{ $student->registration_number }}</strong></p>
+                <p class="mb-0">Occupation: <strong>{{ $student->occupation }}</strong></p>
+                <span class="badge bg-info text-dark badge-custom mt-2">{{ $student->exam_status }}</span>
             </div>
         </div>
-        <div class="card-footer">
-            <a href="{{ route('students.index') }}" class="btn btn-success">
-                ← Back to List
-            </a>
+
+        <div class="card-body">
+            <!-- Action Buttons -->
+            <div class="mb-4 text-end">
+                <button class="btn btn-outline-primary btn-sm" onclick="window.print()"><i
+                        class="bi bi-printer"></i> Print</button>
+            </div>
+
+            <!-- Tabs -->
+            <ul class="nav nav-tabs mb-3" id="profileTabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#info"
+                        type="button">Profile Info</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#assessment"
+                        type="button">Assessment</button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="profileTabsContent">
+                <!-- Profile Info -->
+                <div class="tab-pane fade show active" id="info">
+                    <div class="row mb-3">
+                        <div class="col-md-6"><strong>Father's Name:</strong> {{ $student->father_name }}</div>
+                        <div class="col-md-6"><strong>Mother's Name:</strong> {{ $student->mother_name }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6"><strong>NID:</strong> {{ $student->nid }}</div>
+                        <div class="col-md-6"><strong>Mobile:</strong> 0{{ $student->mobile_number }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6"><strong>Email:</strong> {{ $student->email }}</div>
+                        <div class="col-md-6"><strong>Date of Birth:</strong> {{ $student->date_of_birth }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6"><strong>District:</strong> {{ $student->district }}</div>
+                        <div class="col-md-6"><strong>Address:</strong> {{ $student->address }}</div>
+                    </div>
+                </div>
+
+                <!-- Assessment Info -->
+                <div class="tab-pane fade" id="assessment">
+                    <div class="row mb-3">
+                        <div class="col-md-6"><strong>Assessment Date:</strong> {{ $student->assessment_date }}
+                        </div>
+                        <div class="col-md-6"><strong>Center ID:</strong> {{ $student->assessment_center }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6"><strong>Center Reg. No:</strong>
+                            {{ $student->assessment_center_registration_number }}</div>
+                        <div class="col-md-6"><strong>Chairman's Status:</strong> {{ $student->chairmen_status }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6"><strong>Admin Status:</strong> {{ $student->districts_admin_status }}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

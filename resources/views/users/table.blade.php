@@ -4,7 +4,7 @@
 
 
 <div class="table-responsive">
-    <table class="table" id="users-table">
+    <table class="table table_data" id="users-table">
         <thead>
             <tr>
                 <th>SL</th>

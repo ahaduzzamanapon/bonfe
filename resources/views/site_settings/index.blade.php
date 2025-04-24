@@ -8,11 +8,12 @@ Site Settings @parent
 @section('content')
 <!-- Content Header (Page header) -->
 <section class="content-header">
-    {{--<div aria-label="breadcrumb" class="card-breadcrumb">
-        <h1>Site Settings</h1>
+    <div aria-label="breadcrumb" class="card-breadcrumb">
+        <h5><a href="{{ url('/') }}"  style="text-decoration: none; color: black;">Dashboard</a> > Site Settings </h5>
     </div>
-    <div class="separator-breadcrumb border-top"></div>--}}
+    <div class="separator-breadcrumb border-top"></div>
 </section>
+
 
 <!-- Main content -->
 <div class="content">

@@ -9,6 +9,7 @@ use App\Models\Student;
 use Illuminate\Http\Request;
 use Flash;
 use Response;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class StudentController extends AppBaseController
 {
@@ -29,7 +30,7 @@ class StudentController extends AppBaseController
         if(!can('chairman') && can('district_admin')) {
             $students = $students->where('students.district_id', auth()->user()->district_id);
         }
-        $students = $students-> paginate(10);
+        $students = $students->get();
         return view('students.index')
         ->with('students', $students);
     }
@@ -43,7 +44,7 @@ class StudentController extends AppBaseController
             $students = $students->where('students.district_id', auth()->user()->district_id);
         }
         $students = $students->where('students.status', 'Waiting for District Admin Approval');
-        $students = $students-> paginate(10);
+        $students = $students->get();
         return view('students.index')
             ->with('students', $students);
 
@@ -58,7 +59,7 @@ class StudentController extends AppBaseController
             $students = $students->where('students.district_id', auth()->user()->district_id);
         }
         $students = $students->where('students.status', 'Waiting for Chairman Approval');
-        $students = $students-> paginate(10);
+        $students = $students->get();
         return view('students.index')
             ->with('students', $students);
     }
@@ -221,13 +222,28 @@ class StudentController extends AppBaseController
         return back();
     }
     public function generate_certificate($studentId){
+        $data = route('students.qr_details', $studentId);
+        $qrCode = QrCode::size(100)->generate($data);
         $student = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
             ->join('districts', 'students.district_id', '=', 'districts.id')
             ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
             ->orderBy('id', 'desc')
             ->where('students.id', $studentId)
             ->first();
-
-        return view('students.generate_certificate')->with('student', $student);
+        return view('students.generate_certificate')->with('student', $student)->with('qrCode', $qrCode);
     }
+
+
+    public function qr_details($studentId){
+    
+        $student = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
+            ->join('districts', 'students.district_id', '=', 'districts.id')
+            ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
+            ->orderBy('id', 'desc')
+            ->where('students.id', $studentId)
+            ->first();
+        return view('students.qr_details')->with('student', $student);
+    }
+
+
 }

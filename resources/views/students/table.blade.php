@@ -1,10 +1,10 @@
-<table class="table table-striped table-hover " id="students-table">
+<table class="table table-striped table-hover table_data" id="students-table">
     <thead>
         <tr>
             <th>SL</th>
             <th>Candidate Details</th>
-            <th>Status</th>
-            <th>Exam Status</th>
+            <th width="10%">Status</th>
+            <th>Result</th>
             <th>District App.</th>
             <th>Chairman App.</th>
             <th>Action</th>
@@ -13,7 +13,7 @@
     <tbody>
         @foreach ($students as $key => $student)
             <tr>
-                <td style="color: #000">{{ $key + 1 }}</td>
+                <td >{{ $key + 1 }}</td>
 
                 <td>
                     <div style="line-height: 1px;">
@@ -27,11 +27,11 @@
                     </div>
                 </td>
 
-                <td><span
+                <td  width="10%"><span
                         class="badge badge-{{ $student->status == 'Pending' ? 'warning' : 'success' }}">{{ $student->status }}</span>
                 </td>
                 <td><span
-                        class="badge badge-{{ $student->exam_status == 'Pending' ? 'warning' : 'success' }}">{{ $student->exam_status }}</span>
+                        class="badge badge-{{ $student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success') }}">{{ $student->exam_status }}</span>
                 </td>
                 <td><span
                         class="badge badge-{{ $student->districts_admin_status == 'Pending' ? 'warning' : 'success' }}">{{ $student->districts_admin_status }}</span>
@@ -76,7 +76,7 @@
                                 ]) !!}
                                 {!! Form::close() !!}
                             @endif
-                            @if ($student->status == 'Chairman Approved')
+                            @if ($student->status == 'Chairman Approved' && $student->exam_status != 'Fail')
                                 <a class="dropdown-item" target="_blank"
                                     href="{{ route('students.generate_certificate', [$student->id]) }}"><i
                                         class="im im-icon-People-onCloud"></i> Generate Certificate</a>

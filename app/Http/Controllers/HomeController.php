@@ -40,6 +40,8 @@ class HomeController extends Controller
 
     public function get_upazilas(Request $request){
 
+     
+
         $upazilas = Upazila::where('dis_id', $request->district_id)->get(['id', 'name_en as name']);
         if ($upazilas->isEmpty()) {
             return response()->json(['message' => 'No upazilas found for the given district ID.'], 404);
@@ -47,12 +49,22 @@ class HomeController extends Controller
         return response()->json($upazilas);
     }
 
-    public function getDashboardData()
+    public function getDashboardData(Request $request)
     {
+
+        $program_id = $request->program_id;
+        $occupation_id = $request->occupation_id;
+
         $query = DB::table('students');
 
         if (!can('chairman') && can('district_admin')) {
             $query = $query->where('students.district_id', auth()->user()->district_id);
+        }
+        if ($program_id) {
+            $query = $query->where('students.program_id', $program_id);
+        }
+        if ($occupation_id) {
+            $query = $query->where('students.occupation_id', $occupation_id);
         }
 
         $total_students = $query->count();
@@ -60,6 +72,12 @@ class HomeController extends Controller
         $passedQuery = DB::table('students')->where('exam_status', 'Passed');
         if (!can('chairman') && can('district_admin')) {
             $passedQuery = $passedQuery->where('students.district_id', auth()->user()->district_id);
+        }
+        if ($program_id) {
+            $passedQuery = $passedQuery->where('students.program_id', $program_id);
+        }
+        if ($occupation_id) {
+            $passedQuery = $passedQuery->where('students.occupation_id', $occupation_id);
         }
         $total_passed_students = $passedQuery->count();
 
@@ -71,6 +89,12 @@ class HomeController extends Controller
         if (!can('chairman') && can('district_admin')) {
             $waiting_for_chairman = $waiting_for_chairman->where('students.district_id', auth()->user()->district_id);
         }
+        if ($program_id) {
+            $waiting_for_chairman = $waiting_for_chairman->where('students.program_id', $program_id);
+        }
+        if ($occupation_id) {
+            $waiting_for_chairman = $waiting_for_chairman->where('students.occupation_id', $occupation_id);
+        }
         $waiting_for_chairman = $waiting_for_chairman->count();
 
         $waiting_for_district = DB::table('students')
@@ -78,6 +102,12 @@ class HomeController extends Controller
             ->where('status', 'Waiting for District Admin Approval');
         if (!can('chairman') && can('district_admin')) {
             $waiting_for_district = $waiting_for_district->where('students.district_id', auth()->user()->district_id);
+        }
+        if ($program_id) {
+            $waiting_for_district = $waiting_for_district->where('students.program_id', $program_id);
+        }
+        if ($occupation_id) {
+            $waiting_for_district = $waiting_for_district->where('students.occupation_id', $occupation_id);
         }
         $waiting_for_district = $waiting_for_district->count();
 
@@ -87,6 +117,12 @@ class HomeController extends Controller
 
         if (!can('chairman') && can('district_admin')) {
             $generated_certificate = $generated_certificate->where('students.district_id', auth()->user()->district_id);
+        }
+        if ($program_id) {
+            $generated_certificate = $generated_certificate->where('students.program_id', $program_id);
+        }
+        if ($occupation_id) {
+            $generated_certificate = $generated_certificate->where('students.occupation_id', $occupation_id);
         }
         $generated_certificate = $generated_certificate->count();
 

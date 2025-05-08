@@ -9,9 +9,40 @@
 @stop
 @section('content')
     <section class="content-header">
-        <h3>
-            Dashboard
-        </h3>
+        <div class="col-md-12">
+            <div class="row">
+                @php
+                    $programs = \App\Models\Program::latest()->get();
+                    $occupations = \App\Models\Occupation::latest()->get();
+                @endphp
+                <h3 class="col-md-6 pull-left">
+                    Dashboard
+                </h3>
+                <div class="col-md-6 pull-right">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <select id="dashboard_program" name="dashboard_program" class="form-control" onchange="fetchDashboardData()">
+                                    @foreach ($programs as $program)
+                                        <option value="{{ $program->id }}">{{ $program->program_title }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <select id="dashboard_occupation" name="dashboard_occupation" class="form-control" onchange="fetchDashboardData()">
+                                    <option value="">Select Occupation</option>
+                                    @foreach ($occupations as $occupation)
+                                        <option value="{{ $occupation->id }}">{{ $occupation->title }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <br>
 
     </section>
@@ -263,11 +294,20 @@
 
     <script>
         function fetchDashboardData() {
-
-
+            $('#total_students').html('<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>');
+            $('#total_passed_students').html('<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>');
+            $('#total_failed_students').html('<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>');
+            $('#waiting_for_chairman').html('<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>');
+            $('#waiting_for_district').html('<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>');
+            $('#generated_certificate').html('<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>');
+        
             $.ajax({
                 url: "{{ route('dashboard.data') }}",
                 method: "GET",
+                data: {
+                    program_id: $('#dashboard_program').val(),
+                    occupation_id: $('#dashboard_occupation').val()
+                },
                 success: function(data) {
                     $('#total_students').html(data.total_students);
                     $('#total_passed_students').html(data.total_passed_students);

@@ -21,3 +21,7 @@ Route::resource('occupations', 'OccupationController');
 Route::resource('assessmentVenues', 'AssessmentVenueController');
 
 Route::resource('assessmentCenters', 'AssessmentCenterController');
+
+Route::resource('programs', 'ProgramController');
+
+Route::resource('upazilas', 'UpazilaController');

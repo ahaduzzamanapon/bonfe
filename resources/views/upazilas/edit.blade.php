@@ -2,13 +2,13 @@
 
 {{-- Page title --}}
 @section('title')
-Student @parent
+Upazila @parent
 @stop
 
 @section('content')
    <section class="content-header">
     {{--<div aria-label="breadcrumb" class="card-breadcrumb">
-        <h1>{{ __('Edit') }} Student</h1>
+        <h1>{{ __('Edit') }} Upazila</h1>
     </div>
     <div class="separator-breadcrumb border-top"></div>--}}
     </section>
@@ -17,9 +17,9 @@ Student @parent
        <div class="card">
            <div class="card-body">
                 <div class="row">
-                    {!! Form::model($student, ['route' => ['students.update', $student->id], 'files' => true,  'method' => 'patch','class' => 'form-horizontal col-md-12']) !!}
+                    {!! Form::model($upazila, ['route' => ['upazilas.update', $upazila->id], 'method' => 'patch','class' => 'form-horizontal col-md-12']) !!}
                         <div class="row">
-                            @include('students.fields')
+                            @include('upazilas.fields')
                         </div>
                     {!! Form::close() !!}
                 </div>

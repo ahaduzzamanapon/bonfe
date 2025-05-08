@@ -47,6 +47,8 @@
 
     <!-- Flatpickr JS -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 
     @include('layouts/datatables_css')
 
@@ -57,6 +59,24 @@
             color: #ffffff !important;
             background-color: #1f9303 !important;
             border-color: #1f9303 !important;
+        }
+        .btn-check:focus + .btn, .btn:focus {
+    color: var(--bs-btn-hover-color);
+    background-color: #05534c;
+    border-color: var(--bs-btn-hover-border-color);
+    outline: 0;
+    -webkit-box-shadow: var(--bs-btn-focus-box-shadow);
+    box-shadow: var(--bs-btn-focus-box-shadow);
+}
+
+        .select2-container .select2-selection--single {
+            box-sizing: border-box;
+            cursor: pointer;
+            display: block;
+            height: 38px;
+            user-select: none;
+            -webkit-user-select: none;
+            padding: 4px;
         }
 
         .nav-item {
@@ -102,6 +122,7 @@
             border: 1px solid #808080;
             padding: 1px 13px;
         }
+
         .card-breadcrumb {
             padding: 12px;
             cursor: pointer;
@@ -135,6 +156,11 @@
             padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);
             color: #000000;
             /* font-size: 13px!important; */
+        }
+        .btn-outline-primary:not(:disabled):not(.disabled).active, .btn-outline-primary:not(:disabled):not(.disabled):active, .show>.btn-outline-primary.dropdown-toggle {
+            color: #fff;
+            background-color: #8dc542;
+            border-color: #683091;
         }
 
         .page-item.active .page-link {
@@ -205,28 +231,30 @@
         .pagination {
             justify-content: flex-end;
         }
+
         .btn-primary {
-    --bs-btn-bg: #0aa699;
-    --bs-btn-border-color: #0aa699;
-    --bs-btn-hover-bg: var(--bs-primary-hover-bg);
-    --bs-btn-hover-border-color: var(--bs-primary-hover-border);
-    --bs-btn-active-bg: var(--bs-primary-active-bg);
-    --bs-btn-active-border-color: var(--bs-primary-active-border);
-    --bs-btn-disabled-bg: #0aa699;
-    --bs-btn-disabled-border-color: #0aa699;
-}
-.card .card-header {
-    margin-bottom: 0;
-    border: 0;
-    padding-bottom: 0;
-    -webkit-border-radius: var(--bs-border-radius-lg);
-    padding: 7px;
-    background: #8dc542;
-    border-top: 3px solid red;
-    margin: 0px;
-    border-radius: 6px 6px 0px 0;
-    color: white;
-}
+            --bs-btn-bg: #0aa699;
+            --bs-btn-border-color: #0aa699;
+            --bs-btn-hover-bg: var(--bs-primary-hover-bg);
+            --bs-btn-hover-border-color: var(--bs-primary-hover-border);
+            --bs-btn-active-bg: var(--bs-primary-active-bg);
+            --bs-btn-active-border-color: var(--bs-primary-active-border);
+            --bs-btn-disabled-bg: #0aa699;
+            --bs-btn-disabled-border-color: #0aa699;
+        }
+
+        .card .card-header {
+            margin-bottom: 0;
+            border: 0;
+            padding-bottom: 0;
+            -webkit-border-radius: var(--bs-border-radius-lg);
+            padding: 7px;
+            background: #8dc542;
+            border-top: 3px solid red;
+            margin: 0px;
+            border-radius: 6px 6px 0px 0;
+            color: white;
+        }
     </style>
 
 </head>
@@ -252,7 +280,7 @@
                     <img src="{{ !empty($setting) ? asset($setting->logo) : 'assets/images/Picture1.jpg' }} "
                         class="img-fluid" alt="logo" style="height: 58px;width: 65px;">
                 </div>
-                <span class="logo-title">উপ-আনুষ্ঠানিক <br> শিক্ষা বোর্ড, ঢাকা</span>
+                <span class="logo-title">উপানুষ্ঠানিক <br> শিক্ষা বোর্ড, ঢাকা</span>
             </a>
             <div class="sidebar-toggle" data-toggle="sidebar" data-active="true">
                 <i class="icon">
@@ -307,22 +335,81 @@
                             <span class="navbar-toggler-bar bar3"></span>
                         </span>
                     </button>
-
                     <!-- Navbar Content -->
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="mb-2 navbar-nav ms-auto align-items-center navbar-list mb-lg-0">
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link" id="notification-drop" data-bs-toggle="dropdown">
+                                    <svg class="icon-24" width="24" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" style="color: aliceblue;">
+                                        <path
+                                            d="M19.7695 11.6453C19.039 10.7923 18.7071 10.0531 18.7071 8.79716V8.37013C18.7071 6.73354 18.3304 5.67907 17.5115 4.62459C16.2493 2.98699 14.1244 2 12.0442 2H11.9558C9.91935 2 7.86106 2.94167 6.577 4.5128C5.71333 5.58842 5.29293 6.68822 5.29293 8.37013V8.79716C5.29293 10.0531 4.98284 10.7923 4.23049 11.6453C3.67691 12.2738 3.5 13.0815 3.5 13.9557C3.5 14.8309 3.78723 15.6598 4.36367 16.3336C5.11602 17.1413 6.17846 17.6569 7.26375 17.7466C8.83505 17.9258 10.4063 17.9933 12.0005 17.9933C13.5937 17.9933 15.165 17.8805 16.7372 17.7466C17.8215 17.6569 18.884 17.1413 19.6363 16.3336C20.2118 15.6598 20.5 14.8309 20.5 13.9557C20.5 13.0815 20.3231 12.2738 19.7695 11.6453Z"
+                                            fill="currentColor"></path>
+                                        <path opacity="0.4"
+                                            d="M14.0088 19.2283C13.5088 19.1215 10.4627 19.1215 9.96275 19.2283C9.53539 19.327 9.07324 19.5566 9.07324 20.0602C9.09809 20.5406 9.37935 20.9646 9.76895 21.2335L9.76795 21.2345C10.2718 21.6273 10.8632 21.877 11.4824 21.9667C11.8123 22.012 12.1482 22.01 12.4901 21.9667C13.1083 21.877 13.6997 21.6273 14.2036 21.2345L14.2026 21.2335C14.5922 20.9646 14.8734 20.5406 14.8983 20.0602C14.8983 19.5566 14.4361 19.327 14.0088 19.2283Z"
+                                            fill="currentColor"></path>
+                                    </svg>
+                                    <span class="bg-danger dots"
+                                        style="padding: 2px 7px;border-radius: 50%;font-size: 11px;position: absolute;left: 22px;color: #fff">{{ count(get_notification()) }}</span>
+                                </a>
+                                <div class="p-0 sub-drop dropdown-menu dropdown-menu-end"
+                                    aria-labelledby="notification-drop">
+                                    <div class="m-0 shadow-none card">
+                                        <div
+                                            class="py-3 card-header d-flex justify-content-between bg-primary rounded-top">
+                                            <div class="header-title">
+                                                <h5 class="mb-0 text-white">All Notifications</h5>
+                                            </div>
+                                        </div>
+                                        <div class="p-0 card-body" style="height: 40vh;overflow-y: scroll;">
+                                            @foreach (get_notification() as $key => $notification)
+                                                @if (who('chairmen'))
+                                                    <a href="{{ url('/students_waiting_for_chairman_approval') }}"
+                                                        class="iq-sub-card">
+                                                    @else
+                                                        <a href="{{ url('/students_waiting_for_district_approval') }}"
+                                                            class="iq-sub-card">
+                                                @endif
+                                                <div class="d-flex align-items-center">
+                                                    <img class="p-1 avatar-40 rounded-pill bg-primary-subtle"
+                                                        src="{{ $notification->image ? asset($notification->image) : asset('assets/images/avatars/01.png') }}"
+                                                        alt="">
+                                                    <div class="ms-3 w-100">
+                                                        <h6 class="mb-0 text-start iq-text">
+                                                            {{ $notification->candidate_name }} Waiting For Approval
+                                                        </h6>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <small
+                                                                class="float-end font-size-12">{{ $notification->updated_at->diffForHumans() }}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </a>
+                                            @endforeach
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
                             <li class="nav-item dropdown custom-drop">
                                 <a class="py-0 nav-link d-flex align-items-center" href="#" id="navbarDropdown"
                                     role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="{{ asset('assets/images/avatars/01.png') }}" alt="User-Profile"
-                                        class="theme-color-default-img img-fluid avatar avatar-50 avatar-rounded" />
+                                    @if (Auth::user()->image && file_exists(public_path(Auth::user()->image)))
+                                        <img src="{{ asset(Auth::user()->image) }}" alt="User-Profile"
+                                            class="theme-color-default-img img-fluid avatar avatar-50 avatar-rounded" />
+                                    @else
+                                        <img src="{{ asset('assets/images/avatars/01.png') }}" alt="User-Profile"
+                                            class="theme-color-default-img img-fluid avatar avatar-50 avatar-rounded" />
+                                    @endif
+
+
                                     <div class="caption ms-3 d-none d-md-block">
                                         <h6 class="mb-0 caption-title" style="color: white;">
-                                            {{ Auth::user()->name ?? 'Guest' }}
+                                            {{ Auth::user()->name }} {{ Auth::user()->last_name }}
                                         </h6>
-                                        <p class="mb-0 caption-sub-title" style="color: white;">
+                                        {{-- <p class="mb-0 caption-sub-title" style="color: white;">
                                             {{ Auth::user()->role ?? 'User' }}
-                                        </p>
+                                        </p> --}}
                                     </div>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end profile-dropdown"
@@ -330,13 +417,19 @@
                                     <div class="profile-dropdown-body p-3 bg-white rounded shadow-lg"
                                         style="width: 269px;">
                                         <div class="d-flex align-items-center mb-3">
-                                            <img src="{{ asset('assets/images/avatars/01.png') }}" alt="User Profile"
-                                                class="img-fluid rounded-circle me-2"
+                                            @if (Auth::user()->image && file_exists(public_path(Auth::user()->image)))
+                                                <img src="{{ asset(Auth::user()->image) }}" alt="User Profile"
+                                                class="img-fluid rounded-circle me-2" @else <img
+                                                    src="{{ asset('assets/images/avatars/01.png') }}"
+                                                    alt="User Profile" class="img-fluid rounded-circle me-2"
+                                                    @endif
                                                 style="width: 50px; height: 50px;" />
-                                            <div>
-                                                <h6 class="mb-0">Hi, {{ Auth::user()->name }}</h6>
-                                                <small class="text-muted">{{ Auth::user()->email }}</small>
-                                            </div>
+                                                <div>
+                                                    <h6 class="mb-0">Hi, {{ Auth::user()->name }}
+                                                        {{ Auth::user()->last_name }}
+                                                    </h6>
+                                                    <small class="text-muted">{{ Auth::user()->email }}</small>
+                                                </div>
                                         </div>
                                         <hr>
                                         <a href="{{ route('logout') }}" class="btn btn-sm btn-danger w-100"
@@ -423,7 +516,23 @@
 
     <!-- App Script -->
     <script src="{{ asset('assets/js/hope-ui.js') }}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script>
+        function alert(message) {
+            Swal.fire({
+            text: message,
+            });
+        }
+    </script>
+
+
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+    </script>
 
 
     <script>

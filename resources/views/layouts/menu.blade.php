@@ -40,3 +40,17 @@
     </a>
 </li>
 
+<li class="{!! (Request::is('programs*') ? 'active' : '' ) !!}">
+    <a href="{{ route('programs.index') }}">
+        <span class="mm-text ">Programs</span>
+        <span class="menu-icon"><i class="im im-icon-Structure"></i></span>
+    </a>
+</li>
+
+<li class="{!! (Request::is('upazilas*') ? 'active' : '' ) !!}">
+    <a href="{{ route('upazilas.index') }}">
+        <span class="mm-text ">Upazilas</span>
+        <span class="menu-icon"><i class="im im-icon-Structure"></i></span>
+    </a>
+</li>
+

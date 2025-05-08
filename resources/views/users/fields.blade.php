@@ -126,6 +126,9 @@
 
 @php
     $roles = \App\Models\RoleAndPermission::all()->pluck('name','id')->toArray();
+    $AssessmentCenter = \App\Models\AssessmentCenter::all()->pluck('center_name','id')->prepend('Select Center', '')->toArray();
+    $Occupation = \App\Models\Occupation::all()->pluck('title','id')->prepend('Select Occupation', '')->toArray();
+
 @endphp
 
 
@@ -136,6 +139,31 @@
         {!! Form::select('group_id',$roles, null, ['class' => 'form-control']) !!}
     </div>
 </div>
+
+
+<!-- Group Id Field -->
+<div class="col-md-3">
+    <div class="form-group">
+        {!! Form::label('assessment_center', 'AssessmentCenter',['class'=>'control-label']) !!}
+        {!! Form::select('assessment_center',$AssessmentCenter, null, ['class' => 'form-control']) !!}
+    </div>
+</div>
+<!-- Group Id Field -->
+<div class="col-md-3">
+    <div class="form-group">
+        {!! Form::label('occupation', 'Occupation',['class'=>'control-label']) !!}
+        {!! Form::select('occupation',$Occupation, null, ['class' => 'form-control']) !!}
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
 
 
 <!-- Education Field -->
@@ -233,18 +261,30 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('image', 'Image',['class'=>'control-label']) !!}
-        {!! Form::file('image', ['onchange' => 'previewImage(event)','accept' => 'image/*']) !!}
-        <img id="imagePreview" src="{{ isset($user) ? asset($user->image) : '' }}" alt="Image Preview" style="display:none; margin-top:10px; max-width:100%; height:auto;" />
+        {!! Form::file('image', ['onchange' => 'previewImage(event, "imagePreview")','accept' => 'image/*']) !!}
+        <img id="imagePreview" src="{{ isset($users) ? asset($users->image) : '' }}" alt="Image Preview" style="{{ isset($users) && $users->image ?  '': 'display: none;' }}margin-top:10px;max-width: 45%;height:auto;" />
     </div>
 </div>
 <!-- Signature Field -->
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('signature', 'Signature',['class'=>'control-label']) !!}
-        {!! Form::file('signature', ['onchange' => 'previewImage(event)','accept' => 'image/*']) !!}
-        <img id="signaturePreview" src="{{ isset($user) ? asset($user->signature) : '' }}" alt="Signature Preview" style="display:none; margin-top:10px; max-width:100%; height:auto;" />
+        {!! Form::file('signature', ['onchange' => 'previewImage(event, "signaturePreview")','accept' => 'image/*']) !!}
+        <img id="signaturePreview" src="{{ isset($users) ? asset($users->signature) : '' }}" alt="Signature Preview" style="{{ isset($users) && $users->image ?  '': 'display: none;' }}margin-top:10px;max-width: 45%;height:auto;" />
     </div>
 </div>
+<script>
+    function previewImage(event, previewId) {
+
+        var file = event.target.files[0];
+        var reader = new FileReader();
+        reader.onload = function() {
+            document.getElementById(previewId).src = reader.result;
+            document.getElementById(previewId).style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+</script>
 <div class="clearfix"></div>
 
 

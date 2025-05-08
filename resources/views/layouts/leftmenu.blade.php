@@ -5,12 +5,43 @@
         <span class="item-name">Dashboard</span>
     </a>
 </li>
+@if(can('student'))
 <li class="nav-item">
-    <a class="nav-link {!! Request::is('students*') || Request::is('students_waiting_for_chairman_approval') || Request::is('students_waiting_for_district_approval') ? 'active' : '' !!}" aria-current="page" href="{{ route('students.index') }}" >
-        <i class="icon im im-icon-Student-Hat"></i>
-        <span class="item-name">Students</span>
+    <a class="nav-link" data-bs-toggle="collapse" href="#student_menu" role="button" aria-expanded="false" aria-controls="student_menu">
+        <i class="icon im im-icon-User"></i>
+        <span class="item-name">Student</span>
+        <i class="right-icon im im-icon-Arrow-Right"></i>
     </a>
+    <ul class="sub-nav collapse {!! (Request::is('students*') || Request::is('roleAndPermissions*') ? 'show' : '') !!}" id="student_menu" data-bs-parent="#sidebar-menu">
+        <li class="nav-item">
+            <a class="nav-link {!! Request::is('students') ? 'active' : '' !!}" aria-current="page" href="{{ route('students.index') }}" >
+                <i class="icon im im-icon-Student-Hat"></i>
+                <span class="item-name">Students</span>
+            </a>
+        </li>
+        @if(can('district_admin'))
+        <li class="nav-item">
+            <a class="nav-link {!!  Request::is('students_waiting_for_district_approval') ? 'active' : '' !!}" aria-current="page" href="{{ route('students.students_waiting_for_district_approval') }}" >
+                <i class="icon im im-icon-Student-Hat"></i>
+                <span class="item-name">District Approval</span>
+            </a>
+        </li>
+        @endif
+        @if (can('chairman'))
+        <li class="nav-item">
+            <a class="nav-link {!!  Request::is('students_waiting_for_chairman_approval') ? 'active' : '' !!}" aria-current="page" href="{{ route('students.students_waiting_for_chairman_approval') }}" >
+                <i class="icon im im-icon-Student-Hat"></i>
+                <span class="item-name">Chairman Approval</span>
+            </a>
+        </li>
+        @endif
+        
+      
+    </ul>
 </li>
+
+
+@endif
 
 {{-- Users Management --}}
 @if(can('user_management'))
@@ -61,6 +92,15 @@
             </a>
         </li>
         @endif
+        @if(can('programs'))
+        <li class="nav-item">
+            <a class="nav-link {!! Request::is('programs*') ? 'active' : '' !!}" href="{{ route('programs.index') }}">
+                <i class="icon im im-icon-Street-View"></i>
+                <i class="sidenav-mini-icon"> P </i>
+                <span class="item-name">Programs</span>
+            </a>
+        </li>
+        @endif
         @if(can('designations'))
         <li class="nav-item">
             <a class="nav-link {!! Request::is('designations*') ? 'active' : '' !!}" href="{{ route('designations.index') }}">
@@ -76,6 +116,15 @@
                 <i class="icon im im-icon-Structure"></i>
                 <i class="sidenav-mini-icon"> D </i>
                 <span class="item-name">Districts</span>
+            </a>
+        </li>
+        @endif
+        @if(can('upazilas'))
+        <li class="nav-item">
+            <a class="nav-link {!! Request::is('upazilas*') ? 'active' : '' !!}" href="{{ route('upazilas.index') }}">
+                <i class="icon im im-icon-Structure"></i>
+                <i class="sidenav-mini-icon"> U </i>
+                <span class="item-name">Upazila</span>
             </a>
         </li>
         @endif
@@ -116,6 +165,9 @@
             </a>
         </li>
         @endif
+
+        
+       
         {{-- Add other settings items here --}}
     </ul>
 </li>

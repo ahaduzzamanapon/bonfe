@@ -43,8 +43,9 @@
     <div class="container my-5">
         <div class="card profile-card shadow">
             <div class="profile-header">
-                <img src="{{ asset('images/noimage.jpg') }}" alt="Student Photo">
+                <img src="{{ isset($student) && $student->image && file_exists(public_path($student->image)) ? asset($student->image) : asset('images/noimage.jpg') }}" alt="Student Photo">
                 <div>
+
                     <h4 class="mb-1">{{ $student->candidate_name }}</h4>
                     <p class="mb-0">Reg. No: <strong>{{ $student->registration_number }}</strong></p>
                     <p class="mb-0">Occupation: <strong>{{ $student->occupation }}</strong></p>

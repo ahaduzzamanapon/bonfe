@@ -35,6 +35,8 @@ class User extends Authenticatable
         'salary',
         'nid',
         'group_id',
+        'occupation',
+        'assessment_center',
         'district_id',
         'education',
         'blood_group',

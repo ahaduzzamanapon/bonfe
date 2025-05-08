@@ -13,339 +13,303 @@
             Dashboard
         </h3>
         <br>
-       
+
     </section>
     <style>
-        
         .custom-card {
-    display: flex;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 15px;
-    transition: transform 0.3s ease;
-    background-color: #fff;
-    min-height: 89px;
-}
+            display: flex;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+            background-color: #fff;
+            min-height: 89px;
+        }
 
-   .custom-card:hover {
-      transform: translateY(-4px);
-   }
+        .spinner-border {
+            --bs-spinner-width: 1rem;
+            --bs-spinner-height: 1rem;
+            --bs-spinner-vertical-align: -0.125em;
+            --bs-spinner-border-width: 0.2em;
+            --bs-spinner-animation-speed: 0.50s;
+            --bs-spinner-animation-name: spinner-border;
+            border: var(--bs-spinner-border-width) solid currentcolor;
+            border-right-color: rgba(0, 0, 0, 0);
+        }
 
-   .card-icon {
-      flex: 0 0 100px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 45px;
-   }
+        .custom-card:hover {
+            transform: translateY(-4px);
+        }
 
-   .card-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      /* <- vertical centering */
-      padding: 0 15px;
-   }
+        .card-icon {
+            flex: 0 0 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 45px;
+        }
 
-   .card-content h3 {
-      margin: 0;
-      font-size: 22px;
-      color: #333;
-      font-weight: bold;
-   }
+        .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* <- vertical centering */
+            padding: 0 15px;
+        }
 
-   .card-content p {
-      margin: 4px 0 0;
-      font-size: 15px;
-      color: #666;
-      font-weight: bold;
-   }
+        .card-content h3 {
+            margin: 0;
+            font-size: 22px;
+            color: #333;
+            font-weight: bold;
+        }
 
-   .teal {
-      background-color: teal;
-   }
+        .card-content p {
+            margin: 4px 0 0;
+            font-size: 15px;
+            color: #666;
+            font-weight: bold;
+        }
 
-   .green {
-      background-color: #28a745;
-   }
+        .teal {
+            background-color: teal;
+        }
 
-   .blue {
-      background-color: #007bff;
-   }
+        .green {
+            background-color: #28a745;
+        }
 
-   .red {
-      background-color: #dc3545;
-   }
+        .blue {
+            background-color: #007bff;
+        }
 
-   .aqua {
-      background-color: #17a2b8;
-   }
+        .red {
+            background-color: #dc3545;
+        }
 
-   .fuchsia {
-      background-color: #e83e8c;
-   }
+        .aqua {
+            background-color: #17a2b8;
+        }
 
-   .orange {
-      background-color: #fd7e14;
-   }
+        .fuchsia {
+            background-color: #e83e8c;
+        }
 
-   .yellow {
-      background-color: #ffc107;
-   }
+        .orange {
+            background-color: #fd7e14;
+        }
 
-   .dashboard_cards_header {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-   }
+        .yellow {
+            background-color: #ffc107;
+        }
 
-   .dashboard_card {
-    width: 30% !important;
-    margin: 0px 15px !important;
-}
+        .dashboard_cards_header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
 
-   .tiles-title {
-      font-size: 18px !important;
-   }
+        .dashboard_card {
+            width: 30% !important;
+            margin: 0px 15px !important;
+        }
 
-   .heading {
-      margin-top: 8px !important;
-      font-size: 18px !important;
-   }
+        .tiles-title {
+            font-size: 18px !important;
+        }
 
-   .report-table td {
-      font-size: 15px !important;
-   }
+        .heading {
+            margin-top: 8px !important;
+            font-size: 18px !important;
+        }
 
-   @media (max-width: 768px) {
-      .dashboard_card {
-         width: 100% !important;
-      }
-   }
+        .report-table td {
+            font-size: 15px !important;
+        }
 
-   </style>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
-@php
-   $total_students = DB::table('students');
-   if(!can('chairman') && can('district_admin')) {
-      $total_students = $total_students->where('students.district_id', auth()->user()->district_id);
-   }
-   $total_students = $total_students->count();
-
-
-   $total_passed_students = DB::table('students')
-   ->where('exam_status', 'Passed');
-   if(!can('chairman') && can('district_admin')) {
-      $total_passed_students = $total_passed_students->where('students.district_id', auth()->user()->district_id);
-   }
-   $total_passed_students = $total_passed_students->count();
-
-   $total_failed_students = $total_students - $total_passed_students;
-
-   $waiting_for_chairman = DB::table('students')
-   ->where('exam_status', 'Passed')
-   ->where('status', 'Waiting for Chairman Approval');
-   if(!can('chairman') && can('district_admin')) {
-      $waiting_for_chairman = $waiting_for_chairman->where('students.district_id', auth()->user()->district_id);
-   }
-   $waiting_for_chairman = $waiting_for_chairman->count();
-
-    $waiting_for_district = DB::table('students')
-    ->where('exam_status', 'Passed')
-    ->where('status', 'Waiting for District Admin Approval');
-    if(!can('chairman') && can('district_admin')) {
-      $waiting_for_district = $waiting_for_district->where('students.district_id', auth()->user()->district_id);
-   }
-   $waiting_for_district = $waiting_for_district ->count();
-    $generated_certificate = DB::table('students')
-    ->where('exam_status', 'Passed')
-    ->where('status', 'Chairman Approved')
-    ->count();
-    if(!can('chairman') && can('district_admin')) {
-      $generated_certificate = DB::table('students')
-      ->where('exam_status', 'Passed')
-      ->where('status', 'Chairman Approved')
-      ->where('students.district_id', auth()->user()->district_id)
-      ->count();
-   }
-@endphp
-
-
-
-
-
+        @media (max-width: 768px) {
+            .dashboard_card {
+                width: 100% !important;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <section class="content">
         <div class="dashboard_cards_header">
             <div class="dashboard_card">
-               <a href="{{ route('students.index') }}" style="text-decoration: none!important;">
-                  <div class="custom-card">
-                     <div class="card-icon teal">
-                        <i class="icon im im-icon-User"></i>
-                     </div>
-                     <div class="card-content">
-                        <h3>{{ $total_students }}</h3>
-                        <p>Total Students</p>
-                     </div>
-                  </div>
-               </a>
+                <a href="{{ route('students.index') }}" style="text-decoration: none!important;">
+                    <div class="custom-card">
+                        <div class="card-icon teal">
+                            <i class="icon im im-icon-User"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="total_students">
+                                <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
+                            </h3>
+                            <p>Total Students</p>
+                        </div>
+                    </div>
+                </a>
             </div>
             <div class="dashboard_card">
-               <a href="{{ route('students.index') }}" style="text-decoration: none!important;">
-                  <div class="custom-card">
-                     <div class="card-icon blue">
-                        <i class="icon im im-icon-Map-Marker"></i>
-                     </div>
-                     <div class="card-content">
-                        <h3>{{ $total_passed_students }}</h3>
-                        <p>Total Passed</p>
-                     </div>
-                  </div>
-               </a>
+                <a href="{{ route('students.index') }}" style="text-decoration: none!important;">
+                    <div class="custom-card">
+                        <div class="card-icon blue">
+                            <i class="icon im im-icon-Map-Marker"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="total_passed_students">
+                                <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
+                            </h3>
+                            <p>Total Passed</p>
+                        </div>
+                    </div>
+                </a>
             </div>
             <div class="dashboard_card">
-               <a href="{{ route('students.index') }}" style="text-decoration: none!important;"> 
-                  <div class="custom-card ">
-                     <div class="card-icon green">
-                        <i class="icon im im-icon-Map"></i>
-                     </div>
-                     <div class="card-content">
-                        <h3>{{ $total_students - $total_passed_students }}</h3>
-                        <p>Total Failed </p>
-                     </div>
-                  </div>
-               </a>
+                <a href="{{ route('students.index') }}" style="text-decoration: none!important;">
+                    <div class="custom-card ">
+                        <div class="card-icon green">
+                            <i class="icon im im-icon-Map"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="total_failed_students">
+                                <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
+                            </h3>
+                            <p>Total Failed </p>
+                        </div>
+                    </div>
+                </a>
             </div>
             <div class="dashboard_card">
-               <a href="{{ route('students.students_waiting_for_chairman_approval') }}" style="text-decoration: none!important;"> 
-                  <div class="custom-card ">
-                     <div class="card-icon fuchsia">
-                        <i class="icon im im-icon-Map"></i>
-                     </div>
-                     <div class="card-content">
-                        <h3>{{ $waiting_for_chairman }}</h3>
-                        <p>Waiting for Chairmen Approval</p>
-                     </div>
-                  </div>
-               </a>
+                <a href="{{ route('students.students_waiting_for_chairman_approval') }}"
+                    style="text-decoration: none!important;">
+                    <div class="custom-card ">
+                        <div class="card-icon fuchsia">
+                            <i class="icon im im-icon-Map"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="waiting_for_chairman">
+                                <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
+                            </h3>
+                            <p>Waiting for Chairmen Approval</p>
+                        </div>
+                    </div>
+                </a>
             </div>
             <div class="dashboard_card">
-               <a href="{{ route('students.students_waiting_for_district_approval') }}" style="text-decoration: none!important;"> 
-                  <div class="custom-card ">
-                     <div class="card-icon aqua">
-                        <i class="icon im im-icon-Map"></i>
-                     </div>
-                     <div class="card-content">
-                        <h3>{{ $waiting_for_district }}</h3>
-                        <p>Waiting for District Approval</p>
-                     </div>
-                  </div>
-               </a>
+                <a href="{{ route('students.students_waiting_for_district_approval') }}"
+                    style="text-decoration: none!important;">
+                    <div class="custom-card ">
+                        <div class="card-icon aqua">
+                            <i class="icon im im-icon-Map"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="waiting_for_district">
+                                <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
+                            </h3>
+                            <p>Waiting for District Approval</p>
+                        </div>
+                    </div>
+                </a>
             </div>
 
 
             <div class="dashboard_card">
-               <a href="{{ route('students.index') }}" style="text-decoration: none!important;"> 
-                  <div class="custom-card ">
-                     <div class="card-icon orange">
-                        <i class="icon im im-icon-Map"></i>
-                     </div>
-                     <div class="card-content">
-                        <h3>{{ $generated_certificate }}</h3>
-                        <p>Generated Certificate</p>
-                     </div>
-                  </div>
-               </a>
+                <a href="{{ route('students.index') }}" style="text-decoration: none!important;">
+                    <div class="custom-card ">
+                        <div class="card-icon orange">
+                            <i class="icon im im-icon-Map"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="generated_certificate">
+                                <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
+                            </h3>
+                            <p>Generated Certificate</p>
+                        </div>
+                    </div>
+                </a>
             </div>
 
 
 
             <div class="col-md-12" style="padding: 8px 28px 1px 86px;">
-               <div class="row" style="gap: 50px;">
-                  <div class="col-md-5" style="box-shadow: 0px 0px 7px 1px #bababa;background: #ffffff;border-radius: 7px;">
-                     <div style="width: 100%; max-width: 270px; margin: 30px auto;">
-                        <canvas id="studentPieChart"></canvas>
+                <div class="row" style="gap: 50px;">
+                    <div class="col-md-5"
+                        style="box-shadow: 0px 0px 7px 1px #bababa;background: #ffffff;border-radius: 7px;">
+                        <div style="width: 100%; max-width: 270px; margin: 30px auto;">
+                            <canvas id="studentPieChart"></canvas>
+                        </div>
                     </div>
-                  </div>
-                  <div class="col-md-5" style="box-shadow: 0px 0px 7px 1px #bababa;background: #ffffff;border-radius: 7px;">
-                     <div style="width: 100%; max-width: 320px; margin: 30px auto;">
-                        <canvas id="studentapprovalPieChart"></canvas>
+                    <div class="col-md-5"
+                        style="box-shadow: 0px 0px 7px 1px #bababa;background: #ffffff;border-radius: 7px;">
+                        <div style="width: 100%; max-width: 320px; margin: 30px auto;">
+                            <canvas id="studentapprovalPieChart"></canvas>
+                        </div>
                     </div>
-                  </div>
-                 
-               </div>
+
+                </div>
             </div>
-           
-           
-         </div>
+
+
+        </div>
     </section>
+@section('footer_scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-      const ctx = document.getElementById('studentPieChart').getContext('2d');
-  
-      const studentPieChart = new Chart(ctx, {
-          type: 'pie',
-          data: {
-              labels: ['Passed', 'Failed'],
-              datasets: [{
-                  label: 'Students Status',
-                  data: [{{ $total_passed_students }}, {{ $total_failed_students }}],
-                  backgroundColor: ['#007bff', '#dc3545'],
-                  borderColor: ['#ffffff', '#ffffff'],
-                  borderWidth: 2
-              }]
-          },
-          options: {
-              responsive: true,
-              plugins: {
-                  legend: {
-                      position: 'bottom',
-                      labels: {
-                          font: {
-                              size: 14
-                          }
-                      }
-                  }
-              }
-          }
-      });
-  </script>
-    <script>
-      const ctx2 = document.getElementById('studentapprovalPieChart').getContext('2d');
-  
-      const studentapprovalPieChart = new Chart(ctx2, {
-          type: 'pie',
-          data: {
-              labels: ['Waiting for Chairman', 'Waiting for District', 'Generated Certificate'],
-              datasets: [{
-                  label: 'Students Status',
-                  data: [{{ $waiting_for_chairman }}, {{ $waiting_for_district }}, {{ $generated_certificate }}],
-                  backgroundColor: ['#007bff', '#28a745', '#dc3545'],
-                  borderColor: ['#ffffff', '#ffffff', '#ffffff'],
-                  borderWidth: 2
-              }]
-          },
-          options: {
-              responsive: true,
-              plugins: {
-                  legend: {
-                      position: 'bottom',
-                      labels: {
-                          font: {
-                              size: 14
-                          }
-                      }
-                  }
-              }
-          }
-      });
-  </script>
-  
+        function fetchDashboardData() {
+
+
+            $.ajax({
+                url: "{{ route('dashboard.data') }}",
+                method: "GET",
+                success: function(data) {
+                    $('#total_students').html(data.total_students);
+                    $('#total_passed_students').html(data.total_passed_students);
+                    $('#total_failed_students').html(data.total_failed_students);
+                    $('#waiting_for_chairman').html(data.waiting_for_chairman);
+                    $('#waiting_for_district').html(data.waiting_for_district);
+                    $('#generated_certificate').html(data.generated_certificate);
+
+                    drawPieCharts(data);
+                }
+            });
+        }
+
+        function drawPieCharts(data) {
+            new Chart(document.getElementById('studentPieChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['Passed', 'Failed'],
+                    datasets: [{
+                        data: [data.total_passed_students, data.total_failed_students],
+                        backgroundColor: ['#28a745', '#dc3545']
+                    }]
+                }
+            });
+
+            new Chart(document.getElementById('studentapprovalPieChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['Waiting for Chairman', 'Waiting for District', 'Generated Certificate'],
+                    datasets: [{
+                        data: [data.waiting_for_chairman, data.waiting_for_district, data
+                            .generated_certificate
+                        ],
+                        backgroundColor: ['#ffc107', '#17a2b8', '#6c757d']
+                    }]
+                }
+            });
+        }
+
+        $(document).ready(fetchDashboardData);
+    </script>
+@endsection
+
 
 @stop
-

@@ -49,4 +49,44 @@ if (!function_exists('can')) {
         return false;
     }
 }
+if (!function_exists('who')) {
+
+    function who($key)
+    {
+        $group_id = auth()->user()->group_id;
+        $roll=\App\Models\RoleAndPermission::where('id', $group_id)
+            ->first();
+        if(!empty($roll) && $roll->key==$key){
+            return true;
+        }else{
+            return false;
+        }
+        
+    }
+}
+if (!function_exists('get_notification')) {
+
+    function get_notification()
+    {
+        $group_id = auth()->user()->group_id;
+        $roll=\App\Models\RoleAndPermission::where('id', $group_id)
+            ->first();
+        if(!empty($roll) ){
+            if ($roll->key == 'admin') {
+                return [];
+            }elseif ($roll->key == 'districtadmin') {
+                return \App\Models\Student::where('status', 'Waiting for District Admin Approval')->where('notified', 'Pending')->orderBy('id', 'desc')->get();
+            }elseif ($roll->key == 'chairmen') {
+                return \App\Models\Student::where('status', 'Waiting for Chairman Approval')->where('notified', 'Pending')->orderBy('id', 'desc')->get();
+            }else{
+                return [];
+            }
+        }else{
+            return [];
+        }
+        
+    }
+}
+
+
 

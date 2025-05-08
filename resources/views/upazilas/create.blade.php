@@ -2,13 +2,13 @@
 
 {{-- Page title --}}
 @section('title')
-Student @parent
+Upazila @parent
 @stop
 
 @section('content')
     <section class="content-header">
     {{--<div aria-label="breadcrumb" class="card-breadcrumb">
-        <h1>{{ __('Create New') }} Student</h1>
+        <h1>{{ __('Create New') }} Upazila</h1>
     </div>
     <div class="separator-breadcrumb border-top"></div>--}}
     </section>
@@ -17,9 +17,9 @@ Student @parent
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    {!! Form::open(['route' => 'students.store', 'files' => true, 'class' => 'form-horizontal col-md-12']) !!}
+                    {!! Form::open(['route' => 'upazilas.store','class' => 'form-horizontal col-md-12']) !!}
                     <div class="row">
-                        @include('students.fields')
+                        @include('upazilas.fields')
                     </div>
 
                     {!! Form::close() !!}

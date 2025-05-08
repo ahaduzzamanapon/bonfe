@@ -39,10 +39,13 @@ class Student extends Model
 
 
     public $fillable = [
+        'program_id',
         'occupation_id',
         'registration_number',
         'candidate_id',
         'candidate_name',
+        'candidate_name_bn',
+        'brn',
         'father_name',
         'mother_name',
         'nid',
@@ -58,10 +61,14 @@ class Student extends Model
         'assessment_center_registration_number',
         'status',
         'exam_status',
+        'exam_result_sheet',
         'chairmen_id',
         'chairmen_status',
         'districts_admin_id',
         'districts_admin_status',
+        'notified',
+        'image',
+        'attachment',
     ];
 
     /**
@@ -75,6 +82,7 @@ class Student extends Model
         'registration_number' => 'string',
         'candidate_id' => 'string',
         'candidate_name' => 'string',
+        
         'father_name' => 'string',
         'mother_name' => 'string',
         'nid' => 'string',
@@ -88,6 +96,7 @@ class Student extends Model
         'assessment_venue' => 'string',
         'assessment_center' => 'string',
         'assessment_center_registration_number' => 'string'
+
     ];
 
     /**
@@ -96,17 +105,6 @@ class Student extends Model
      * @var array
      */
     public static $rules = [
-        'occupation_id' => 'required',
-        'registration_number' => 'required',
-        'candidate_id' => 'required',
-        'candidate_name' => 'required',
-        'father_name' => 'required',
-        'mother_name' => 'required',
-        'nid' => 'required',
-        'district_id' => 'required',
-        'address' => 'required',
-        'date_of_birth' => 'required',
-        'mobile_number' => 'required',
-        'assessment_date' => 'required'
+      
     ];
 }

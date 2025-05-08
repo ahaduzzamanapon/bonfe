@@ -66,7 +66,21 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('students_waiting_for_chairman_approval', 'StudentController@students_waiting_for_chairman_approval')->name('students.students_waiting_for_chairman_approval');
 
 
+    Route::get('get_upazilas', 'HomeController@get_upazilas')->name('get_upazilas');
+    Route::get('get_table', 'StudentController@get_table')->name('students.get_table');
+    Route::get('forwardToAssessmentController_modal', 'StudentController@forwardToAssessmentController_modal')->name('forwardToAssessmentController_modal');
+    Route::post('forwardToAssessmentController_send', 'StudentController@forwardToAssessmentController_send')->name('forwardToAssessmentController_send');
+    
+    Route::get('forwardToDistrictAdmin_modal', 'StudentController@forwardToDistrictAdmin_modal')->name('forwardToDistrictAdmin_modal');
+    Route::post('forwardToDistrictAdmin_send', 'StudentController@forwardToDistrictAdmin_send')->name('forwardToDistrictAdmin_send');
+   
+    Route::get('forwardToChairman_modal', 'StudentController@forwardToChairman_modal')->name('forwardToChairman_modal');
+    Route::post('forwardToChairman_send', 'StudentController@forwardToChairman_send')->name('forwardToChairman_send');
+    
+    Route::get('approveStudent_modal', 'StudentController@approveStudent_modal')->name('approveStudent_modal');
+    Route::post('approveStudent_send', 'StudentController@approveStudent_send')->name('approveStudent_send');
 
+    Route::get('/dashboard-data', [HomeController::class, 'getDashboardData'])->name('dashboard.data');
 
 });
 Route::get('empty_table', 'JoshController@emptyTable');

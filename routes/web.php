@@ -68,8 +68,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('get_upazilas', 'HomeController@get_upazilas')->name('get_upazilas');
     Route::get('get_table', 'StudentController@get_table')->name('students.get_table');
-    Route::get('forwardToAssessmentController_modal', 'StudentController@forwardToAssessmentController_modal')->name('forwardToAssessmentController_modal');
-    Route::post('forwardToAssessmentController_send', 'StudentController@forwardToAssessmentController_send')->name('forwardToAssessmentController_send');
+    Route::get('forwardToAssessmentCenter_modal', 'StudentController@forwardToAssessmentCenter_modal')->name('forwardToAssessmentCenter_modal');
+    Route::post('forwardToAssessmentCenter_send', 'StudentController@forwardToAssessmentCenter_send')->name('forwardToAssessmentCenter_send');
     
     Route::get('forwardToDistrictAdmin_modal', 'StudentController@forwardToDistrictAdmin_modal')->name('forwardToDistrictAdmin_modal');
     Route::post('forwardToDistrictAdmin_send', 'StudentController@forwardToDistrictAdmin_send')->name('forwardToDistrictAdmin_send');
@@ -79,6 +79,9 @@ Route::group(['middleware' => 'auth'], function () {
     
     Route::get('approveStudent_modal', 'StudentController@approveStudent_modal')->name('approveStudent_modal');
     Route::post('approveStudent_send', 'StudentController@approveStudent_send')->name('approveStudent_send');
+
+    Route::get('generateCertificate_modal', 'StudentController@generateCertificate_modal')->name('generateCertificate_modal');
+    Route::get('generateCertificate_send', 'StudentController@generateCertificate_send')->name('generateCertificate_send');
 
     Route::get('/dashboard-data', [HomeController::class, 'getDashboardData'])->name('dashboard.data');
 

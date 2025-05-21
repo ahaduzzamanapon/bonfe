@@ -27,13 +27,16 @@
                         <a class="btn btn-primary pull-right" onclick="forwardToDistrictAdmin_modal()">Forward to District Admin</a>
                     @endif
                     @if (can('district_admin'))
-                        <a class="btn btn-primary pull-right" onclick="forwardToAssessmentController_modal()">Forward to Assessment Controller</a>
+                        <a class="btn btn-primary pull-right" onclick="forwardToAssessmentCenter_modal()">Forward to Assessment Center</a>
                         <a class="btn btn-primary pull-right" onclick="forwardToChairman_modal()">Approve / Forward to Chairman</a>
                     @endif
                     @if (can('chairman'))
                         <a class="btn btn-primary pull-right" onclick="approveStudent_modal()">Approve</a>
                     @endif
-                    <a class="btn btn-primary pull-right" href="{{ route('students.create') }}">Add New</a>
+                    <a class="btn btn-primary pull-right" onclick="generateCertificate_modal()">Generate Certificate</a>
+                    @if (can('student_add'))
+                        <a class="btn btn-primary pull-right" href="{{ route('students.create') }}">Add New</a>
+                    @endif
                 </span>
             </section>
             <div class="card-body table-responsive">
@@ -57,7 +60,7 @@
                                             name="status_filter" id="waiting_for_assessment_center_approval"
                                             value="waiting_for_assessment_center_approval" autocomplete="off"
                                             {{ Request::is('students_waiting_for_assessment_center_approval') ? 'checked' : '' }}>
-                                        Waiting for District Approval
+                                        Waiting for the exam results from the Assessment Center
                                     </label>
                                 @endif
 
@@ -84,13 +87,11 @@
                                 @endif
                             </div>
                         </div>
-
                     </div>
                     @php
                         $programs = \App\Models\Program::latest()->get();
                         $occupations = \App\Models\Occupation::latest()->get();
                     @endphp
-
                     <div class="col-sm-12 col-md-5">
                         <div class="row">
                             <div class="col-md-6">

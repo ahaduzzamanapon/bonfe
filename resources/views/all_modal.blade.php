@@ -86,21 +86,23 @@
 
 
 
-{{-- forwardToAssessmentController_modal start --}}
+{{-- forwardToAssessmentCenter_modal start --}}
 <!-- Modal -->
-<div class="modal fade" id="forwardToAssessmentController_modal" tabindex="-1" role="dialog"
+<div class="modal fade" id="forwardToAssessmentCenter_modal" tabindex="-1" role="dialog"
     aria-labelledby="modelTitleId" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Forward to Assessment Controller</h5>
+                <h5 class="modal-title">Forward to Assessment Center</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                    onclick="$('#forwardToAssessmentController_modal').modal('hide')">
+                    onclick="$('#forwardToAssessmentCenter_modal').modal('hide')">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <div id="forwardToAssessmentController_modal_body" style="overflow-y: scroll;">
+                <a class="btn btn-primary" href="javascript:void(0)" onclick="selectAllStudents()">
+                    Select All</a>
+                <div id="forwardToAssessmentCenter_modal_body" style="overflow-y: scroll;">
                 </div>
                 <div class="col-md-12 d-none assessment_details">
                     <div class="row">
@@ -136,56 +138,56 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal"
-                    onclick="$('#forwardToAssessmentController_modal').modal('hide')">Close</button>
-                <button type="button" class="btn btn-primary" id="forwardToAssessmentController_modal_button"
-                    onclick="forwardToAssessmentController_submit()">Forward
-                    to Assessment Controller</button>
+                    onclick="$('#forwardToAssessmentCenter_modal').modal('hide')">Close</button>
+                <button type="button" class="btn btn-primary" id="forwardToAssessmentCenter_modal_button"
+                    onclick="forwardToAssessmentCenter_submit()">Forward
+                    to Assessment Center</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    function forwardToAssessmentController_modal_body_loader_on() {
-        const forwardToAssessmentController_modal_body = $('#forwardToAssessmentController_modal_body');
-        forwardToAssessmentController_modal_body.html(
+    function forwardToAssessmentCenter_modal_body_loader_on() {
+        const forwardToAssessmentCenter_modal_body = $('#forwardToAssessmentCenter_modal_body');
+        forwardToAssessmentCenter_modal_body.html(
             '<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>'
         );
     }
 
-    function forwardToAssessmentController_modal() {
-        $('#forwardToAssessmentController_modal').modal('show');
-        $('#forwardToAssessmentController_modal_button').prop('disabled', true);
-        forwardToAssessmentController_modal_body_loader_on()
+    function forwardToAssessmentCenter_modal() {
+        $('#forwardToAssessmentCenter_modal').modal('show');
+        $('#forwardToAssessmentCenter_modal_button').prop('disabled', true);
+        forwardToAssessmentCenter_modal_body_loader_on()
         $.ajax({
-            url: '{{ route('forwardToAssessmentController_modal') }}',
+            url: '{{ route('forwardToAssessmentCenter_modal') }}',
             type: 'GET',
             success: function(data) {
-                $('#forwardToAssessmentController_modal_body').html(data);
+                $('#forwardToAssessmentCenter_modal_body').html(data);
             }
         })
     }
 
-    function forwardToAssessmentController_select() {
-        var student_ids_forwardToAssessmentController = $('.student_ids_forwardToAssessmentController');
-        var selected_ids = student_ids_forwardToAssessmentController.filter(':checked').map(function() {
+    function forwardToAssessmentCenter_select() {
+        var student_ids_forwardToAssessmentCenter = $('.student_ids_forwardToAssessmentCenter');
+        var selected_ids = student_ids_forwardToAssessmentCenter.filter(':checked').map(function() {
             return this.value;
         }).get();
         if (selected_ids.length > 0) {
             $('.assessment_details').hide().removeClass('d-none').fadeIn();
-            $('#forwardToAssessmentController_modal_button').prop('disabled', false);
+            $('#forwardToAssessmentCenter_modal_button').prop('disabled', false);
         } else {
             $('.assessment_details').hide().addClass('d-none').fadeOut();
-            $('#forwardToAssessmentController_modal_button').prop('disabled', true);
+            $('#forwardToAssessmentCenter_modal_button').prop('disabled', true);
         }
     }
 
 
-    function forwardToAssessmentController_submit() {
+    function forwardToAssessmentCenter_submit() {
 
-        var student_ids_forwardToAssessmentController = $(
-            '.student_ids_forwardToAssessmentController');
-        var selected_ids = student_ids_forwardToAssessmentController.filter(':checked').map(
+        var student_ids_forwardToAssessmentCenter = $(
+            '.student_ids_forwardToAssessmentCenter');
+        var selected_ids = student_ids_forwardToAssessmentCenter.filter(':checked').map(
             function() {
                 return this.value;
             }).get();
@@ -198,25 +200,25 @@
                 return false;
             }
             $.ajax({
-                url: '{{ route('forwardToAssessmentController_send') }}',
+                url: '{{ route('forwardToAssessmentCenter_send') }}',
                 type: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',
-                    student_ids_forwardToAssessmentController: selected_ids,
+                    student_ids_forwardToAssessmentCenter: selected_ids,
                     assessment_center_id: assessment_center_id,
                     assessment_date: assessment_date
                 },
                 success: function(data) {
                     if (data.success) {
                         alert(data.message);
-                        $('#forwardToAssessmentController_modal').modal('hide');
+                        $('#forwardToAssessmentCenter_modal').modal('hide');
                         createTable()
                     } else {
                         alert(data.message);
                     }
                 },
                 error: function() {
-                    alert('Failed to forward to Assessment Controller');
+                    alert('Failed to forward to Assessment Center');
                 }
             });
         } else {
@@ -226,7 +228,7 @@
 </script>
 
 
-{{-- forwardToAssessmentController_modal end --}}
+{{-- forwardToAssessmentCenter_modal end --}}
 
 
 {{-- forwardToDistrictAdmin_modal start --}}
@@ -243,6 +245,8 @@
                 </button>
             </div>
             <div class="modal-body">
+                <a class="btn btn-primary" href="javascript:void(0)" onclick="selectAllStudents()">
+                    Select All</a>
                 <div id="forwardToDistrictAdmin_modal_body" style="overflow-y: scroll;">
                 </div>
             </div>
@@ -347,6 +351,8 @@
                 </button>
             </div>
             <div class="modal-body">
+                <a class="btn btn-primary" href="javascript:void(0)" onclick="selectAllStudents()">
+                    Select All</a>
                 <div id="forwardToChairman_modal_body" style="overflow-y: scroll;">
                 </div>
             </div>
@@ -446,6 +452,8 @@
                 </button>
             </div>
             <div class="modal-body">
+                <a class="btn btn-primary" href="javascript:void(0)" onclick="selectAllStudents()">
+                    Select All</a>
                 <div id="approveStudent_modal_body" style="overflow-y: scroll;">
                 </div>
             </div>
@@ -529,4 +537,108 @@
 </script>
 
 {{-- approveStudent_modal end --}}
+
+{{-- generateCertificate_modal start --}}
+<!-- Modal -->
+<div class="modal fade" id="generateCertificate_modal" tabindex="-1" role="dialog"
+    aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Generate Certificate</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    onclick="$('#generateCertificate_modal').modal('hide')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <a class="btn btn-primary" href="javascript:void(0)" onclick="selectAllStudents()">
+                    Select All</a>
+                <div id="generateCertificate_modal_body" style="overflow-y: scroll;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                    onclick="$('#generateCertificate_modal').modal('hide')">Close</button>
+                <button type="button" class="btn btn-primary" id="generateCertificate_modal_button"
+                    onclick="generateCertificate_submit()">Generate
+                    Certificate</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function generateCertificate_modal_body_loader_on() {
+        const generateCertificate_modal_body = $('#generateCertificate_modal_body');
+        generateCertificate_modal_body.html(
+            '<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>'
+        );
+    }
+    function generateCertificate_modal() {
+        console.log('generateCertificate_modal');
+        
+        $('#generateCertificate_modal').modal('show');
+        $('#generateCertificate_modal_button').prop('disabled', true);
+        generateCertificate_modal_body_loader_on();
+        $.ajax({
+            url: '{{ route('generateCertificate_modal') }}',
+            type: 'GET',
+            success: function(data) {
+                $('#generateCertificate_modal_body').html(data);
+            }
+        })
+    }
+
+    function generateCertificate_select() {
+        console.log('generateCertificate_select');
+        var student_ids_generateCertificate = $('.student_ids_generateCertificate');
+        var selected_ids = student_ids_generateCertificate.filter(':checked').map(function() {
+            return this.value;
+        }).get();
+        if (selected_ids.length > 0) {
+            $('#generateCertificate_modal_button').prop('disabled', false);
+        } else {
+            $('#generateCertificate_modal_button').prop('disabled', true);
+        }
+    }
+
+    function generateCertificate_submit() {
+        var student_ids_generateCertificate = $('.student_ids_generateCertificate');
+        var selected_ids = student_ids_generateCertificate.filter(':checked').map(
+            function() {
+                return this.value;
+            }).get();
+        if (selected_ids.length > 0) {
+            window.open('{{ route('generateCertificate_send') }}?' + $.param({
+                student_ids_generateCertificate: selected_ids,
+                _token: '{{ csrf_token() }}',
+            }), '_blank');
+        } else {
+            alert('Please select at least one student to generate a certificate.');
+        }
+        $('#generateCertificate_modal').modal('hide');
+
+    }
+</script>
+{{-- generateCertificate_modal end --}}
+
+
+
+
+<script>
+    function selectAllStudents() {
+        var student_ids_forwardToAssessmentCenter = $('input[name="student_ids[]"]');
+        var selected_ids = student_ids_forwardToAssessmentCenter.filter(':checked').map(function() {
+            return this.value;
+        }).get();
+        if (selected_ids.length > 0) {
+            student_ids_forwardToAssessmentCenter.prop('checked', false);
+        } else {
+            student_ids_forwardToAssessmentCenter.trigger('click');
+            student_ids_forwardToAssessmentCenter.prop('checked', true);
+        }
+    }
+</script>
+
 

@@ -15,8 +15,14 @@ class UserController extends Controller
         $users = User::select('users.*', 'roles.name as role', 'designations.desi_name as designation','districts.name_en as district')
             ->leftjoin('roles', 'users.group_id', '=', 'roles.id')
             ->leftjoin('districts', 'users.district_id', '=', 'districts.id')
-            ->leftjoin('designations', 'users.designation_id', '=', 'designations.id')
-            ->get();
+            ->leftjoin('designations', 'users.designation_id', '=', 'designations.id');
+
+            
+        if(!can('chairman') && can('district_admin')) {
+            $users = $users->where('users.district_id', auth()->user()->district_id);
+        }
+
+           $users = $users->get();
 
         return view('users.index')
             ->with('users', $users);

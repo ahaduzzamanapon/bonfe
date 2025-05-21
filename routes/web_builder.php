@@ -25,3 +25,5 @@ Route::resource('assessmentCenters', 'AssessmentCenterController');
 Route::resource('programs', 'ProgramController');
 
 Route::resource('upazilas', 'UpazilaController');
+
+Route::resource('competences', 'CompetenceController');

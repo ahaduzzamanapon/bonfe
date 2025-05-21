@@ -68,7 +68,7 @@ class StudentController extends AppBaseController
             } elseif ($request->status_filter == 'waiting_for_chairman_approval') {
                 $students = $students->where('students.status', 'Waiting for Chairman Approval');
             }elseif ($request->status_filter == 'waiting_for_assessment_center_approval') {
-                $students = $students->where('students.status', 'Waiting for Assessment Center Approval');
+                $students = $students->where('students.status', 'Waiting for the exam results from the Assessment Center');
             }
         }
         if($request->has('occupation_id') && $request->occupation_id != null) {
@@ -108,7 +108,7 @@ class StudentController extends AppBaseController
             if ($student->status != 'Chairman Approved') {
                 $html .= '<a class="dropdown-item" href="' . route('students.edit', [$student->id]) . '"><i class="im im-icon-Pen"></i> Edit</a>';
             }
-            if (can('give_exam_result') && $student->status == 'Waiting for Assessment Center Approval') {
+            if (can('give_exam_result') && $student->status == 'Waiting for the exam results from the Assessment Center') {
                 $html .= '<a class="dropdown-item" onclick="give_exam_result(' . $student->id . ')" href="javascript:void(0);"><i class="im im-icon-Pencil-Ruler"></i> Give Exam Result</a>';
             }
             if (can('district_admin') && $student->status == 'Waiting for District Admin Approval') {
@@ -130,9 +130,9 @@ class StudentController extends AppBaseController
                 $html .= '<a class="dropdown-item" target="_blank" href="' . route('students.generate_certificate', [$student->id]) . '"><i class="im im-icon-People-onCloud"></i> Generate Certificate</a>';
             }
 
-            if ($student->status == 'Chairman Approved' && $student->exam_status != 'Fail') {
-                $html .= '<a class="dropdown-item" target="_blank" href="' . route('students.generate_certificate', [$student->id]) . '"><i class="im im-icon-People-onCloud"></i> Generate Certificate</a>';
-            }
+            // if ($student->status == 'Chairman Approved' && $student->exam_status != 'Fail') {
+            //     $html .= '<a class="dropdown-item" target="_blank" href="' . route('students.generate_certificate', [$student->id]) . '"><i class="im im-icon-People-onCloud"></i> Generate Certificate</a>';
+            // }
 
 
             $html .= '</div>';
@@ -358,6 +358,8 @@ class StudentController extends AppBaseController
         $student->status ='Chairman Approved';
         $student->save();
         Flash::success('Operation completed successfully.');
+        $massage = 'প্রিয় '.$student->candidate_name_bn.', আপনার প্রশিক্ষণ কোর্সের সার্টিফিকেট প্রস্তুত। অনুগ্রহ করে নির্ধারিত সময়ে আপনার জেলা উপানুষ্ঠানিক শিক্ষা ব্যুরো অফিস থেকে এটি সংগ্রহ করুন।';
+        $send=send_sms_new($student->mobile_number, $massage);
         return back();
     }
     public function generate_certificate($studentId){
@@ -384,7 +386,7 @@ class StudentController extends AppBaseController
         return view('students.qr_details')->with('student', $student);
     }
 
-    public function forwardToAssessmentController_modal(){
+    public function forwardToAssessmentCenter_modal(){
         $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
             ->join('districts', 'students.district_id', '=', 'districts.id')
             ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
@@ -407,7 +409,7 @@ class StudentController extends AppBaseController
             <tbody>';
         foreach($students as $key => $student){
             $html .= '<tr>
-                <td style="font-size: 20px;padding: 3px;text-align: -webkit-center;"><input onclick="forwardToAssessmentController_select()" type="checkbox" name="student_ids[]" class="student_ids_forwardToAssessmentController" value="'.$student->id.'" style="width: 20px; height: 20px;"></td>
+                <td style="font-size: 20px;padding: 3px;text-align: -webkit-center;"><input onclick="forwardToAssessmentCenter_select()" type="checkbox" name="student_ids[]" class="student_ids_forwardToAssessmentCenter" value="'.$student->id.'" style="width: 20px; height: 20px;"></td>
                 <td style="font-size: 16px;padding: 3px;text-align: -webkit-center;">'.++$key.'</td>
                 <td style="padding: 3px;" >'.$student->candidate_name.'</td>
                 <td style="padding: 3px;" >'.$student->candidate_id.'</td>
@@ -421,8 +423,8 @@ class StudentController extends AppBaseController
         return response()->json($html);
     }
 
-    public function forwardToAssessmentController_send(Request $request){
-        $student_ids_forwardToAssessmentController = $request->student_ids_forwardToAssessmentController;
+    public function forwardToAssessmentCenter_send(Request $request){
+        $student_ids_forwardToAssessmentCenter = $request->student_ids_forwardToAssessmentCenter;
         $assessment_center_id = $request->assessment_center_id;
 
         $assessment_center = AssessmentCenter::find($assessment_center_id);
@@ -435,12 +437,12 @@ class StudentController extends AppBaseController
         $assessment_date = $request->assessment_date;
         DB::beginTransaction();
         try{
-            foreach($student_ids_forwardToAssessmentController as $studentId){
+            foreach($student_ids_forwardToAssessmentCenter as $studentId){
                 $student = Student::find($studentId);
                 $student->assessment_center = $assessment_center_id;
                 $student->assessment_date = $assessment_date;
                 $student->assessment_center_registration_number = $assessment_center->registration_number;
-                $student->status ='Waiting for Assessment Center Approval';
+                $student->status ='Waiting for the exam results from the Assessment Center';
                 $student->save();
             }
             DB::commit();
@@ -463,7 +465,7 @@ class StudentController extends AppBaseController
             ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
             ->orderBy('id', 'desc')
             ->where('students.exam_status', '!=', 'Pending')
-            ->where('students.status', '=', 'Waiting for Assessment Center Approval')
+            ->where('students.status', '=', 'Waiting for the exam results from the Assessment Center')
             ->get();
         $html = '';
         $html .= '<table class="table table-bordered table-striped table-hover" id="example1">
@@ -630,6 +632,8 @@ class StudentController extends AppBaseController
                 $student->chairmen_status = "Approved";
                 $student->chairmen_id = auth()->user()->id;
                 $student->save();
+                $massage = 'প্রিয় '.$student->candidate_name_bn.', আপনার প্রশিক্ষণ কোর্সের সার্টিফিকেট প্রস্তুত। অনুগ্রহ করে নির্ধারিত সময়ে আপনার জেলা উপানুষ্ঠানিক শিক্ষা ব্যুরো অফিস থেকে এটি সংগ্রহ করুন।';
+                $send=send_sms_new($student->mobile_number, $massage);
             }
             DB::commit();
             return response()->json([
@@ -643,5 +647,63 @@ class StudentController extends AppBaseController
                 'message' => "Operation failed",
             ]);
         }
+    }
+
+
+    public function generateCertificate_modal(){
+        $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
+            ->join('districts', 'students.district_id', '=', 'districts.id')
+            ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
+            ->orderBy('id', 'desc')
+            ->where('students.status', '=', 'Chairman Approved')
+            ->get();
+        $html = '';
+        $html .= '<table class="table table-bordered table-striped table-hover" id="example1">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>SL</th>
+                    <th>Name</th>
+                    <th>Candidate Id</th>
+                    <th>Exam Status</th>
+                    <th>Occupation</th>
+                    <th>District</th>
+                </tr>
+            </thead>
+            <tbody>';
+        foreach($students as $key => $student){
+            $html .= '<tr>
+                <td style="font-size: 20px;padding: 3px;text-align: -webkit-center;"><input onclick="generateCertificate_select()" type="checkbox" name="student_ids[]" class="student_ids_generateCertificate" value="'.$student->id.'" style="width: 20px; height: 20px;"></td>
+                <td style="font-size: 16px;padding: 3px;text-align: -webkit-center;">'.++$key.'</td>
+                <td style="padding: 3px;" >'.$student->candidate_name.'</td>
+                <td style="padding: 3px;" >'.$student->candidate_id.'</td>
+                <td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Non Competent' : ($student->exam_status == 'Pending' ? 'Pending' : 'Competent')) . '</span></td>
+                <td style="padding: 3px;" >'.$student->occupation.'</td>
+                <td style="padding: 3px;" >'.$student->district.'</td>
+            </tr>';
+        }
+        $html .= '</tbody>
+        </table>';
+        return response()->json($html);
+    }
+
+    public function generateCertificate_send(Request $request){
+        $student_ids_approveStudent =$request->all()['student_ids_generateCertificate'];
+        $data = [];
+        foreach($student_ids_approveStudent as $studentId){
+            $ro = route('students.qr_details', $studentId);
+            $qrCode = QrCode::size(100)->generate($ro);
+            $student = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
+                ->join('districts', 'students.district_id', '=', 'districts.id')
+                ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
+                ->orderBy('id', 'desc')
+                ->where('students.id', $studentId)
+                ->first();
+            $data[] = [
+                'student' => $student,
+                'qrCode' => $qrCode,
+            ];
+        }
+        return view('students.generate_certificate_bulk')->with('data', $data);
     }
 }

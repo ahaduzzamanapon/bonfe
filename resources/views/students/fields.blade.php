@@ -157,7 +157,12 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('mobile_number', 'Mobile Number', ['class' => 'control-label']) !!}
-        {!! Form::number('mobile_number', null, ['class' => 'form-control']) !!}
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text" style="padding: 2px;border: 1px solid;">+880</span>
+            </div>
+            {!! Form::number('mobile_number', null, ['class' => 'form-control','style' => 'padding: 1px 1px 1px 1px;']) !!}
+        </div>
     </div>
 </div>
 
@@ -169,6 +174,48 @@
         {!! Form::email('email', null, ['class' => 'form-control']) !!}
     </div>
 </div>
+
+
+
+<!-- Email Field -->
+<div class="col-md-3">
+    <div class="form-group">
+        {!! Form::label('admitted_from', ' Admitted from', ['class' => 'control-label']) !!}
+        {!! Form::select('admitted_from', ['From this institution' => 'From this institution', 'From another institution' => 'From another institution'], null, ['class' => 'form-control']) !!}
+    </div>
+</div>
+
+
+<!-- Address Field -->
+<div class="col-md-3 d-none" id="institutionName">
+    <div class="form-group">
+        {!! Form::label('institutionName', 'Institution Name', ['class' => 'control-label']) !!}
+        {!! Form::text('institutionName', null, ['class' => 'form-control']) !!}
+    </div>
+</div>
+
+
+@section('footer_scripts')
+    <script>
+        $(document).ready(function() {
+            toggleInstitutionName() 
+            $('#admitted_from').change(function() {
+                toggleInstitutionName() 
+            });
+        });
+        function toggleInstitutionName() {
+            var admittedFrom = document.getElementById('admitted_from').value;
+            var institutionNameDiv = document.getElementById('institutionName');
+            if (admittedFrom === 'From another institution') {
+                institutionNameDiv.classList.remove('d-none');
+            } else {
+                institutionNameDiv.classList.add('d-none');
+            }
+        }
+    </script>
+@endsection
+
+
 
 
 <div class="col-md-12">

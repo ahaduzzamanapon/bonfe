@@ -60,6 +60,11 @@ class HomeController extends Controller
         if (!can('chairman') && can('district_admin')) {
             $query = $query->where('students.district_id', auth()->user()->district_id);
         }
+
+        if (!can('chairman') && !can('district_admin') && can('assessment_centers_controller')) {
+            $query = $query->where('students.assessment_center', auth()->user()->assessment_center)->where('students.occupation_id', auth()->user()->occupation);
+        }         
+
         if ($program_id) {
             $query = $query->where('students.program_id', $program_id);
         }
@@ -73,6 +78,14 @@ class HomeController extends Controller
         if (!can('chairman') && can('district_admin')) {
             $passedQuery = $passedQuery->where('students.district_id', auth()->user()->district_id);
         }
+
+        if (!can('chairman') && !can('district_admin') && can('assessment_centers_controller')) {
+            $passedQuery = $passedQuery->where('students.assessment_center', auth()->user()->assessment_center)->where('students.occupation_id', auth()->user()->occupation);
+        } 
+
+
+
+
         if ($program_id) {
             $passedQuery = $passedQuery->where('students.program_id', $program_id);
         }
@@ -81,13 +94,38 @@ class HomeController extends Controller
         }
         $total_passed_students = $passedQuery->count();
 
-        $total_failed_students = $total_students - $total_passed_students;
+
+
+
+        $failQuery = DB::table('students')->where('exam_status', 'Fail');
+        if (!can('chairman') && can('district_admin')) {
+            $failQuery = $failQuery->where('students.district_id', auth()->user()->district_id);
+        }
+
+        if (!can('chairman') && !can('district_admin') && can('assessment_centers_controller')) {
+            $failQuery = $failQuery->where('students.assessment_center', auth()->user()->assessment_center)->where('students.occupation_id', auth()->user()->occupation);
+        } 
+
+        if ($program_id) {
+            $failQuery = $failQuery->where('students.program_id', $program_id);
+        }
+        if ($occupation_id) {
+            $failQuery = $failQuery->where('students.occupation_id', $occupation_id);
+        }
+        $total_failed_students = $failQuery->count();
+
+
+
+
 
         $waiting_for_chairman = DB::table('students')
             ->where('exam_status', 'Passed')
             ->where('status', 'Waiting for Chairman Approval');
         if (!can('chairman') && can('district_admin')) {
             $waiting_for_chairman = $waiting_for_chairman->where('students.district_id', auth()->user()->district_id);
+        }
+        if (!can('chairman') && !can('district_admin') && can('assessment_centers_controller')) {
+            $waiting_for_chairman = $waiting_for_chairman->where('students.assessment_center', auth()->user()->assessment_center)->where('students.occupation_id', auth()->user()->occupation);
         }
         if ($program_id) {
             $waiting_for_chairman = $waiting_for_chairman->where('students.program_id', $program_id);
@@ -103,6 +141,9 @@ class HomeController extends Controller
         if (!can('chairman') && can('district_admin')) {
             $waiting_for_district = $waiting_for_district->where('students.district_id', auth()->user()->district_id);
         }
+        if (!can('chairman') && !can('district_admin') && can('assessment_centers_controller')) {
+            $waiting_for_district = $waiting_for_district->where('students.assessment_center', auth()->user()->assessment_center)->where('students.occupation_id', auth()->user()->occupation);
+        }
         if ($program_id) {
             $waiting_for_district = $waiting_for_district->where('students.program_id', $program_id);
         }
@@ -117,6 +158,9 @@ class HomeController extends Controller
 
         if (!can('chairman') && can('district_admin')) {
             $generated_certificate = $generated_certificate->where('students.district_id', auth()->user()->district_id);
+        }
+        if (!can('chairman') && !can('district_admin') && can('assessment_centers_controller')) {
+            $generated_certificate = $generated_certificate->where('students.assessment_center', auth()->user()->assessment_center)->where('students.occupation_id', auth()->user()->occupation);
         }
         if ($program_id) {
             $generated_certificate = $generated_certificate->where('students.program_id', $program_id);

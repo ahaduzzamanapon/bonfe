@@ -13,7 +13,7 @@
             // dd("Please login first");
             // redirect(route('welcome'));
         }
-        $setting = DB::table('sitesettings')->first();
+        $setting = DB::table(table: 'sitesettings')->first();
     @endphp
 
     <title>{{ !empty($setting) ? $setting->name : 'Title' }} -
@@ -55,19 +55,43 @@
 
 
     <style>
+        /* Chrome, Safari, Edge, Opera */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+            /* optional: for broader support */
+        }
+
+        /* Microsoft Edge (Legacy and Chromium-based) */
+        input[type="number"]::-ms-clear,
+        input[type="number"]::-ms-reveal {
+            display: none;
+        }
+
+
+
         .btn:hover {
             color: #ffffff !important;
             background-color: #1f9303 !important;
             border-color: #1f9303 !important;
         }
-        .btn-check:focus + .btn, .btn:focus {
-    color: var(--bs-btn-hover-color);
-    background-color: #05534c;
-    border-color: var(--bs-btn-hover-border-color);
-    outline: 0;
-    -webkit-box-shadow: var(--bs-btn-focus-box-shadow);
-    box-shadow: var(--bs-btn-focus-box-shadow);
-}
+
+        .btn-check:focus+.btn,
+        .btn:focus {
+            color: var(--bs-btn-hover-color);
+            background-color: #05534c;
+            border-color: var(--bs-btn-hover-border-color);
+            outline: 0;
+            -webkit-box-shadow: var(--bs-btn-focus-box-shadow);
+            box-shadow: var(--bs-btn-focus-box-shadow);
+        }
 
         .select2-container .select2-selection--single {
             box-sizing: border-box;
@@ -157,7 +181,10 @@
             color: #000000;
             /* font-size: 13px!important; */
         }
-        .btn-outline-primary:not(:disabled):not(.disabled).active, .btn-outline-primary:not(:disabled):not(.disabled):active, .show>.btn-outline-primary.dropdown-toggle {
+
+        .btn-outline-primary:not(:disabled):not(.disabled).active,
+        .btn-outline-primary:not(:disabled):not(.disabled):active,
+        .show>.btn-outline-primary.dropdown-toggle {
             color: #fff;
             background-color: #8dc542;
             border-color: #683091;
@@ -522,7 +549,7 @@
     <script>
         function alert(message) {
             Swal.fire({
-            text: message,
+                text: message,
             });
         }
     </script>

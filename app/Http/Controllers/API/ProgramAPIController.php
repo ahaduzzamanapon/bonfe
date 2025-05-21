@@ -51,7 +51,6 @@ class ProgramAPIController extends AppBaseController
     public function store(CreateProgramAPIRequest $request)
     {
         $input = $request->all();
-
         /** @var Program $program */
         $program = Program::create($input);
 
@@ -116,13 +115,10 @@ class ProgramAPIController extends AppBaseController
     {
         /** @var Program $program */
         $program = Program::find($id);
-
         if (empty($program)) {
             return $this->sendError('Program not found');
         }
-
         $program->delete();
-
         return $this->sendSuccess('Program deleted successfully');
     }
 }

@@ -44,10 +44,10 @@
 
 
 <!-- Date Of Join Field -->
-<div class="col-md-3">
+<div class="col-md-3 d-none" >
     <div class="form-group">
         {!! Form::label('date_of_join', 'Date Of Join',['class'=>'control-label']) !!}
-        {!! Form::date('date_of_join', null, ['class' => 'form-control','id'=>'date_of_join','required']) !!}
+        {!! Form::date('date_of_join', null, ['class' => 'form-control','id'=>'date_of_join']) !!}
     </div>
 </div>
 
@@ -72,10 +72,15 @@
 </div>
 
 @php
-    $districts = \App\Models\District::all()->pluck('name_en','id')->prepend('Select District', '')->toArray();
+  if(!can('chairman') && can('district_admin')) {
+      $districts = \App\Models\District::where('id', auth()->user()->district_id)->get()->pluck('name_en','id')->toArray();
+    }else {
+        $districts = \App\Models\District::all()->pluck('name_en','id')->prepend('Select District', '')->toArray();
+    }
+
 @endphp
 <!-- Gender Field -->
-<div class="col-md-3">
+<div class="col-md-3 @if(!can('chairman') && can('district_admin')) d-none @endif" >
     <div class="form-group">
         {!! Form::label('district_id', 'District',['class'=>'control-label']) !!}
         {!! Form::select('district_id',$districts, null, ['class' => 'form-control','required']) !!}
@@ -125,9 +130,14 @@
 
 
 @php
-    $roles = \App\Models\RoleAndPermission::all()->pluck('name','id')->toArray();
     $AssessmentCenter = \App\Models\AssessmentCenter::all()->pluck('center_name','id')->prepend('Select Center', '')->toArray();
     $Occupation = \App\Models\Occupation::all()->pluck('title','id')->prepend('Select Occupation', '')->toArray();
+
+      if(!can('chairman') && can('district_admin')) {
+          $roles = \App\Models\RoleAndPermission::where('key', 'assessment_centers_controller')->get()->pluck('name','id')->toArray();
+        }else {
+            $roles = \App\Models\RoleAndPermission::all()->pluck('name','id')->prepend('Select Roll', '')->toArray();
+        }
 
 @endphp
 
@@ -176,7 +186,7 @@
 
 
 <!-- Blood Group Field -->
-<div class="col-md-3">
+<div class="col-md-3 d-none">
     <div class="form-group">
         {!! Form::label('blood_group', 'Blood Group',['class'=>'control-label']) !!}
         {!! Form::select('blood_group', [
@@ -204,7 +214,7 @@
 
 
 <!-- Marital Status Field -->
-<div class="col-md-3">
+<div class="col-md-3 d-none">
     <div class="form-group">
         {!! Form::label('marital_status', 'Marital Status',['class'=>'control-label']) !!}
         {!! Form::select('marital_status', ['Single' => 'Single', 'Married' => 'Married'], null, ['class' => 'form-control']) !!}

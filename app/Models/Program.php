@@ -24,6 +24,7 @@ class Program extends Model
 
     public $fillable = [
         'program_title',
+        'program_type',
         'start_date',
         'end_date',
         'description'

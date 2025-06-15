@@ -20,6 +20,25 @@
                             <option value="Fail"> Non-Competent </option>
                         </select>
                     </div>
+                    <div style="padding: 10px;">   
+                        <label for="ExamResult_field">Competence</label>
+                        <div id="competence_pass_div"  style="border: 1px solid;padding: 10px;">
+                           
+                        </div>
+                    </div>
+                    <script>
+                        document.getElementById('ExamResult_field').addEventListener('change', function() {
+                            if (this.value === 'Passed') {
+                                document.getElementsByName('competence_ids[]').forEach(input => {
+                                    input.checked = true;
+                                })
+                            } else {
+                               document.getElementsByName('competence_ids[]').forEach(input => {
+                                    input.checked = false;
+                                })
+                            }
+                        });
+                    </script>
                     <div class="form-group">
                         <label for="ExamResult_field">Exam Result Sheet</label>
                         <input type="file" class="form-control" id="ExamResultSheet_field"
@@ -57,11 +76,17 @@
             return false;
         }
 
+        var checkedCompetences = [];
+        $('input[name="competence_ids[]"]:checked').each(function() {
+            checkedCompetences.push($(this).val());
+        });
+
         const formData = new FormData();
         formData.append('_token', '{{ csrf_token() }}');
         formData.append('examResult', examResult);
         formData.append('studentId', studentId);
         formData.append('examResultSheet', examResultSheet);
+        formData.append('checkedCompetences', checkedCompetences);
 
         $.ajax({
             url: '{{ route('submit_exam_result') }}',
@@ -69,12 +94,12 @@
             data: formData,
             processData: false,
             contentType: false,
-            success: function() {
+            success: function () {
                 alert('Result submitted successfully');
                 $('#exam_result_modal').modal('hide');
                 location.reload();
             },
-            error: function() {
+            error: function () {
                 alert('Failed to submit exam result');
             }
         });
@@ -88,8 +113,8 @@
 
 {{-- forwardToAssessmentCenter_modal start --}}
 <!-- Modal -->
-<div class="modal fade" id="forwardToAssessmentCenter_modal" tabindex="-1" role="dialog"
-    aria-labelledby="modelTitleId" aria-hidden="true">
+<div class="modal fade" id="forwardToAssessmentCenter_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -117,9 +142,9 @@
                             <div class="form-group">
                                 {!! Form::label('assessment_center', 'Assessment Center', ['class' => 'control-label']) !!}
                                 {!! Form::select('assessment_center_id', $AssessmentCenter, null, [
-                                    'class' => 'form-control',
-                                    'id' => 'assessment_center_id',
-                                ]) !!}
+    'class' => 'form-control',
+    'id' => 'assessment_center_id',
+]) !!}
                             </div>
                         </div>
                         <!-- Assessment Date Field -->
@@ -127,10 +152,10 @@
                             <div class="form-group">
                                 {!! Form::label('assessment_date', 'Assessment Date', ['class' => 'control-label']) !!}
                                 {!! Form::text('assessment_date_field', null, [
-                                    'class' => 'form-control date',
-                                    'id' => 'assessment_date_field',
-                                    'autocomplete' => 'off',
-                                ]) !!}
+    'class' => 'form-control date',
+    'id' => 'assessment_date_field',
+    'autocomplete' => 'off',
+]) !!}
                             </div>
                         </div>
                     </div>
@@ -146,7 +171,6 @@
         </div>
     </div>
 </div>
-
 <script>
     function forwardToAssessmentCenter_modal_body_loader_on() {
         const forwardToAssessmentCenter_modal_body = $('#forwardToAssessmentCenter_modal_body');
@@ -162,7 +186,7 @@
         $.ajax({
             url: '{{ route('forwardToAssessmentCenter_modal') }}',
             type: 'GET',
-            success: function(data) {
+            success: function (data) {
                 $('#forwardToAssessmentCenter_modal_body').html(data);
             }
         })
@@ -170,7 +194,7 @@
 
     function forwardToAssessmentCenter_select() {
         var student_ids_forwardToAssessmentCenter = $('.student_ids_forwardToAssessmentCenter');
-        var selected_ids = student_ids_forwardToAssessmentCenter.filter(':checked').map(function() {
+        var selected_ids = student_ids_forwardToAssessmentCenter.filter(':checked').map(function () {
             return this.value;
         }).get();
         if (selected_ids.length > 0) {
@@ -188,7 +212,7 @@
         var student_ids_forwardToAssessmentCenter = $(
             '.student_ids_forwardToAssessmentCenter');
         var selected_ids = student_ids_forwardToAssessmentCenter.filter(':checked').map(
-            function() {
+            function () {
                 return this.value;
             }).get();
         if (selected_ids.length > 0) {
@@ -208,7 +232,7 @@
                     assessment_center_id: assessment_center_id,
                     assessment_date: assessment_date
                 },
-                success: function(data) {
+                success: function (data) {
                     if (data.success) {
                         alert(data.message);
                         $('#forwardToAssessmentCenter_modal').modal('hide');
@@ -217,7 +241,7 @@
                         alert(data.message);
                     }
                 },
-                error: function() {
+                error: function () {
                     alert('Failed to forward to Assessment Center');
                 }
             });
@@ -226,15 +250,13 @@
         }
     }
 </script>
-
-
 {{-- forwardToAssessmentCenter_modal end --}}
 
 
 {{-- forwardToDistrictAdmin_modal start --}}
 <!-- Modal -->
-<div class="modal fade" id="forwardToDistrictAdmin_modal" tabindex="-1" role="dialog"
-    aria-labelledby="modelTitleId" aria-hidden="true">
+<div class="modal fade" id="forwardToDistrictAdmin_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -269,24 +291,24 @@
         );
     }
     function forwardToDistrictAdmin_modal() {
-      console.log('forwardToDistrictAdmin_modal');
-      
+        console.log('forwardToDistrictAdmin_modal');
+
         $('#forwardToDistrictAdmin_modal').modal('show');
         $('#forwardToDistrictAdmin_modal_button').prop('disabled', true);
         forwardToDistrictAdmin_modal_body_loader_on()
         $.ajax({
             url: '{{ route('forwardToDistrictAdmin_modal') }}',
             type: 'GET',
-            success: function(data) {
+            success: function (data) {
                 $('#forwardToDistrictAdmin_modal_body').html(data);
             }
         })
     }
 
     function forwardToDistrictAdmin_select() {
-      console.log('forwardToDistrictAdmin_select');
+        console.log('forwardToDistrictAdmin_select');
         var student_ids_forwardToDistrictAdmin = $('.student_ids_forwardToDistrictAdmin');
-        var selected_ids = student_ids_forwardToDistrictAdmin.filter(':checked').map(function() {
+        var selected_ids = student_ids_forwardToDistrictAdmin.filter(':checked').map(function () {
             return this.value;
         }).get();
         if (selected_ids.length > 0) {
@@ -302,11 +324,11 @@
         var student_ids_forwardToDistrictAdmin = $(
             '.student_ids_forwardToDistrictAdmin');
         var selected_ids = student_ids_forwardToDistrictAdmin.filter(':checked').map(
-            function() {
+            function () {
                 return this.value;
             }).get();
         if (selected_ids.length > 0) {
-           
+
             $.ajax({
                 url: '{{ route('forwardToDistrictAdmin_send') }}',
                 type: 'POST',
@@ -314,7 +336,7 @@
                     _token: '{{ csrf_token() }}',
                     student_ids_forwardToDistrictAdmin: selected_ids,
                 },
-                success: function(data) {
+                success: function (data) {
                     if (data.success) {
                         alert(data.message);
                         $('#forwardToDistrictAdmin_modal').modal('hide');
@@ -323,7 +345,7 @@
                         alert(data.message);
                     }
                 },
-                error: function() {
+                error: function () {
                     alert('Failed to forward to District Admin');
                 }
             });
@@ -337,10 +359,114 @@
 {{-- forwardToDistrictAdmin_modal end --}}
 
 
+{{-- forwardToAssessmentController_modal start --}}
+<!-- Modal -->
+<div class="modal fade" id="forwardToAssessmentController_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Forward to Assessment Center</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    onclick="$('#forwardToAssessmentController_modal').modal('hide')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <a class="btn btn-primary" href="javascript:void(0)" onclick="selectAllStudents()">
+                    Select All</a>
+                <div id="forwardToAssessmentController_modal_body" style="overflow-y: scroll;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                    onclick="$('#forwardToAssessmentController_modal').modal('hide')">Close</button>
+                <button type="button" class="btn btn-primary" id="forwardToAssessmentController_modal_button"
+                    onclick="forwardToAssessmentController_submit()">Forward
+                    to Assessment Center</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function forwardToAssessmentController_modal_body_loader_on() {
+        const forwardToAssessmentController_modal_body = $('#forwardToAssessmentController_modal_body');
+        forwardToAssessmentController_modal_body.html(
+            '<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>'
+        );
+    }
+    function forwardToAssessmentController_modal() {
+        console.log('forwardToAssessmentController_modal');
+
+        $('#forwardToAssessmentController_modal').modal('show');
+        $('#forwardToAssessmentController_modal_button').prop('disabled', true);
+        forwardToAssessmentController_modal_body_loader_on();
+        $.ajax({
+            url: '{{ route('forwardToAssessmentController_modal') }}',
+            type: 'GET',
+            success: function (data) {
+                $('#forwardToAssessmentController_modal_body').html(data);
+            }
+        })
+    }
+
+    function forwardToAssessmentController_select() {
+        console.log('forwardToAssessmentController_select');
+        var student_ids_forwardToAssessmentController = $('.student_ids_forwardToAssessmentController');
+        var selected_ids = student_ids_forwardToAssessmentController.filter(':checked').map(function () {
+            return this.value;
+        }).get();
+        if (selected_ids.length > 0) {
+            $('#forwardToAssessmentController_modal_button').prop('disabled', false);
+        } else {
+            $('#forwardToAssessmentController_modal_button').prop('disabled', true);
+        }
+    }
+
+    function forwardToAssessmentController_submit() {
+        var student_ids_forwardToAssessmentController = $('.student_ids_forwardToAssessmentController');
+        var selected_ids = student_ids_student_ids_forwardToAssessmentControllerforwardToAssessmentController.filter(':checked').map(
+            function () {
+                return this.value;
+            }).get();
+        if (selected_ids.length > 0) {
+            $.ajax({
+                url: '{{ route('forwardToAssessmentController_send') }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    student_ids_forwardToAssessmentController: selected_ids,
+                },
+                success: function (data) {
+                    if (data.success) {
+                        alert(data.message);
+                        $('#forwardToAssessmentController_modal').modal('hide');
+                        createTable();
+                    } else {
+                        alert(data.message);
+                    }
+                },
+                error: function () {
+                    alert('Failed to forward to Assessment Center');
+                }
+            });
+        } else {
+            alert('Please select at least one student to forward.');
+        }
+    }
+
+
+
+</script>
+
+{{-- forwardToAssessmentController_modal end --}}
+
+
 {{-- forwardToChairman_modal start --}}
 <!-- Modal -->
-<div class="modal fade" id="forwardToChairman_modal" tabindex="-1" role="dialog"
-    aria-labelledby="modelTitleId" aria-hidden="true">
+<div class="modal fade" id="forwardToChairman_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -376,14 +502,14 @@
     }
     function forwardToChairman_modal() {
         console.log('forwardToChairman_modal');
-        
+
         $('#forwardToChairman_modal').modal('show');
         $('#forwardToChairman_modal_button').prop('disabled', true);
         forwardToChairman_modal_body_loader_on();
         $.ajax({
             url: '{{ route('forwardToChairman_modal') }}',
             type: 'GET',
-            success: function(data) {
+            success: function (data) {
                 $('#forwardToChairman_modal_body').html(data);
             }
         })
@@ -392,7 +518,7 @@
     function forwardToChairman_select() {
         console.log('forwardToChairman_select');
         var student_ids_forwardToChairman = $('.student_ids_forwardToChairman');
-        var selected_ids = student_ids_forwardToChairman.filter(':checked').map(function() {
+        var selected_ids = student_ids_forwardToChairman.filter(':checked').map(function () {
             return this.value;
         }).get();
         if (selected_ids.length > 0) {
@@ -405,7 +531,7 @@
     function forwardToChairman_submit() {
         var student_ids_forwardToChairman = $('.student_ids_forwardToChairman');
         var selected_ids = student_ids_forwardToChairman.filter(':checked').map(
-            function() {
+            function () {
                 return this.value;
             }).get();
         if (selected_ids.length > 0) {
@@ -416,7 +542,7 @@
                     _token: '{{ csrf_token() }}',
                     student_ids_forwardToChairman: selected_ids,
                 },
-                success: function(data) {
+                success: function (data) {
                     if (data.success) {
                         alert(data.message);
                         $('#forwardToChairman_modal').modal('hide');
@@ -425,7 +551,7 @@
                         alert(data.message);
                     }
                 },
-                error: function() {
+                error: function () {
                     alert('Failed to forward to Chairman');
                 }
             });
@@ -440,8 +566,8 @@
 
 {{-- approveStudent_modal start --}}
 <!-- Modal -->
-<div class="modal fade" id="approveStudent_modal" tabindex="-1" role="dialog"
-    aria-labelledby="modelTitleId" aria-hidden="true">
+<div class="modal fade" id="approveStudent_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -477,14 +603,14 @@
     }
     function approveStudent_modal() {
         console.log('approveStudent_modal');
-        
+
         $('#approveStudent_modal').modal('show');
         $('#approveStudent_modal_button').prop('disabled', true);
         approveStudent_modal_body_loader_on();
         $.ajax({
             url: '{{ route('approveStudent_modal') }}',
             type: 'GET',
-            success: function(data) {
+            success: function (data) {
                 $('#approveStudent_modal_body').html(data);
             }
         })
@@ -493,7 +619,7 @@
     function approveStudent_select() {
         console.log('approveStudent_select');
         var student_ids_approveStudent = $('.student_ids_approveStudent');
-        var selected_ids = student_ids_approveStudent.filter(':checked').map(function() {
+        var selected_ids = student_ids_approveStudent.filter(':checked').map(function () {
             return this.value;
         }).get();
         if (selected_ids.length > 0) {
@@ -506,7 +632,7 @@
     function approveStudent_submit() {
         var student_ids_approveStudent = $('.student_ids_approveStudent');
         var selected_ids = student_ids_approveStudent.filter(':checked').map(
-            function() {
+            function () {
                 return this.value;
             }).get();
         if (selected_ids.length > 0) {
@@ -517,7 +643,7 @@
                     _token: '{{ csrf_token() }}',
                     student_ids_approveStudent: selected_ids,
                 },
-                success: function(data) {
+                success: function (data) {
                     if (data.success) {
                         alert(data.message);
                         $('#approveStudent_modal').modal('hide');
@@ -526,7 +652,7 @@
                         alert(data.message);
                     }
                 },
-                error: function() {
+                error: function () {
                     alert('Failed to approve student');
                 }
             });
@@ -540,8 +666,8 @@
 
 {{-- generateCertificate_modal start --}}
 <!-- Modal -->
-<div class="modal fade" id="generateCertificate_modal" tabindex="-1" role="dialog"
-    aria-labelledby="modelTitleId" aria-hidden="true">
+<div class="modal fade" id="generateCertificate_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -577,14 +703,14 @@
     }
     function generateCertificate_modal() {
         console.log('generateCertificate_modal');
-        
+
         $('#generateCertificate_modal').modal('show');
         $('#generateCertificate_modal_button').prop('disabled', true);
         generateCertificate_modal_body_loader_on();
         $.ajax({
             url: '{{ route('generateCertificate_modal') }}',
             type: 'GET',
-            success: function(data) {
+            success: function (data) {
                 $('#generateCertificate_modal_body').html(data);
             }
         })
@@ -593,7 +719,7 @@
     function generateCertificate_select() {
         console.log('generateCertificate_select');
         var student_ids_generateCertificate = $('.student_ids_generateCertificate');
-        var selected_ids = student_ids_generateCertificate.filter(':checked').map(function() {
+        var selected_ids = student_ids_generateCertificate.filter(':checked').map(function () {
             return this.value;
         }).get();
         if (selected_ids.length > 0) {
@@ -606,7 +732,7 @@
     function generateCertificate_submit() {
         var student_ids_generateCertificate = $('.student_ids_generateCertificate');
         var selected_ids = student_ids_generateCertificate.filter(':checked').map(
-            function() {
+            function () {
                 return this.value;
             }).get();
         if (selected_ids.length > 0) {
@@ -629,7 +755,7 @@
 <script>
     function selectAllStudents() {
         var student_ids_forwardToAssessmentCenter = $('input[name="student_ids[]"]');
-        var selected_ids = student_ids_forwardToAssessmentCenter.filter(':checked').map(function() {
+        var selected_ids = student_ids_forwardToAssessmentCenter.filter(':checked').map(function () {
             return this.value;
         }).get();
         if (selected_ids.length > 0) {
@@ -640,5 +766,7 @@
         }
     }
 </script>
+
+
 
 

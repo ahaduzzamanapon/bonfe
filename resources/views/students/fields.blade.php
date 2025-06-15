@@ -1,5 +1,10 @@
 @php
-    $Occupation = \App\Models\Occupation::all()->pluck('title', 'id')->prepend('Select Occupation', '')->toArray();
+    if( Request::is('general_students*')){
+        $Occupation = \App\Models\Occupation::where('title', 'General')->get()->pluck('title', 'id')->toArray();
+    }else{
+        $Occupation = \App\Models\Occupation::where('title', '!=', 'General')->get()->pluck('title', 'id')->prepend('Select Occupation', '')->toArray();
+    }
+
     $AssessmentVenue = \App\Models\AssessmentVenue::all()
         ->pluck('venue_name', 'id')
         ->prepend('Select Venue', '')
@@ -10,6 +15,7 @@
         ->toArray();
     $Program = \App\Models\Program::orderBy('id', 'desc')->get()
         ->pluck('program_title', 'id')
+        ->prepend('Select Program', '')
         ->toArray();
 @endphp
 
@@ -23,7 +29,7 @@
 </div>
 
 <!-- Occupation Id Field -->
-<div class="col-md-3">
+<div class="col-md-3 @if( Request::is('general_students*')) d-none @endif">
     <div class="form-group">
         {!! Form::label('occupation_id', 'Occupation', ['class' => 'control-label']) !!}
         {!! Form::select('occupation_id', $Occupation, null, ['class' => 'form-control']) !!}
@@ -319,7 +325,32 @@
                 });
             });
         });
+
+        $(document).ready(function() {
+            $('#program_id').change(function() {
+                var districtId = $(this).val();
+                $.ajax({
+                    url: "{{ route('get_upazilas') }}",
+                    type: "GET",
+                    data: {
+                        district_id: districtId
+                    },
+                    success: function(data) {
+                        $('#upajila_id').empty();
+                        $('#upajila_id').append('<option value="">Select Upazila</option>');
+                        $.each(data, function(index, upajila) {
+                            $('#upajila_id').append('<option value="' + upajila.id + '">' + upajila.name + '</option>');
+                        });
+                    }
+                });
+            });
+        });
     </script>
+
+
+
+
+
 @endsection
 
 

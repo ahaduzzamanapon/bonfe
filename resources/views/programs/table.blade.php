@@ -4,6 +4,7 @@
             <tr>
                 <th>SL</th>
         <th>Program Title</th>
+        <th>Program Type</th>
         <th>Start Date</th>
         <th>End Date</th>
         <th>Created At</th>
@@ -15,6 +16,7 @@
             <tr>
                 <td>{{ $key+1 }}</td>
             <td>{{ $program->program_title }}</td>
+            <td>{{ $program->program_type }}</td>
             <td>{{ date('d-m-Y', strtotime($program->start_date)) }}</td>
             <td>{{ date('d-m-Y', strtotime($program->end_date)) }}</td>
             <td>{{ $program->created_at }}</td>

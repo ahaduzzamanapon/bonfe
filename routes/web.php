@@ -64,6 +64,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('students_waiting_for_district_approval', 'StudentController@students_waiting_for_district_approval')->name('students.students_waiting_for_district_approval');
     Route::get('students_waiting_for_chairman_approval', 'StudentController@students_waiting_for_chairman_approval')->name('students.students_waiting_for_chairman_approval');
+    
+    Route::get('general_students_waiting_for_district_approval', 'StudentController@students_waiting_for_district_approval')->name('general_students.students_waiting_for_district_approval');
+    Route::get('general_students_waiting_for_chairman_approval', 'StudentController@students_waiting_for_chairman_approval')->name('general_students.students_waiting_for_chairman_approval');
 
 
     Route::get('get_upazilas', 'HomeController@get_upazilas')->name('get_upazilas');
@@ -76,12 +79,16 @@ Route::group(['middleware' => 'auth'], function () {
    
     Route::get('forwardToChairman_modal', 'StudentController@forwardToChairman_modal')->name('forwardToChairman_modal');
     Route::post('forwardToChairman_send', 'StudentController@forwardToChairman_send')->name('forwardToChairman_send');
+
+    Route::get('forwardToAssessmentController_modal', 'StudentController@forwardToAssessmentController_modal')->name('forwardToAssessmentController_modal');
+    Route::post('forwardToAssessmentController_send', 'StudentController@forwardToAssessmentController_send')->name('forwardToAssessmentController_send');
     
     Route::get('approveStudent_modal', 'StudentController@approveStudent_modal')->name('approveStudent_modal');
     Route::post('approveStudent_send', 'StudentController@approveStudent_send')->name('approveStudent_send');
 
     Route::get('generateCertificate_modal', 'StudentController@generateCertificate_modal')->name('generateCertificate_modal');
     Route::get('generateCertificate_send', 'StudentController@generateCertificate_send')->name('generateCertificate_send');
+    Route::get('get_competences_by_occupation', 'StudentController@get_competences_by_occupation')->name('get_competences_by_occupation');
 
     Route::get('/dashboard-data', [HomeController::class, 'getDashboardData'])->name('dashboard.data');
 

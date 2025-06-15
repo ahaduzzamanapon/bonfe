@@ -196,7 +196,7 @@
                             <h3 id="total_passed_students">
                                 <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
                             </h3>
-                            <p>Total Passed</p>
+                            <p>Total Competent</p>
                         </div>
                     </div>
                 </a>
@@ -211,7 +211,7 @@
                             <h3 id="total_failed_students">
                                 <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
                             </h3>
-                            <p>Total Failed </p>
+                            <p>Total Non Competent </p>
                         </div>
                     </div>
                 </a>
@@ -325,7 +325,7 @@
             new Chart(document.getElementById('studentPieChart'), {
                 type: 'pie',
                 data: {
-                    labels: ['Passed', 'Failed'],
+                    labels: ['Competent', 'Non Competent'],
                     datasets: [{
                         data: [data.total_passed_students, data.total_failed_students],
                         backgroundColor: ['#28a745', '#dc3545']

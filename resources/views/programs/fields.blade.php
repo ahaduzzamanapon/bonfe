@@ -6,6 +6,15 @@
     </div>
 </div>
 
+<!-- Program Type Field -->
+<div class="col-md-3">
+    <div class="form-group">
+        {!! Form::label('program_type', 'Program Type', ['class' => 'control-label']) !!}
+        {!! Form::select('program_type', ['' => 'Select Program Type','Technical' => 'Technical', 'General' => 'General'], null, ['class' => 'form-control']) !!}
+    </div>
+</div>
+
+
 
 <!-- Start Date Field -->
 <div class="col-md-3">

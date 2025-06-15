@@ -28,6 +28,10 @@
                     @endif
                     @if (can('district_admin'))
                         <a class="btn btn-primary pull-right" onclick="forwardToAssessmentCenter_modal()">Forward to Assessment Center</a>
+                        <a class="btn btn-primary pull-right" onclick="forwardToAssessmentController_modal()">Forward to Assessment Controller</a>
+                    @endif
+
+                    @if (can('assessment_controller'))
                         <a class="btn btn-primary pull-right" onclick="forwardToChairman_modal()">Approve / Forward to Chairman</a>
                     @endif
                     @if (can('chairman'))
@@ -35,7 +39,11 @@
                     @endif
                     <a class="btn btn-primary pull-right" onclick="generateCertificate_modal()">Generate Certificate</a>
                     @if (can('student_add'))
-                        <a class="btn btn-primary pull-right" href="{{ route('students.create') }}">Add New</a>
+                        @if( Request::is('general_students*'))
+                            <a class="btn btn-primary pull-right" href="{{ route('general_students.create') }}">Add New</a>
+                        @else
+                            <a class="btn btn-primary pull-right" href="{{ route('students.create') }}">Add New</a>
+                        @endif
                     @endif
                 </span>
             </section>
@@ -89,8 +97,12 @@
                         </div>
                     </div>
                     @php
-                        $programs = \App\Models\Program::latest()->get();
-                        $occupations = \App\Models\Occupation::latest()->get();
+                    if( Request::is('general_students*')){
+                        $programs = \App\Models\Program::where('program_type', 'General')->latest()->get();
+                    }else{
+                        $programs = \App\Models\Program::where('program_type', 'Technical')->latest()->get();
+                    }
+                    $occupations = \App\Models\Occupation::latest()->get();
                     @endphp
                     <div class="col-sm-12 col-md-5">
                         <div class="row">
@@ -157,6 +169,8 @@
                         const statusFilter = $('input[name="status_filter"]:checked').val();
                         const programId = $('#filter_program').val();
                         const occupationId = $('#filter_occupation').val();
+                        const programType = '{{ Request::is('general_students') ? "General" : "Technical" }}';
+
                         loader_on()
                         $.ajax({
                             url: "{{ route('students.get_table') }}",
@@ -164,7 +178,9 @@
                             data: {
                                 status_filter: statusFilter,
                                 program_id: programId,
-                                occupation_id: occupationId
+                                occupation_id: occupationId,
+                                program_type: programType
+
                             },
                             success: function(data) {
                                 loader_off()
@@ -197,6 +213,18 @@
                     function give_exam_result(id) {
                         $('#exam_result_modal').modal('show');
                         localStorage.setItem('student_id_for_exam_result', id);
+                        $.ajax({
+                            url: "{{ route('get_competences_by_occupation') }}",
+                            type: "GET",
+                            data: {
+                                id: id
+                            },
+                            success: function(data) {                                
+                                $('#competence_pass_div').empty().html(data);                                
+                            },
+                            error: function() {
+                            }
+                        });
                     }
                 </script>
 

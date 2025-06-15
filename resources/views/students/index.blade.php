@@ -2,14 +2,14 @@
 
 {{-- Page title --}}
 @section('title')
-    Students @parent
+    Lerner @parent
 @stop
 
 @section('content')
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div aria-label="breadcrumb" class="card-breadcrumb">
-            <h5><a href="{{ url('/') }}" style="text-decoration: none; color: black;">Dashboard</a> > Students </h5>
+            <h5><a href="{{ url('/') }}" style="text-decoration: none; color: black;">Dashboard</a> > Lerner </h5>
         </div>
         <div class="separator-breadcrumb border-top"></div>
     </section>
@@ -21,7 +21,7 @@
         <div class="clearfix"></div>
         <div class="card" width="88vw;">
             <section class="card-header">
-                <h5 class="card-title d-inline">Students</h5>
+                <h5 class="card-title d-inline">Lerner</h5>
                 <span class="float-right">
                     @if (can('assessment_centers_controller'))
                         <a class="btn btn-primary pull-right" onclick="forwardToDistrictAdmin_modal()">Forward to District Admin</a>
@@ -33,6 +33,7 @@
 
                     @if (can('assessment_controller'))
                         <a class="btn btn-primary pull-right" onclick="forwardToChairman_modal()">Approve / Forward to Chairman</a>
+                        <a class="btn btn-primary pull-right" onclick="backTodistrict_modal()">Back to District</a>
                     @endif
                     @if (can('chairman'))
                         <a class="btn btn-primary pull-right" onclick="approveStudent_modal()">Approve</a>
@@ -58,7 +59,7 @@
                                 <label class="btn btn-outline-primary {{ Request::is('students') ? 'active' : '' }}">
                                     <input onchange="createTable()" class="form-check-input" type="radio"
                                         name="status_filter" id="all" value="all" autocomplete="off"
-                                        {{ Request::is('students') ? 'checked' : '' }}> All Students
+                                        {{ Request::is('students') ? 'checked' : '' }}> All Lerner
                                 </label>
 
                                 @if (can('assessment_centers_controller'))

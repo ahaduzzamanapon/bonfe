@@ -82,6 +82,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('forwardToAssessmentController_modal', 'StudentController@forwardToAssessmentController_modal')->name('forwardToAssessmentController_modal');
     Route::post('forwardToAssessmentController_send', 'StudentController@forwardToAssessmentController_send')->name('forwardToAssessmentController_send');
+
+    Route::get('backToDistrict_modal', 'StudentController@backToDistrict_modal')->name('backToDistrict_modal');
+    Route::post('backToDistrict_send', 'StudentController@backToDistrict_send')->name('backToDistrict_send');
     
     Route::get('approveStudent_modal', 'StudentController@approveStudent_modal')->name('approveStudent_modal');
     Route::post('approveStudent_send', 'StudentController@approveStudent_send')->name('approveStudent_send');

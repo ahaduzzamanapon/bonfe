@@ -16,8 +16,8 @@
                     <div class="form-group">
                         <label for="ExamResult_field">Exam Result</label>
                         <select class="form-control" id="ExamResult_field">
-                            <option value="Passed"> Competent </option>
-                            <option value="Fail"> Non-Competent </option>
+                            <option value="Passed"> Promising </option>
+                            <option value="Fail"> Optainane </option>
                         </select>
                     </div>
                     <div style="padding: 10px;">   

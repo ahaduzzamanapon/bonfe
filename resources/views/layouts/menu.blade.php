@@ -14,7 +14,7 @@
 
 <li class="{!! (Request::is('students*') ? 'active' : '' ) !!}">
     <a href="{{ route('students.index') }}">
-        <span class="mm-text ">Students</span>
+        <span class="mm-text ">Lerner</span>
         <span class="menu-icon"><i class="im im-icon-Structure"></i></span>
     </a>
 </li>

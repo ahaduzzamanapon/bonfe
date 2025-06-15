@@ -114,7 +114,7 @@ class StudentController extends AppBaseController
             $html .= '</div>';
             $html .= '</td>';
             $html .= '<td width="10%"><span class="badge badge-' . ($student->status == 'Pending' ? 'warning' : 'success') . '">' . $student->status . '</span></td>';
-            $html .= '<td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Non Competent' : ($student->exam_status == 'Pending' ? 'Pending' : 'Competent')) . '</span></td>';
+            $html .= '<td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Optainane ' : ($student->exam_status == 'Pending' ? 'Pending' : 'Promising')) . '</span></td>';
             $html .= '<td><span class="badge badge-' . ($student->districts_admin_status == 'Pending' ? 'warning' : 'success') . '">' . $student->districts_admin_status . '</span></td>';
             $html .= '<td><span class="badge badge-' . ($student->chairmen_status == 'Pending' ? 'warning' : 'success') . '">' . $student->chairmen_status . '</span></td>';
             $html .= '<td>';
@@ -547,7 +547,7 @@ class StudentController extends AppBaseController
             DB::commit();
             return response()->json([
                 'success' => true,
-                'message' => "Students forwarded to Assessment Center successfully",
+                'message' => "Lerner forwarded to Assessment Center successfully",
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -587,7 +587,7 @@ class StudentController extends AppBaseController
                 <td style="font-size: 16px;padding: 3px;text-align: -webkit-center;">' . ++$key . '</td>
                 <td style="padding: 3px;" >' . $student->candidate_name . '</td>
                 <td style="padding: 3px;" >' . $student->candidate_id . '</td>
-                <td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Non Competent' : ($student->exam_status == 'Pending' ? 'Pending' : 'Competent')) . '</span></td>
+                <td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Optainane ' : ($student->exam_status == 'Pending' ? 'Pending' : 'Promising')) . '</span></td>
                 <td style="padding: 3px;" >' . $student->occupation . '</td>
                 <td style="padding: 3px;" >' . $student->district . '</td>
             </tr>';
@@ -610,7 +610,7 @@ class StudentController extends AppBaseController
             DB::commit();
             return response()->json([
                 'success' => true,
-                'message' => "Students forwarded to District Admin successfully",
+                'message' => "Lerner forwarded to District Admin successfully",
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -651,7 +651,7 @@ class StudentController extends AppBaseController
                 <td style="font-size: 16px;padding: 3px;text-align: -webkit-center;">' . ++$key . '</td>
                 <td style="padding: 3px;" >' . $student->candidate_name . '</td>
                 <td style="padding: 3px;" >' . $student->candidate_id . '</td>
-                <td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Non Competent' : ($student->exam_status == 'Pending' ? 'Pending' : 'Competent')) . '</span></td>
+                <td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Optainane ' : ($student->exam_status == 'Pending' ? 'Pending' : 'Promising')) . '</span></td>
                 <td style="padding: 3px;" >' . $student->occupation . '</td>
                 <td style="padding: 3px;" >' . $student->district . '</td>
             </tr>';
@@ -676,7 +676,7 @@ class StudentController extends AppBaseController
             DB::commit();
             return response()->json([
                 'success' => true,
-                'message' => "Students forwarded to District Admin successfully",
+                'message' => "Lerner forwarded to District Admin successfully",
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -686,6 +686,8 @@ class StudentController extends AppBaseController
             ]);
         }
     }
+
+
     public function forwardToAssessmentController_modal()
     {
         $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
@@ -714,7 +716,7 @@ class StudentController extends AppBaseController
                 <td style="font-size: 16px;padding: 3px;text-align: -webkit-center;">' . ++$key . '</td>
                 <td style="padding: 3px;" >' . $student->candidate_name . '</td>
                 <td style="padding: 3px;" >' . $student->candidate_id . '</td>
-                <td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Non Competent' : ($student->exam_status == 'Pending' ? 'Pending' : 'Competent')) . '</span></td>
+                <td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Optainane ' : ($student->exam_status == 'Pending' ? 'Pending' : 'Promising')) . '</span></td>
                 <td style="padding: 3px;" >' . $student->occupation . '</td>
                 <td style="padding: 3px;" >' . $student->district . '</td>
             </tr>';
@@ -739,10 +741,74 @@ class StudentController extends AppBaseController
             DB::commit();
             return response()->json([
                 'success' => true,
-                'message' => "Students forwarded to District Admin successfully",
+                'message' => "Lerner forwarded to District Admin successfully",
             ]);
         } catch (\Exception $e) {
             dd($e);
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => "Operation failed",
+            ]);
+        }
+    }
+    public function backToDistrict_modal()
+    {
+        $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
+            ->join('districts', 'students.district_id', '=', 'districts.id')
+            ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
+            ->orderBy('id', 'desc')
+            ->where('students.status', '=', 'Waiting for Assessment Controller Approval')
+            ->get();
+        $html = '';
+        $html .= '<table class="table table-bordered table-striped table-hover" id="example1">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>SL</th>
+                    <th>Name</th>
+                    <th>Candidate Id</th>
+                    <th>Exam Status</th>
+                    <th>Occupation</th>
+                    <th>District</th>
+                </tr>
+            </thead>
+            <tbody>';
+        foreach ($students as $key => $student) {
+            $html .= '<tr>
+                <td style="font-size: 20px;padding: 3px;text-align: -webkit-center;"><input onclick="backTodistrict_modal_select()" type="checkbox" name="student_ids[]" class="backTodistrict_modal_select" value="' . $student->id . '" style="width: 20px; height: 20px;"></td>
+                <td style="font-size: 16px;padding: 3px;text-align: -webkit-center;">' . ++$key . '</td>
+                <td style="padding: 3px;" >' . $student->candidate_name . '</td>
+                <td style="padding: 3px;" >' . $student->candidate_id . '</td>
+                <td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Optainane ' : ($student->exam_status == 'Pending' ? 'Pending' : 'Promising')) . '</span></td>
+                <td style="padding: 3px;" >' . $student->occupation . '</td>
+                <td style="padding: 3px;" >' . $student->district . '</td>
+            </tr>';
+        }
+        $html .= '</tbody>
+        </table>';
+        return response()->json($html);
+    }
+
+    public function backToDistrict_send(Request $request)
+    {
+        $student_ids_forwardToChairman = $request->student_ids_backToDistrict;
+        DB::beginTransaction();
+        try {
+            foreach ($student_ids_forwardToChairman as $studentId) {
+                $student = Student::find($studentId);
+                $student->status = 'Waiting for District Admin Approval';
+                $student->districts_admin_id = auth()->user()->id;
+                $student->districts_admin_status = "Pending";
+                $student->save();
+            }
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => "Lerner Back to District Admin successfully",
+            ]);
+        } catch (\Exception $e) {
+            dd(vars: $e);
             DB::rollBack();
             return response()->json([
                 'success' => false,
@@ -780,7 +846,7 @@ class StudentController extends AppBaseController
                 <td style="font-size: 16px;padding: 3px;text-align: -webkit-center;">' . ++$key . '</td>
                 <td style="padding: 3px;" >' . $student->candidate_name . '</td>
                 <td style="padding: 3px;" >' . $student->candidate_id . '</td>
-                <td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Non Competent' : ($student->exam_status == 'Pending' ? 'Pending' : 'Competent')) . '</span></td>
+                <td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Optainane ' : ($student->exam_status == 'Pending' ? 'Pending' : 'Promising')) . '</span></td>
                 <td style="padding: 3px;" >' . $student->occupation . '</td>
                 <td style="padding: 3px;" >' . $student->district . '</td>
             </tr>';
@@ -807,7 +873,7 @@ class StudentController extends AppBaseController
             DB::commit();
             return response()->json([
                 'success' => true,
-                'message' => "Students forwarded to District Admin successfully",
+                'message' => "Lerner forwarded to District Admin successfully",
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -847,7 +913,7 @@ class StudentController extends AppBaseController
                 <td style="font-size: 16px;padding: 3px;text-align: -webkit-center;">' . ++$key . '</td>
                 <td style="padding: 3px;" >' . $student->candidate_name . '</td>
                 <td style="padding: 3px;" >' . $student->candidate_id . '</td>
-                <td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Non Competent' : ($student->exam_status == 'Pending' ? 'Pending' : 'Competent')) . '</span></td>
+                <td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Optainane ' : ($student->exam_status == 'Pending' ? 'Pending' : 'Promising')) . '</span></td>
                 <td style="padding: 3px;" >' . $student->occupation . '</td>
                 <td style="padding: 3px;" >' . $student->district . '</td>
             </tr>';

@@ -137,7 +137,10 @@ p{
           Registration No.: RPL-T&A-CBT&AM-L4-M000<br>
           Issued on: {{ date('d-m-Y') }}
           <br>
-          {{ $qrCode }}
+          <div style="position: relative;right: -352px;">
+
+            {{ $qrCode }}
+          </div>
         </p>
       </div>
 

@@ -16,8 +16,8 @@
                     <div class="form-group">
                         <label for="ExamResult_field">Exam Result</label>
                         <select class="form-control" id="ExamResult_field">
-                            <option value="Passed"> Competent </option>
-                            <option value="Fail"> Non-Competent </option>
+                            <option value="Passed"> Promising </option>
+                            <option value="Fail"> Optainane </option>
                         </select>
                     </div>
                     <div style="padding: 10px;">   
@@ -377,6 +377,10 @@
                     Select All</a>
                 <div id="forwardToAssessmentController_modal_body" style="overflow-y: scroll;">
                 </div>
+                <div>
+                    <input type="checkbox" name="diss_accept" id="diss_accept" onchange="forwardToAssessmentController_select()">
+                    <label for="">I have verified the result and confirm its accuracy.</label>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal"
@@ -414,10 +418,13 @@
     function forwardToAssessmentController_select() {
         console.log('forwardToAssessmentController_select');
         var student_ids_forwardToAssessmentController = $('.student_ids_forwardToAssessmentController');
+        var diss_accept = $('#diss_accept');
+
+
         var selected_ids = student_ids_forwardToAssessmentController.filter(':checked').map(function () {
             return this.value;
         }).get();
-        if (selected_ids.length > 0) {
+        if (selected_ids.length > 0 && diss_accept.prop('checked')) {
             $('#forwardToAssessmentController_modal_button').prop('disabled', false);
         } else {
             $('#forwardToAssessmentController_modal_button').prop('disabled', true);
@@ -426,7 +433,7 @@
 
     function forwardToAssessmentController_submit() {
         var student_ids_forwardToAssessmentController = $('.student_ids_forwardToAssessmentController');
-        var selected_ids = student_ids_student_ids_forwardToAssessmentControllerforwardToAssessmentController.filter(':checked').map(
+        var selected_ids = student_ids_forwardToAssessmentController.filter(':checked').map(
             function () {
                 return this.value;
             }).get();
@@ -663,6 +670,112 @@
 </script>
 
 {{-- approveStudent_modal end --}}
+
+{{-- backToDistrict_modal start --}}
+<!-- Modal -->
+<div class="modal fade" id="backToDistrict_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Send Back to District</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    onclick="$('#backToDistrict_modal').modal('hide')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <a class="btn btn-primary" href="javascript:void(0)" onclick="selectAllStudents()">
+                    Select All</a>
+                <div id="backToDistrict_modal_body" style="overflow-y: scroll;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                    onclick="$('#backToDistrict_modal').modal('hide')">Close</button>
+                <button type="button" class="btn btn-primary" id="backToDistrict_modal_button"
+                    onclick="backToDistrict_submit()">Send Back
+                    to District</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function backToDistrict_modal_body_loader_on() {
+        const backToDistrict_modal_body = $('#backToDistrict_modal_body');
+        backToDistrict_modal_body.html(
+            '<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>'
+        );
+    }
+    function backTodistrict_modal() {
+        console.log('backToDistrict_modal');
+
+        $('#backToDistrict_modal').modal('show');
+        $('#backToDistrict_modal_button').prop('disabled', true);
+        backToDistrict_modal_body_loader_on();
+        $.ajax({
+            url: '{{ route('backToDistrict_modal') }}',
+            type: 'GET',
+            success: function (data) {
+                $('#backToDistrict_modal_body').html(data);
+            }
+        })
+    }
+
+    function backTodistrict_modal_select() {
+        console.log('backToDistrict_select');
+        var student_ids_backToDistrict = $('.backTodistrict_modal_select');
+        var selected_ids = student_ids_backToDistrict.filter(':checked').map(function () {
+            return this.value;
+        }).get();
+        if (selected_ids.length > 0) {
+            $('#backToDistrict_modal_button').prop('disabled', false);
+        } else {
+            $('#backToDistrict_modal_button').prop('disabled', true);
+        }
+    }
+
+    function backToDistrict_submit() {
+        var student_ids_backToDistrict = $('.backTodistrict_modal_select');
+        var selected_ids = student_ids_backToDistrict.filter(':checked').map(
+            function () {
+                return this.value;
+            }).get();
+        if (selected_ids.length > 0) {
+            $.ajax({
+                url: '{{ route('backToDistrict_send') }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    student_ids_backToDistrict: selected_ids,
+                },
+                success: function (data) {
+                    if (data.success) {
+                        alert(data.message);
+                        $('#backToDistrict_modal').modal('hide');
+                        createTable();
+                    } else {
+                        alert(data.message);
+                    }
+                },
+                error: function () {
+                    alert('Failed to send back to district');
+                }
+            });
+        } else {
+            alert('Please select at least one student to send back to district.');
+        }
+    }
+</script>
+
+{{-- backToDistrict_modal end --}}
+
+
+
+
+
+
 
 {{-- generateCertificate_modal start --}}
 <!-- Modal -->

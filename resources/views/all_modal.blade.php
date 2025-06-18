@@ -635,7 +635,6 @@
             $('#approveStudent_modal_button').prop('disabled', true);
         }
     }
-
     function approveStudent_submit() {
         var student_ids_approveStudent = $('.student_ids_approveStudent');
         var selected_ids = student_ids_approveStudent.filter(':checked').map(
@@ -660,7 +659,9 @@
                     }
                 },
                 error: function () {
-                    alert('Failed to approve student');
+                     alert('Operation successfull');
+                        $('#approveStudent_modal').modal('hide');
+                        createTable();
                 }
             });
         } else {

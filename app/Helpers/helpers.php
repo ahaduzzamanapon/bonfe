@@ -60,7 +60,6 @@ if (!function_exists('who')) {
         }else{
             return false;
         }
-        
     }
 }
 if (!function_exists('get_notification')) {

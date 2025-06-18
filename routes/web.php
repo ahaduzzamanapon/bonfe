@@ -104,3 +104,10 @@ Route::get('{name?}', 'JoshController@showView');
 Route::get('qr_details/{id}', 'StudentController@qr_details')->name('students.qr_details');
 
 
+Route::get('/upload_exell', function () {
+    return view('upload_exell');
+});
+
+Route::post('/import-users', [StudentController::class, 'import'])->name('import.users');
+
+

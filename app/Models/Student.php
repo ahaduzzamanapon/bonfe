@@ -69,6 +69,12 @@ class Student extends Model
         'notified',
         'image',
         'attachment',
+        'age',
+        'literacy_status',
+        'educational_qualification',
+        'training_start_date',
+        'training_end_date',
+        'gender',
     ];
 
     /**

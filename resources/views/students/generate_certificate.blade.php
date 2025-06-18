@@ -98,13 +98,13 @@ p{
           <img src="{{ !empty($setting) ? asset($setting->logo) : 'assets/images/Picture1.jpg' }} "alt="Logo" style="width: 168px;height: 169px;"> <!-- Replace with dynamic logo -->
         </div>
       <div class="header">
-        <h4 style="font-weight: 900;">Board of Non-Formal Education, Bangladesh</h4>
+        <h4 style="font-weight: 900;">Non-Formal Education Board, Bangladesh</h4>
       </div>
 
 
       <div class="content">
         <p>
-          This is to certify that <strong>{{ $student->candidate_name }}</strong> Mother's Name: <strong>{{ $student->mother_name }}</strong> & Father's Name: <strong>{{ $student->father_name }}</strong>, Date of Birth: <strong>{{ $student->date_of_birth }}</strong> Birth Registration No. <strong>{{ $student->nid }}</strong> has been awarded prevocational on <strong>{{ $student->occupation }}</strong> for successful completion of the following competencies under Bangladesh National Qualification Framework (BNQF):
+          This is to certify that {{ $student->candidate_name }}, Mother's Name: {{ $student->mother_name }}, Father's Name: {{ $student->father_name }}, Date of Birth: {{ $student->date_of_birth }}, Birth Registration No: {{ $student->nid }} has successfully completed Prevocational Level course in {{ $student->occupation }} (460 hours) under the Bangladesh National Qualification Framework (BNQF) with the following competencies conducted by {{ $student->institute_name }} from {{ $student->start_date }} to {{ $student->end_date }}. The student demonstrated satisfactory participation and performance during the course.
         </p>
 
         <div class="units">

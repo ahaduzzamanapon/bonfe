@@ -203,6 +203,8 @@
                             }
                         });
                     }
+                    
+                    
                     $(document).ready(function() {
                         $('#filter_program, #filter_occupation').change(function() {
                             createTable();

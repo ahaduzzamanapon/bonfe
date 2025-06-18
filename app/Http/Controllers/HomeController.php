@@ -170,13 +170,21 @@ class HomeController extends Controller
         }
         $generated_certificate = $generated_certificate->count();
 
+        $program_type = DB::table('programs')->where('id', $program_id)->first()->program_type;
+
+
+
+
+
+
         return response()->json([
             'total_students' => $total_students,
             'total_passed_students' => $total_passed_students,
             'total_failed_students' => $total_failed_students,
             'waiting_for_chairman' => $waiting_for_chairman,
             'waiting_for_district' => $waiting_for_district,
-            'generated_certificate' => $generated_certificate
+            'generated_certificate' => $generated_certificate,
+            'program_type' => $program_type
         ]);
     }
 }

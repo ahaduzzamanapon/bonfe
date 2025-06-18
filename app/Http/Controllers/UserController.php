@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-use App\Http\Controllers\AppBaseController;
 use App\Models\User;
 use Flash;
 use Response;
+use DB;
 
 class UserController extends Controller
 {
@@ -16,14 +16,10 @@ class UserController extends Controller
             ->leftjoin('roles', 'users.group_id', '=', 'roles.id')
             ->leftjoin('districts', 'users.district_id', '=', 'districts.id')
             ->leftjoin('designations', 'users.designation_id', '=', 'designations.id');
-
-            
         if(!can('chairman') && can('district_admin')) {
             $users = $users->where('users.district_id', auth()->user()->district_id);
         }
-
-           $users = $users->get();
-
+        $users = $users->get();
         return view('users.index')
             ->with('users', $users);
     }
@@ -43,6 +39,13 @@ class UserController extends Controller
     {
         $input = $request->all();
 
+        if(isset($input['multiple_district'])){
+            $multiple_district=$input['multiple_district'];
+            unset($input['multiple_district']);
+        }else{
+            $multiple_district=[];
+        }
+       
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
@@ -73,6 +76,15 @@ class UserController extends Controller
 
         /** @var User $users */
         $users = User::create($input);
+        $id=$users->id;
+
+         foreach ($multiple_district as $key => $value) {
+            DB::table('multiple_district')->insert([
+                'user_id' => $id,
+                'district_id' => $value,
+            ]);
+        }
+
 
         Flash::success('User saved successfully.');
 
@@ -123,6 +135,27 @@ class UserController extends Controller
         }
 
         $input = $request->all();
+
+          if(isset($input['multiple_district'])){
+            $multiple_district=$input['multiple_district'];
+            unset($input['multiple_district']);
+        }else{
+            $multiple_district=[];
+        }
+
+        DB::table('multiple_district')->where('user_id', $id)->delete();
+        foreach ($multiple_district as $key => $value) {
+            DB::table('multiple_district')->insert([
+                'user_id' => $id,
+                'district_id' => $value,
+            ]);
+        }
+
+
+
+
+
+
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');

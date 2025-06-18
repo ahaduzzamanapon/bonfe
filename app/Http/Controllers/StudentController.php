@@ -1,29 +1,33 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\StudentCompetenceModel;
+use App\Models\AssessmentCenter;
+use App\Models\Competence;
+use App\Models\Student;
+use App\Models\Upazila;
+use App\Models\Occupation;
+
 
 use App\Http\Requests\CreateStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use App\Http\Controllers\AppBaseController;
-use App\Models\Student;
 use Illuminate\Http\Request;
 use Flash;
 use Response;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use App\Models\District;
-use App\Models\Occupation;
-use App\Models\Program;
-use App\Models\StudentCompetenceModel;
-use App\Models\AssessmentCenter;
 use Form;
 use DB;
-use Auth;
-use App\Models\Competence;
+use DateTime;
+
+
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ExcelDataImport;
+
 
 
 class StudentController extends AppBaseController
 {
-
     /**
      * Display a listing of the Student.
      *
@@ -43,25 +47,13 @@ class StudentController extends AppBaseController
     {
         return view('students.index');
     }
-
-
-
-
     public function get_table(Request $request)
     {
-
-
         $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
             ->join('districts', 'students.district_id', '=', 'districts.id')
             ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
             ->join('programs', 'students.program_id', '=', 'programs.id')
             ->orderBy('id', 'desc');
-
-
-
-
-
-
         if (!can('chairman') && can('district_admin')) {
             $students = $students->where('students.district_id', auth()->user()->district_id);
         }
@@ -114,7 +106,13 @@ class StudentController extends AppBaseController
             $html .= '</div>';
             $html .= '</td>';
             $html .= '<td width="10%"><span class="badge badge-' . ($student->status == 'Pending' ? 'warning' : 'success') . '">' . $student->status . '</span></td>';
-            $html .= '<td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Optainane ' : ($student->exam_status == 'Pending' ? 'Pending' : 'Promising')) . '</span></td>';
+
+            if ($request->has('program_type') && $request->program_type == 'General') {
+                $html .= '<td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Optainane ' : ($student->exam_status == 'Pending' ? 'Pending' : 'Promising')) . '</span></td>';
+            } else {
+                $html .= '<td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Not Competent yet ' : ($student->exam_status == 'Pending' ? 'Pending' : 'Competent')) . '</span></td>';
+            }
+
             $html .= '<td><span class="badge badge-' . ($student->districts_admin_status == 'Pending' ? 'warning' : 'success') . '">' . $student->districts_admin_status . '</span></td>';
             $html .= '<td><span class="badge badge-' . ($student->chairmen_status == 'Pending' ? 'warning' : 'success') . '">' . $student->chairmen_status . '</span></td>';
             $html .= '<td>';
@@ -133,14 +131,13 @@ class StudentController extends AppBaseController
                     $html .= '<a class="dropdown-item" href="' . route('students.edit', [$student->id]) . '"><i class="im im-icon-Pen"></i> Edit</a>';
                 } else {
                     $html .= '<a class="dropdown-item" href="' . route('general_students.edit', [$student->id]) . '"><i class="im im-icon-Pen"></i> Edit</a>';
-
                 }
             }
             if (can('give_exam_result') && $student->status == 'Waiting for the exam results from the Assessment Center') {
                 $html .= '<a class="dropdown-item" onclick="give_exam_result(' . $student->id . ')" href="javascript:void(0);"><i class="im im-icon-Pencil-Ruler"></i> Give Exam Result</a>';
             }
             if (can('district_admin') && $student->status == 'Waiting for District Admin Approval') {
-                $html .= '<a class="dropdown-item" href="' . route('students.forward_to_chairman', [$student->id]) . '"><i class="im im-icon-Arrow-Back"></i> Approve And Send To Chairman</a>';
+                // $html .= '<a class="dropdown-item" href="' . route('students.forward_to_chairman', [$student->id]) . '"><i class="im im-icon-Arrow-Back"></i> Approve And Send To Chairman</a>';
             }
             if (can('chairman') && $student->status == 'Waiting for Chairman Approval') {
                 $html .= '<a class="dropdown-item" href="' . route('students.chairman_approve', [$student->id]) . '"><i class="im im-icon-Approved-Window"></i> Approve</a>';
@@ -220,20 +217,23 @@ class StudentController extends AppBaseController
         }
 
 
+        $student_type = $input['student_type'];
+        unset($input['student_type']);
+
+
+
+
 
 
         /** @var Student $student */
         $student = Student::create($input);
 
         Flash::success('Student saved successfully.');
-        if (request()->is('general_students*')) {
-            if (request()->is('general_students*')) {
-                return redirect(route('students.index'));
-            } else {
-                return redirect(route('general_students.index'));
-            }
-        } else {
+
+        if ($student_type == 'general') {
             return redirect(route('general_students.index'));
+        } else {
+            return redirect(route('students.index'));
         }
     }
 
@@ -310,11 +310,15 @@ class StudentController extends AppBaseController
      */
     public function update($id, UpdateStudentRequest $request)
     {
+
+
         /** @var Student $student */
         $student = Student::find($id);
 
         $input = $request->all();
 
+        $student_type = $input['student_type'];
+        unset($input['student_type']);
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
@@ -340,14 +344,10 @@ class StudentController extends AppBaseController
         if (empty($student)) {
             Flash::error('Student not found');
 
-            if (request()->is('general_students*')) {
-                if (request()->is('general_students*')) {
-                    return redirect(route('students.index'));
-                } else {
-                    return redirect(route('general_students.index'));
-                }
-            } else {
+            if ($student_type == 'general') {
                 return redirect(route('general_students.index'));
+            } else {
+                return redirect(route('students.index'));
             }
         }
 
@@ -414,7 +414,7 @@ class StudentController extends AppBaseController
         $student->exam_status = $request->examResult;
         $student->exam_result_sheet = $input['examResultSheet'];
         $student->save();
-        $checkedCompetences=explode(',',$request->checkedCompetences) ;
+        $checkedCompetences = explode(',', $request->checkedCompetences);
 
         foreach ($checkedCompetences as $competenceId) {
             $StudentCompetenceModel = new StudentCompetenceModel();
@@ -873,8 +873,8 @@ class StudentController extends AppBaseController
             DB::commit();
             return response()->json([
                 'success' => true,
-                'message' => "Lerner forwarded to District Admin successfully",
-            ]);
+                'message' => "Operation successfull",
+            ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -962,4 +962,109 @@ class StudentController extends AppBaseController
 
         return response()->json($html);
     }
+
+
+    function convertBanglaDateToEnglish($banglaDate)
+    {
+        $bn = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+        $en = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        // Step 1: Replace Bangla digits with English digits
+        $englishDate = str_replace($bn, $en, $banglaDate);
+        return date('Y-m-d', strtotime($englishDate));
+    }
+    function bntoen($var)
+    {
+        $bn = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+        $en = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        $english = str_replace($bn, $en, $var);
+        return $english;
+    }
+
+    function get_upazila_id($var)
+    {
+        $upazila = Upazila::where('name_bn', $var)->first();
+        if ($upazila) {
+            return $upazila->id;
+        } else {
+            $new_upazila = new Upazila();
+            $new_upazila->name_bn = $var;
+            $new_upazila->name_en = $var;
+            $new_upazila->dis_id = 12;
+            $new_upazila->save();
+            return $new_upazila->id;
+        }
+
+    }
+    function get_occupation_id($var)
+    {
+        $upazila = Occupation::where('title', $var)->first();
+        if ($upazila) {
+            return $upazila->id;
+        } else {
+            $new_upazila = new Occupation();
+            $new_upazila->title = $var;
+            $new_upazila->description = $var;
+            $new_upazila->save();
+            return $new_upazila->id;
+        }
+
+    }
+
+
+    function excell_date_convert($number){
+        $date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($number);
+        return $date->format('Y-m-d'); // Output: 2024-11-14 
+    }
+
+
+
+
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+
+        $import = new ExcelDataImport;
+        Excel::import($import, $request->file('file'));
+
+        $data = $import->data;
+        foreach ($data as $key => $value) {
+
+            $upajila_id = $this->get_upazila_id($value['upajila_id']);
+            $occupation_id = $this->get_occupation_id($value['occupation_id']);
+            $date_of_birth = $this->convertBanglaDateToEnglish($value['date_of_birth']);
+
+            $training_start_date=$this->excell_date_convert($value['training_start_date']);
+            $training_end_date=$this->excell_date_convert($value['training_end_date']);
+
+            $data = [
+                'program_id' => $value['program_id'],
+                'occupation_id' => $occupation_id,
+                'registration_number' => $value['registration_number'],
+                'candidate_id' => $value['candidate_id'],
+                'candidate_name' => $value['candidate_name_bn'],
+                'candidate_name_bn' => $value['candidate_name_bn'],
+                'father_name' => $value['father_name'],
+                'mother_name' => $value['mother_name'],
+                'district_id' => 12,
+                'upajila_id' => $upajila_id,
+                'address' => $value['address'],
+                'date_of_birth' => $date_of_birth,
+                'mobile_number' => $value['mobile_number'],
+                'admitted_from' => 'From this institution',
+                'age' => $this->bntoen($value['age']),
+                'literacy_status' => $value['literacy_status'],
+                'educational_qualification' => $value['educational_qualification'],
+                'training_start_date' => $training_start_date,
+                'training_end_date' => $training_end_date,
+                'gender' => $value['gender'],
+            ];
+            Student::create($data);
+        }
+        echo 'success';
+    }
+
 }

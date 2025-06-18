@@ -38,6 +38,12 @@ class CreateStudentsTable extends Migration
             $table->string('chairmen_status');
             $table->string('districts_admin_id');
             $table->string('districts_admin_status');
+            $table->string('age');
+            $table->string('literacy_status');
+            $table->string('educational_qualification');
+            $table->string('training_start_date');
+            $table->string('training_end_date');
+            $table->string('gender');
             $table->timestamps();
         });
     }

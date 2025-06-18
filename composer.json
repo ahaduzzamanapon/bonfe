@@ -17,6 +17,8 @@
         "laravel/tinker": "^2.7",
         "laravel/ui": "^v3.0.0",
         "laravelcollective/html": "^v6.3.0",
+        "maatwebsite/excel": "^3.1",
+        "phpoffice/phpspreadsheet": "^1.29",
         "sentry/sentry-laravel": "^2.3",
         "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/ray": "^1.42",

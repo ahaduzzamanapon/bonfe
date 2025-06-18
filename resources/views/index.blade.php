@@ -172,7 +172,7 @@
     <section class="content">
         <div class="dashboard_cards_header">
             <div class="dashboard_card">
-                <a href="{{ route('students.index') }}" style="text-decoration: none!important;">
+                <a class="indexLink" href="{{ route('students.index') }}" style="text-decoration: none!important;">
                     <div class="custom-card">
                         <div class="card-icon teal">
                             <i class="icon im im-icon-User"></i>
@@ -187,7 +187,7 @@
                 </a>
             </div>
             <div class="dashboard_card">
-                <a href="{{ route('students.index') }}" style="text-decoration: none!important;">
+                <a class="indexLink" href="{{ route('students.index') }}" style="text-decoration: none!important;">
                     <div class="custom-card">
                         <div class="card-icon blue">
                             <i class="icon im im-icon-Map-Marker"></i>
@@ -196,13 +196,13 @@
                             <h3 id="total_passed_students">
                                 <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
                             </h3>
-                            <p>Total Promising</p>
+                            <p>Total <span id='com_pass'></span> </p>
                         </div>
                     </div>
                 </a>
             </div>
             <div class="dashboard_card">
-                <a href="{{ route('students.index') }}" style="text-decoration: none!important;">
+                <a class="indexLink" href="{{ route('students.index') }}" style="text-decoration: none!important;">
                     <div class="custom-card ">
                         <div class="card-icon green">
                             <i class="icon im im-icon-Map"></i>
@@ -211,13 +211,13 @@
                             <h3 id="total_failed_students">
                                 <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
                             </h3>
-                            <p>Total Optainane  </p>
+                            <p>Total <span id='com_fail'></span>  </p>
                         </div>
                     </div>
                 </a>
             </div>
             <div class="dashboard_card">
-                <a href="{{ route('students.students_waiting_for_chairman_approval') }}"
+                <a class="indexLink" href="{{ route('students.students_waiting_for_chairman_approval') }}"
                     style="text-decoration: none!important;">
                     <div class="custom-card ">
                         <div class="card-icon fuchsia">
@@ -234,7 +234,7 @@
             </div>
             <div class="dashboard_card">
                 <a href="{{ route('students.students_waiting_for_district_approval') }}"
-                    style="text-decoration: none!important;">
+                    style="text-decoration: none!important;" class="indexLink">
                     <div class="custom-card ">
                         <div class="card-icon aqua">
                             <i class="icon im im-icon-Map"></i>
@@ -251,7 +251,7 @@
 
 
             <div class="dashboard_card">
-                <a href="{{ route('students.index') }}" style="text-decoration: none!important;">
+                <a href="{{ route('students.index') }}" class="indexLink" style="text-decoration: none!important;">
                     <div class="custom-card ">
                         <div class="card-icon orange">
                             <i class="icon im im-icon-Map"></i>
@@ -309,13 +309,24 @@
                     occupation_id: $('#dashboard_occupation').val()
                 },
                 success: function(data) {
+                    program_type =data.program_type
+                    if (program_type == 'General') {
+                        $('#com_pass').html('Promising');
+                        $('#com_fail').html('Optainane');
+
+                        $('.indexLink').attr('href', "{{ route('general_students.index') }}");
+                    } else {
+                        $('#com_pass').html('Competent');
+                        $('#com_fail').html('Not Competent yet');
+
+                        $('.indexLink').attr('href', "{{ route('students.index') }}");
+                    }
                     $('#total_students').html(data.total_students);
                     $('#total_passed_students').html(data.total_passed_students);
                     $('#total_failed_students').html(data.total_failed_students);
                     $('#waiting_for_chairman').html(data.waiting_for_chairman);
                     $('#waiting_for_district').html(data.waiting_for_district);
                     $('#generated_certificate').html(data.generated_certificate);
-
                     drawPieCharts(data);
                 }
             });

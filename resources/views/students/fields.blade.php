@@ -1,10 +1,21 @@
 @php
     if( Request::is('general_students*')){
         $Occupation = \App\Models\Occupation::where('title', 'General')->get()->pluck('title', 'id')->toArray();
+         $Program = \App\Models\Program::orderBy('id', 'desc')
+         ->where('program_type', 'General')
+         ->get()
+        ->pluck('program_title', 'id')
+        ->prepend('Select Program', '')
+        ->toArray();
     }else{
         $Occupation = \App\Models\Occupation::where('title', '!=', 'General')->get()->pluck('title', 'id')->prepend('Select Occupation', '')->toArray();
+         $Program = \App\Models\Program::orderBy('id', 'desc')
+         ->where('program_type', 'Technical')
+         ->get()
+        ->pluck('program_title', 'id')
+        ->prepend('Select Program', '')
+        ->toArray();
     }
-
     $AssessmentVenue = \App\Models\AssessmentVenue::all()
         ->pluck('venue_name', 'id')
         ->prepend('Select Venue', '')
@@ -13,10 +24,7 @@
         ->pluck('center_name', 'id')
         ->prepend('Select Center', '')
         ->toArray();
-    $Program = \App\Models\Program::orderBy('id', 'desc')->get()
-        ->pluck('program_title', 'id')
-        ->prepend('Select Program', '')
-        ->toArray();
+   
 @endphp
 
 
@@ -220,6 +228,78 @@
         {!! Form::text('institutionName', null, ['class' => 'form-control']) !!}
     </div>
 </div>
+
+
+
+<!-- Age Field -->
+<div class="col-md-3 @if (Request::is('general_students*')) d-none @endif" >
+    <div class="form-group">
+        {!! Form::label('age', 'Age', ['class' => 'control-label']) !!}
+        <span style="color: red">*</span>
+        {!! Form::number('age', null, ['class' => 'form-control']) !!}
+    </div>
+</div>
+
+
+<!-- Literacy Status Field -->
+<div class="col-md-3 @if (Request::is('general_students*')) d-none @endif" >
+    <div class="form-group">
+        {!! Form::label('literacy_status', 'Literacy Status', ['class' => 'control-label']) !!}
+        <span style="color: red">*</span>
+        {!! Form::text('literacy_status',  null, ['class' => 'form-control']) !!}
+    </div>
+</div>
+
+
+<!-- Educational Qualification Field -->
+<div class="col-md-3 @if (Request::is('general_students*')) d-none @endif" >
+    <div class="form-group">
+        {!! Form::label('educational_qualification', 'Educational Qualification', ['class' => 'control-label']) !!}
+        <span style="color: red">*</span>
+        {!! Form::text('educational_qualification', null, ['class' => 'form-control']) !!}
+    </div>
+</div>
+
+
+<!-- Training Start Date Field -->
+<div class="col-md-3 @if (Request::is('general_students*')) d-none @endif" >
+    <div class="form-group">
+        {!! Form::label('training_start_date', 'Training Start Date', ['class' => 'control-label']) !!}
+        <span style="color: red">*</span>
+        {!! Form::text('training_start_date', null, ['class' => 'form-control date','autocomplete' => 'off']) !!}
+    </div>
+</div>
+
+
+<!-- Training End Date Field -->
+<div class="col-md-3 @if (Request::is('general_students*')) d-none @endif" >
+    <div class="form-group">
+        {!! Form::label('training_end_date', 'Training End Date', ['class' => 'control-label']) !!}
+        <span style="color: red">*</span>
+        {!! Form::text('training_end_date', null, ['class' => 'form-control date','autocomplete' => 'off']) !!}
+    </div>
+</div>
+
+<!-- Gender Field -->
+<div class="col-md-3">
+    <div class="form-group">
+        {!! Form::label('gender', 'Gender', ['class' => 'control-label']) !!}
+        <span style="color: red">*</span>
+        {!! Form::select('gender', ['' => 'Select Gender','Male' => 'Male', 'Female' => 'Female', 'Other' => 'Other'], null, ['class' => 'form-control']) !!}
+    </div>
+</div>
+
+
+
+
+{{-- 
+age
+literacy_status
+educational_qualification
+training_start_date
+training_end_date
+ --}}
+
 
 
 @section('footer_scripts')

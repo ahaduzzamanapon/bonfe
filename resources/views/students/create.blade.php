@@ -18,6 +18,12 @@ Student @parent
             <div class="card-body">
                 <div class="row">
                     {!! Form::open(['route' => 'students.store', 'files' => true, 'class' => 'form-horizontal col-md-12']) !!}
+                    @if( Request::is('general_students*'))
+                    <input type="hidden" name="student_type" value="general">
+                    @else
+                    <input type="hidden" name="student_type" value="technical">
+                    @endif
+
                     <div class="row">
                         @include('students.fields')
                     </div>

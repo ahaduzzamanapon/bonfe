@@ -1,3 +1,10 @@
+
+
+
+
+
+
+
 <!-- Emp Id Field -->
 <div class="col-md-3">
     <div class="form-group">
@@ -76,6 +83,7 @@
       $districts = \App\Models\District::where('id', auth()->user()->district_id)->get()->pluck('name_en','id')->toArray();
     }else {
         $districts = \App\Models\District::all()->pluck('name_en','id')->prepend('Select District', '')->toArray();
+        $districts_multi = \App\Models\District::all()->pluck('name_en','id')->toArray();
     }
 
 @endphp
@@ -150,6 +158,21 @@
     </div>
 </div>
 
+@php
+    if(isset($users)){
+        $user_id = $users->id;
+        $multiple_district = \DB::table('multiple_district')->where('user_id', $user_id)->pluck('district_id')->toArray();
+    }
+@endphp
+
+
+<!-- multiple district  Field -->
+<div class="col-md-3">
+    <div class="form-group">
+        {!! Form::label('multiple_district', 'Multiple District',['class'=>'control-label']) !!}
+        {!! Form::select('multiple_district[]',$districts_multi,isset($multiple_district) ? $multiple_district : [], ['class' => 'form-control select2','multiple'=>'multiple']) !!}
+    </div>
+</div>
 
 <!-- Group Id Field -->
 <div class="col-md-3">

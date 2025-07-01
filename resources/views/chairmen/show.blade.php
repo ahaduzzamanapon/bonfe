@@ -2,7 +2,7 @@
 
 {{-- Page title --}}
 @section('title')
-Chairmen @parent
+Chairman's @parent
 @stop
 
 @section('content')

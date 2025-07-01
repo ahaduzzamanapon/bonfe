@@ -103,9 +103,11 @@ p{
 
 
       <div class="content">
+        
         <p>
           This is to certify that {{ $student->candidate_name }}, Mother's Name: {{ $student->mother_name }}, Father's Name: {{ $student->father_name }}, Date of Birth: {{ $student->date_of_birth }}, Birth Registration No: {{ $student->nid }} has successfully completed Prevocational Level course in {{ $student->occupation }} (460 hours) under the Bangladesh National Qualification Framework (BNQF) with the following competencies conducted by {{ $student->institute_name }} from {{ $student->start_date }} to {{ $student->end_date }}. The student demonstrated satisfactory participation and performance during the course.
         </p>
+
 
         <div class="units">
           <div style="display: flex;line-height: 37px;flex-direction: row;">

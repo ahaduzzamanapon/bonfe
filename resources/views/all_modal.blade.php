@@ -16,8 +16,13 @@
                     <div class="form-group">
                         <label for="ExamResult_field">Exam Result</label>
                         <select class="form-control" id="ExamResult_field">
+                            @if( Request::is('general_students*'))
                             <option value="Passed"> Promising </option>
                             <option value="Fail"> Optainane </option>
+                            @else
+                            <option value="Passed"> Competent </option>
+                            <option value="Fail"> Not Yet Competent </option>
+                            @endif
                         </select>
                     </div>
                     <div style="padding: 10px;">   
@@ -127,7 +132,7 @@
             <div class="modal-body">
                 <a class="btn btn-primary" href="javascript:void(0)" onclick="selectAllStudents()">
                     Select All</a>
-                <div id="forwardToAssessmentCenter_modal_body" style="overflow-y: scroll;">
+                <div id="forwardToAssessmentCenter_modal_body" style="overflow-y: scroll;height: 50vh;">
                 </div>
                 <div class="col-md-12 d-none assessment_details">
                     <div class="row">
@@ -269,7 +274,7 @@
             <div class="modal-body">
                 <a class="btn btn-primary" href="javascript:void(0)" onclick="selectAllStudents()">
                     Select All</a>
-                <div id="forwardToDistrictAdmin_modal_body" style="overflow-y: scroll;">
+                <div id="forwardToDistrictAdmin_modal_body" style="overflow-y: scroll;height: 50vh;">
                 </div>
             </div>
             <div class="modal-footer">
@@ -375,7 +380,7 @@
             <div class="modal-body">
                 <a class="btn btn-primary" href="javascript:void(0)" onclick="selectAllStudents()">
                     Select All</a>
-                <div id="forwardToAssessmentController_modal_body" style="overflow-y: scroll;">
+                <div id="forwardToAssessmentController_modal_body" style="overflow-y: scroll;height: 50vh;">
                 </div>
                 <div>
                     <input type="checkbox" name="diss_accept" id="diss_accept" onchange="forwardToAssessmentController_select()">
@@ -486,7 +491,7 @@
             <div class="modal-body">
                 <a class="btn btn-primary" href="javascript:void(0)" onclick="selectAllStudents()">
                     Select All</a>
-                <div id="forwardToChairman_modal_body" style="overflow-y: scroll;">
+                <div id="forwardToChairman_modal_body" style="overflow-y: scroll;height: 50vh;">
                 </div>
             </div>
             <div class="modal-footer">
@@ -587,7 +592,7 @@
             <div class="modal-body">
                 <a class="btn btn-primary" href="javascript:void(0)" onclick="selectAllStudents()">
                     Select All</a>
-                <div id="approveStudent_modal_body" style="overflow-y: scroll;">
+                <div id="approveStudent_modal_body" style="overflow-y: scroll;height: 50vh;">
                 </div>
             </div>
             <div class="modal-footer">
@@ -688,7 +693,7 @@
             <div class="modal-body">
                 <a class="btn btn-primary" href="javascript:void(0)" onclick="selectAllStudents()">
                     Select All</a>
-                <div id="backToDistrict_modal_body" style="overflow-y: scroll;">
+                <div id="backToDistrict_modal_body" style="overflow-y: scroll;height: 50vh;">
                 </div>
             </div>
             <div class="modal-footer">
@@ -794,7 +799,7 @@
             <div class="modal-body">
                 <a class="btn btn-primary" href="javascript:void(0)" onclick="selectAllStudents()">
                     Select All</a>
-                <div id="generateCertificate_modal_body" style="overflow-y: scroll;">
+                <div id="generateCertificate_modal_body" style="overflow-y: scroll;height: 50vh;">
                 </div>
             </div>
             <div class="modal-footer">

@@ -97,7 +97,7 @@ class StudentController extends AppBaseController
             $html .= '<td>' . ($key + 1) . '</td>';
             $html .= '<td>';
             $html .= '<div style="line-height: 1px;">';
-            $html .= '<p style="font-weight: bold;color: #000"> ' . $student->candidate_name . '</p>';
+            $html .= '<p style="font-weight: bold;color: #000"> ' . $student->candidate_name_bn . '</p>';
             $html .= '<div style="line-height: 2px;">';
             $html .= '<p style="font-size: 10px;"><strong>Occupation:</strong> ' . $student->occupation . '</p>';
             $html .= '<p style="font-size: 10px;"><strong>Regis. No:</strong> ' . $student->registration_number . '</p>';
@@ -121,16 +121,16 @@ class StudentController extends AppBaseController
             $html .= '<i class="im im-icon-List2" data-placement="top" title="Actions">Action</i>';
             $html .= '</button>';
             $html .= '<div class="dropdown-menu">';
-            if (request()->is('general_students*')) {
-                $html .= '<a class="dropdown-item" href="' . route('students.show', [$student->id]) . '"><i class="im im-icon-Eye"></i> View</a>';
-            } else {
+            if ($request->has('program_type') && $request->program_type == 'General') {
                 $html .= '<a class="dropdown-item" href="' . route('general_students.show', [$student->id]) . '"><i class="im im-icon-Eye"></i> View</a>';
+            } else {
+                $html .= '<a class="dropdown-item" href="' . route('students.show', [$student->id]) . '"><i class="im im-icon-Eye"></i> View</a>';
             }
             if ($student->status != 'Chairman Approved') {
-                if (request()->is('general_students*')) {
-                    $html .= '<a class="dropdown-item" href="' . route('students.edit', [$student->id]) . '"><i class="im im-icon-Pen"></i> Edit</a>';
-                } else {
+                if ($request->has('program_type') && $request->program_type == 'General') {
                     $html .= '<a class="dropdown-item" href="' . route('general_students.edit', [$student->id]) . '"><i class="im im-icon-Pen"></i> Edit</a>';
+                } else {
+                    $html .= '<a class="dropdown-item" href="' . route('students.edit', [$student->id]) . '"><i class="im im-icon-Pen"></i> Edit</a>';
                 }
             }
             if (can('give_exam_result') && $student->status == 'Waiting for the exam results from the Assessment Center') {
@@ -547,7 +547,7 @@ class StudentController extends AppBaseController
             DB::commit();
             return response()->json([
                 'success' => true,
-                'message' => "Lerner forwarded to Assessment Center successfully",
+                'message' => "Learner forwarded to Assessment Center successfully",
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -610,7 +610,7 @@ class StudentController extends AppBaseController
             DB::commit();
             return response()->json([
                 'success' => true,
-                'message' => "Lerner forwarded to District Admin successfully",
+                'message' => "Learner forwarded to District Admin successfully",
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -676,7 +676,7 @@ class StudentController extends AppBaseController
             DB::commit();
             return response()->json([
                 'success' => true,
-                'message' => "Lerner forwarded to District Admin successfully",
+                'message' => "Learner forwarded to District Admin successfully",
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -741,7 +741,7 @@ class StudentController extends AppBaseController
             DB::commit();
             return response()->json([
                 'success' => true,
-                'message' => "Lerner forwarded to District Admin successfully",
+                'message' => "Learner forwarded to District Admin successfully",
             ]);
         } catch (\Exception $e) {
             dd($e);
@@ -805,7 +805,7 @@ class StudentController extends AppBaseController
             DB::commit();
             return response()->json([
                 'success' => true,
-                'message' => "Lerner Back to District Admin successfully",
+                'message' => "Learner Back to District Admin successfully",
             ]);
         } catch (\Exception $e) {
             dd(vars: $e);
@@ -1011,7 +1011,8 @@ class StudentController extends AppBaseController
     }
 
 
-    function excell_date_convert($number){
+    function excell_date_convert($number)
+    {
         $date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($number);
         return $date->format('Y-m-d'); // Output: 2024-11-14 
     }
@@ -1025,8 +1026,6 @@ class StudentController extends AppBaseController
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
         ]);
-
-
         $import = new ExcelDataImport;
         Excel::import($import, $request->file('file'));
 
@@ -1037,8 +1036,8 @@ class StudentController extends AppBaseController
             $occupation_id = $this->get_occupation_id($value['occupation_id']);
             $date_of_birth = $this->convertBanglaDateToEnglish($value['date_of_birth']);
 
-            $training_start_date=$this->excell_date_convert($value['training_start_date']);
-            $training_end_date=$this->excell_date_convert($value['training_end_date']);
+            $training_start_date = $this->convertBanglaDateToEnglish($value['training_start_date']);
+            $training_end_date = $this->convertBanglaDateToEnglish($value['training_end_date']);
 
             $data = [
                 'program_id' => $value['program_id'],
@@ -1062,7 +1061,10 @@ class StudentController extends AppBaseController
                 'training_end_date' => $training_end_date,
                 'gender' => $value['gender'],
             ];
-            Student::create($data);
+            // $prev_data=Student::where('registration_number',$value['registration_number'],)->get();
+            // if (!count($prev_data)>0) {
+                Student::create($data);
+            //}
         }
         echo 'success';
     }

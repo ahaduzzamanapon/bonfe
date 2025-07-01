@@ -1,7 +1,7 @@
 @extends('layouts.default')
 
 @section('title')
-    Lerner @parent
+    Learner @parent
 @stop
 
 @section('content')

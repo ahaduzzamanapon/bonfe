@@ -82,7 +82,7 @@
   if(!can('chairman') && can('district_admin')) {
       $districts = \App\Models\District::where('id', auth()->user()->district_id)->get()->pluck('name_en','id')->toArray();
     }else {
-        $districts = \App\Models\District::all()->pluck('name_en','id')->prepend('Select District', '')->toArray();
+        $districts = \App\Models\District::all()->pluck('name_en',key: 'id')->prepend('Select District', '')->toArray();
         $districts_multi = \App\Models\District::all()->pluck('name_en','id')->toArray();
     }
 

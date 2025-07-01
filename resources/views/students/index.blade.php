@@ -2,14 +2,21 @@
 
 {{-- Page title --}}
 @section('title')
-    Lerner @parent
+    Learner @parent
 @stop
 
 @section('content')
+
+<style>
+    .badge-warning {
+    color: #212529!important;
+    background-color: #ffc107;
+}
+</style>
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div aria-label="breadcrumb" class="card-breadcrumb">
-            <h5><a href="{{ url('/') }}" style="text-decoration: none; color: black;">Dashboard</a> > Lerner </h5>
+            <h5><a href="{{ url('/') }}" style="text-decoration: none; color: black;">Dashboard</a> > Learner </h5>
         </div>
         <div class="separator-breadcrumb border-top"></div>
     </section>
@@ -21,7 +28,7 @@
         <div class="clearfix"></div>
         <div class="card" width="88vw;">
             <section class="card-header">
-                <h5 class="card-title d-inline">Lerner</h5>
+                <h5 class="card-title d-inline">Learner</h5>
                 <span class="float-right">
                     @if (can('assessment_centers_controller'))
                         <a class="btn btn-primary pull-right" onclick="forwardToDistrictAdmin_modal()">Forward to District Admin</a>
@@ -59,7 +66,7 @@
                                 <label class="btn btn-outline-primary {{ Request::is('students') ? 'active' : '' }}">
                                     <input onchange="createTable()" class="form-check-input" type="radio"
                                         name="status_filter" id="all" value="all" autocomplete="off"
-                                        {{ Request::is('students') ? 'checked' : '' }}> All Lerner
+                                        {{ Request::is('students') ? 'checked' : '' }}> All Learner
                                 </label>
 
                                 @if (can('assessment_centers_controller'))
@@ -123,7 +130,6 @@
                                 <div class="form-group">
                                     <label for="search">Select Occupation:</label>
                                     <select id="filter_occupation" class="form-control">
-                                        <option value="">All</option>
                                         @foreach ($occupations as $occupation)
                                             <option value="{{ $occupation->id }}">{{ $occupation->title }}</option>
                                         @endforeach

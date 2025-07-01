@@ -8,7 +8,7 @@
         ->prepend('Select Program', '')
         ->toArray();
     }else{
-        $Occupation = \App\Models\Occupation::where('title', '!=', 'General')->get()->pluck('title', 'id')->prepend('Select Occupation', '')->toArray();
+        $Occupation = \App\Models\Occupation::where('title', '!=', 'General')->get()->pluck('title', 'id')->prepend('Select trade/course', '')->toArray();
          $Program = \App\Models\Program::orderBy('id', 'desc')
          ->where('program_type', 'Technical')
          ->get()
@@ -40,7 +40,7 @@
 <!-- Occupation Id Field -->
 <div class="col-md-3 @if( Request::is('general_students*')) d-none @endif">
     <div class="form-group">
-        {!! Form::label('occupation_id', 'Occupation', ['class' => 'control-label']) !!}
+        {!! Form::label('occupation_id', 'Trade/Course Name', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
         {!! Form::select('occupation_id', $Occupation, null, ['class' => 'form-control']) !!}
     </div>
@@ -66,6 +66,14 @@
     </div>
 </div>
 
+<!-- Candidate Name Field -->
+<div class="col-md-3">
+    <div class="form-group">
+        {!! Form::label('candidate_name_bn', 'Candidate Name (Bangla)', ['class' => 'control-label']) !!}
+        <span style="color: red">*</span>
+        {!! Form::text('candidate_name_bn', null, ['class' => 'form-control']) !!}
+    </div>
+</div>
 
 <!-- Candidate Name Field -->
 <div class="col-md-3">
@@ -76,12 +84,12 @@
     </div>
 </div>
 
-<!-- Candidate Name Field -->
+<!-- Date Of Birth Field -->
 <div class="col-md-3">
     <div class="form-group">
-        {!! Form::label('candidate_name_bn', 'Candidate Name (Bangla)', ['class' => 'control-label']) !!}
+        {!! Form::label('date_of_birth', 'Date Of Birth', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('candidate_name_bn', null, ['class' => 'form-control']) !!}
+        {!! Form::text('date_of_birth', null, ['class' => 'form-control date', 'id' => 'date_of_birth','autocomplete' => 'off']) !!}
     </div>
 </div>
 
@@ -94,43 +102,35 @@
 </div>
 
 
-<!-- Date Of Birth Field -->
+
+
+
+
+<!-- Mother Name Field -->
 <div class="col-md-3">
     <div class="form-group">
-        {!! Form::label('date_of_birth', 'Date Of Birth', ['class' => 'control-label']) !!}
+        {!! Form::label('mother_name', "Mother's Name", ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('date_of_birth', null, ['class' => 'form-control date', 'id' => 'date_of_birth','autocomplete' => 'off']) !!}
+        {!! Form::text('mother_name', null, ['class' => 'form-control']) !!}
     </div>
 </div>
-
-
-
-
 
 <!-- Father Name Field -->
 <div class="col-md-3">
     <div class="form-group">
-        {!! Form::label('father_name', 'Father Name', ['class' => 'control-label']) !!}
+        {!! Form::label('father_name', "Father's Name", ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
         {!! Form::text('father_name', null, ['class' => 'form-control']) !!}
     </div>
 </div>
 
 
-<!-- Mother Name Field -->
-<div class="col-md-3">
-    <div class="form-group">
-        {!! Form::label('mother_name', 'Mother Name', ['class' => 'control-label']) !!}
-        <span style="color: red">*</span>
-        {!! Form::text('mother_name', null, ['class' => 'form-control']) !!}
-    </div>
-</div>
 
 
 <!-- Nid Field -->
 <div class="col-md-3 @if (Request::is('general_students*')) d-none @endif">
     <div class="form-group">
-        {!! Form::label('nid', 'Nid', ['class' => 'control-label']) !!}
+        {!! Form::label('nid', 'NID', ['class' => 'control-label']) !!}
         {!! Form::text('nid', null, ['class' => 'form-control']) !!}
     </div>
 </div>
@@ -162,7 +162,7 @@
 <!-- Upajila Id Field -->
 <div class="col-md-3">
     <div class="form-group">
-        {!! Form::label('upajila_id', 'Upazila', ['class' => 'control-label']) !!}
+        {!! Form::label('upajila_id', 'Upazila/City', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
         {!! Form::select('upajila_id', $upazilas, null, ['class' => 'form-control select2']) !!}
     </div>
@@ -203,7 +203,6 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('email', 'Email', ['class' => 'control-label']) !!}
-        <span style="color: red">*</span>
         {!! Form::email('email', null, ['class' => 'form-control']) !!}
     </div>
 </div>
@@ -215,7 +214,7 @@
     <div class="form-group">
         {!! Form::label('admitted_from', ' Admitted from', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::select('admitted_from', ['From this institution' => 'From this institution', 'From another institution' => 'From another institution'], null, ['class' => 'form-control']) !!}
+        {!! Form::select('admitted_from', ['BNFEinstitution' => 'BNFE institution', 'Others institution' => 'Others institution'], null, ['class' => 'form-control']) !!}
     </div>
 </div>
 
@@ -229,10 +228,35 @@
     </div>
 </div>
 
+@section('footer_scripts')
+    {{-- <script>
+        $(document).ready(function() {
+            toggleInstitutionName() 
+            
+            $('#admitted_from').change(function() {
+                toggleInstitutionName() 
+            });
+        });
+        function toggleInstitutionName() {
+
+            var admittedFrom = document.getElementById('admitted_from').value;
+            var institutionNameDiv = document.getElementById('institutionName');
+            console.log(admittedFrom);
+            
+            if (admittedFrom === 'Others institution') {
+                institutionNameDiv.classList.remove('d-none');
+            } else {
+                institutionNameDiv.classList.add('d-none');
+            }
+        }
+    </script> --}}
+@endsection
+
+
 
 
 <!-- Age Field -->
-<div class="col-md-3 @if (Request::is('general_students*')) d-none @endif" >
+<div class="col-md-3 d-none" >
     <div class="form-group">
         {!! Form::label('age', 'Age', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
@@ -242,7 +266,7 @@
 
 
 <!-- Literacy Status Field -->
-<div class="col-md-3 @if (Request::is('general_students*')) d-none @endif" >
+<div class="col-md-3  d-none" >
     <div class="form-group">
         {!! Form::label('literacy_status', 'Literacy Status', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
@@ -272,7 +296,7 @@
 
 
 <!-- Training End Date Field -->
-<div class="col-md-3 @if (Request::is('general_students*')) d-none @endif" >
+<div class="col-md-3 d-none" >
     <div class="form-group">
         {!! Form::label('training_end_date', 'Training End Date', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
@@ -302,25 +326,6 @@ training_end_date
 
 
 
-@section('footer_scripts')
-    <script>
-        $(document).ready(function() {
-            toggleInstitutionName() 
-            $('#admitted_from').change(function() {
-                toggleInstitutionName() 
-            });
-        });
-        function toggleInstitutionName() {
-            var admittedFrom = document.getElementById('admitted_from').value;
-            var institutionNameDiv = document.getElementById('institutionName');
-            if (admittedFrom === 'From another institution') {
-                institutionNameDiv.classList.remove('d-none');
-            } else {
-                institutionNameDiv.classList.add('d-none');
-            }
-        }
-    </script>
-@endsection
 
 
 

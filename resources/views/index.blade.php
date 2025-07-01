@@ -181,7 +181,7 @@
                             <h3 id="total_students">
                                 <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
                             </h3>
-                            <p>Total Lerner</p>
+                            <p>Total Learner</p>
                         </div>
                     </div>
                 </a>
@@ -227,7 +227,7 @@
                             <h3 id="waiting_for_chairman">
                                 <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
                             </h3>
-                            <p>Waiting for Chairmen Approval</p>
+                            <p>Waiting for Chairman's Approval</p>
                         </div>
                     </div>
                 </a>
@@ -317,7 +317,7 @@
                         $('.indexLink').attr('href', "{{ route('general_students.index') }}");
                     } else {
                         $('#com_pass').html('Competent');
-                        $('#com_fail').html('Not Competent yet');
+                        $('#com_fail').html('Not Yet Competent');
 
                         $('.indexLink').attr('href', "{{ route('students.index') }}");
                     }
@@ -327,31 +327,49 @@
                     $('#waiting_for_chairman').html(data.waiting_for_chairman);
                     $('#waiting_for_district').html(data.waiting_for_district);
                     $('#generated_certificate').html(data.generated_certificate);
-                    drawPieCharts(data);
+                    drawPieCharts(data,program_type);
                 }
             });
         }
+        function drawPieCharts(data, program_type) {
 
-        function drawPieCharts(data) {
-            new Chart(document.getElementById('studentPieChart'), {
+            if (window.myPieChart) {
+                window.myPieChart.destroy();
+            }
+
+            if (window.myPieChart2) {
+                window.myPieChart2.destroy();
+            }
+
+            $('#studentPieChart').empty();
+            $('#studentapprovalPieChart').empty();
+
+
+            const ctx = document.getElementById('studentPieChart').getContext('2d');
+            const ctx2 = document.getElementById('studentapprovalPieChart').getContext('2d');
+           
+
+            const pieData = program_type === 'General' ? 
+                { labels: ['Promising', 'Optainane'], data: [data.total_passed_students, data.total_failed_students] } : 
+                { labels: ['Competent', 'Not Yet Competent'], data: [data.total_passed_students, data.total_failed_students] };
+
+            window.myPieChart = new Chart(ctx, {
                 type: 'pie',
                 data: {
-                    labels: ['Promising', 'Optainane '],
+                    labels: pieData.labels,
                     datasets: [{
-                        data: [data.total_passed_students, data.total_failed_students],
+                        data: pieData.data,
                         backgroundColor: ['#28a745', '#dc3545']
                     }]
                 }
             });
 
-            new Chart(document.getElementById('studentapprovalPieChart'), {
+            window.myPieChart2 = new Chart(ctx2, {
                 type: 'pie',
                 data: {
                     labels: ['Waiting for Chairman', 'Waiting for District', 'Generated Certificate'],
                     datasets: [{
-                        data: [data.waiting_for_chairman, data.waiting_for_district, data
-                            .generated_certificate
-                        ],
+                        data: [data.waiting_for_chairman, data.waiting_for_district, data.generated_certificate],
                         backgroundColor: ['#ffc107', '#17a2b8', '#6c757d']
                     }]
                 }

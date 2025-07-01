@@ -110,4 +110,5 @@ Route::get('/upload_exell', function () {
 
 Route::post('/import-users', [StudentController::class, 'import'])->name('import.users');
 
+Route::get('/students/table', [StudentController::class, 'get_table'])->name('students.get_table');
 

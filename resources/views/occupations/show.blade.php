@@ -2,7 +2,7 @@
 
 {{-- Page title --}}
 @section('title')
-Occupations @parent
+Trade/Course @parent
 @stop
 
 @section('content')

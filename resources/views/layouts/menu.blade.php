@@ -7,21 +7,21 @@
 
 <li class="{!! (Request::is('chairmen*') ? 'active' : '' ) !!}">
     <a href="{{ route('chairmen.index') }}">
-        <span class="mm-text ">Chairmen</span>
+        <span class="mm-text ">Chairman's</span>
         <span class="menu-icon"><i class="im im-icon-Structure"></i></span>
     </a>
 </li>
 
 <li class="{!! (Request::is('students*') ? 'active' : '' ) !!}">
     <a href="{{ route('students.index') }}">
-        <span class="mm-text ">Lerner</span>
+        <span class="mm-text ">Learner</span>
         <span class="menu-icon"><i class="im im-icon-Structure"></i></span>
     </a>
 </li>
 
 <li class="{!! (Request::is('occupations*') ? 'active' : '' ) !!}">
     <a href="{{ route('occupations.index') }}">
-        <span class="mm-text ">Occupations</span>
+        <span class="mm-text ">Trade/Course</span>
         <span class="menu-icon"><i class="im im-icon-Structure"></i></span>
     </a>
 </li>

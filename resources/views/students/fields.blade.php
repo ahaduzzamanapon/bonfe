@@ -210,21 +210,30 @@
 
 
 <!-- Email Field -->
-<div class="col-md-3">
+<div class="col-md-3 d-none">
     <div class="form-group">
         {!! Form::label('admitted_from', ' Admitted from', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::select('admitted_from', ['BNFEinstitution' => 'BNFE institution', 'Others institution' => 'Others institution'], null, ['class' => 'form-control']) !!}
+        {!! Form::select('admitted_from', ['Others institution' => 'Others institution'], null, ['class' => 'form-control']) !!}
     </div>
 </div>
 
+@php
+    if (!can('chairman') && can('district_admin')) {
+        $Insatitute = \App\Models\Insatitute::where('district', auth()->user()->district_id)
+            ->pluck('insatitute_name', 'id')
+            ->toArray();
+    } else {
+        $Insatitute = \App\Models\Insatitute::all()->pluck('insatitute_name', 'id')->prepend('Select Institution', '')->toArray();
+    }
+@endphp
 
 <!-- Address Field -->
-<div class="col-md-3 d-none" id="institutionName">
+<div class="col-md-3" id="institutionName">
     <div class="form-group">
         {!! Form::label('institutionName', 'Institution Name', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('institutionName', null, ['class' => 'form-control']) !!}
+        {!! Form::select('institutionName', $Insatitute, null, ['class' => 'form-control']) !!}
     </div>
 </div>
 

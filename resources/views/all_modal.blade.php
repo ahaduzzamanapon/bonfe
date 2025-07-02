@@ -188,9 +188,15 @@
         $('#forwardToAssessmentCenter_modal').modal('show');
         $('#forwardToAssessmentCenter_modal_button').prop('disabled', true);
         forwardToAssessmentCenter_modal_body_loader_on()
+        filter_occupation = $('#filter_occupation').val();
+        filter_program = $('#filter_program').val();
         $.ajax({
             url: '{{ route('forwardToAssessmentCenter_modal') }}',
             type: 'GET',
+            data: {
+                filter_occupation: filter_occupation,
+                filter_program: filter_program
+            },
             success: function (data) {
                 $('#forwardToAssessmentCenter_modal_body').html(data);
             }

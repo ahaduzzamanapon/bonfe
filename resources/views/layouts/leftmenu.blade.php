@@ -10,14 +10,14 @@
         <a class="nav-link" data-bs-toggle="collapse" href="#student_menu" role="button" aria-expanded="false"
             aria-controls="student_menu">
             <i class="icon im im-icon-User"></i>
-            <span class="item-name">Pre Voc Learner</span>
+            <span class="item-name">Pre vocational</span>
             <i class="right-icon im im-icon-Arrow-Right"></i>
         </a>
         <ul class="sub-nav collapse {!! Request::is('students*') || Request::is('roleAndPermissions*') ? 'show' : '' !!}" id="student_menu" data-bs-parent="#sidebar-menu">
             <li class="nav-item">
                 <a class="nav-link {!! Request::is('students') ? 'active' : '' !!}" aria-current="page" href="{{ route('students.index') }}">
                     <i class="icon im im-icon-Student-Hat"></i>
-                    <span class="item-name">Pre Voc Learner</span>
+                    <span class="item-name">Learner</span>
                 </a>
             </li>
             @if (can('district_admin'))
@@ -50,14 +50,14 @@
         <a class="nav-link" data-bs-toggle="collapse" href="#general_student_menu" role="button" aria-expanded="false"
             aria-controls="student_menu">
             <i class="icon im im-icon-User"></i>
-            <span class="item-name">NFPE Learner </span>
+            <span class="item-name">NFPE </span>
             <i class="right-icon im im-icon-Arrow-Right"></i>
         </a>
         <ul class="sub-nav collapse {!! Request::is('general_students*')  ? 'show' : '' !!}" id="general_student_menu" data-bs-parent="#sidebar-menu">
             <li class="nav-item">
                 <a class="nav-link {!! Request::is('general_students') ? 'active' : '' !!}" aria-current="page" href="{{ route('general_students.index') }}">
                     <i class="icon im im-icon-Student-Hat"></i>
-                    <span class="item-name">NFPE Learner</span>
+                    <span class="item-name">Learner</span>
                 </a>
             </li>
             @if (can('district_admin'))
@@ -222,6 +222,15 @@
                         <i class="icon im im-icon-Structure"></i>
                         <i class="sidenav-mini-icon"> C </i>
                         <span class="item-name">Competences</span>
+                    </a>
+                </li>
+            @endif
+            @if (can('insatitutes'))
+                <li class="nav-item">
+                    <a class="nav-link {!! Request::is('insatitutes*') ? 'active' : '' !!}" href="{{ route('insatitutes.index') }}">
+                        <i class="icon im im-icon-Structure"></i>
+                        <i class="sidenav-mini-icon"> I </i>
+                        <span class="item-name">Insatitutes</span>
                     </a>
                 </li>
             @endif

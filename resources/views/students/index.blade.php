@@ -2,7 +2,7 @@
 
 {{-- Page title --}}
 @section('title')
-    Learner @parent
+    Lerner @parent
 @stop
 
 @section('content')
@@ -16,7 +16,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div aria-label="breadcrumb" class="card-breadcrumb">
-            <h5><a href="{{ url('/') }}" style="text-decoration: none; color: black;">Dashboard</a> > Learner </h5>
+            <h5><a href="{{ url('/') }}" style="text-decoration: none; color: black;">Dashboard</a> > Lerner </h5>
         </div>
         <div class="separator-breadcrumb border-top"></div>
     </section>
@@ -28,7 +28,7 @@
         <div class="clearfix"></div>
         <div class="card" width="88vw;">
             <section class="card-header">
-                <h5 class="card-title d-inline">Learner</h5>
+                <h5 class="card-title d-inline">Lerner</h5>
                 <span class="float-right">
                     @if (can('assessment_centers_controller'))
                         <a class="btn btn-primary pull-right" onclick="forwardToDistrictAdmin_modal()">Forward to District Admin</a>
@@ -66,7 +66,7 @@
                                 <label class="btn btn-outline-primary {{ Request::is('students') ? 'active' : '' }}">
                                     <input onchange="createTable()" class="form-check-input" type="radio"
                                         name="status_filter" id="all" value="all" autocomplete="off"
-                                        {{ Request::is('students') ? 'checked' : '' }}> All Learner
+                                        {{ Request::is('students') ? 'checked' : '' }}> All Lerner
                                 </label>
 
                                 @if (can('assessment_centers_controller'))
@@ -130,6 +130,7 @@
                                 <div class="form-group">
                                     <label for="search">Select Occupation:</label>
                                     <select id="filter_occupation" class="form-control">
+                                        <option value="">All</option>
                                         @foreach ($occupations as $occupation)
                                             <option value="{{ $occupation->id }}">{{ $occupation->title }}</option>
                                         @endforeach
@@ -160,57 +161,148 @@
                 <script>
                     function loader_on() {
                         const tableBody = $('#students-table-body');
-                        tableBody.html(
-                            '<tr><td colspan="7" class="text-center"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></td></tr>'
+                        tableBody.append(
+                            '<tr id="loader_trr"><td colspan="7" class="text-center"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></td></tr>'
                             );
                     }
 
                     function loader_off() {
-                        const tableBody = $('#students-table-body');
-                        tableBody.html('');
+                        $('#loader_trr').remove();
                     }
                 </script>
                 <script>
-                    function createTable() {
-                        const tableBody = $('#students-table-body');
+                    let offset = 0;
+                    const limit = 50;
+                    let loading = false;
+                    let allLoaded = false;
+
+                    function loadStudents() {
+                        if (loading || allLoaded) return;
+                        loading = true;
+
                         const statusFilter = $('input[name="status_filter"]:checked').val();
                         const programId = $('#filter_program').val();
                         const occupationId = $('#filter_occupation').val();
                         const programType = '{{ Request::is('general_students') ? "General" : "Technical" }}';
 
-                        loader_on()
+
                         $.ajax({
                             url: "{{ route('students.get_table') }}",
-                            type: "GET",
+                            method: "GET",
                             data: {
+                                offset: offset,
+                                limit: limit,
                                 status_filter: statusFilter,
                                 program_id: programId,
                                 occupation_id: occupationId,
                                 program_type: programType
-
                             },
                             success: function(data) {
-                                loader_off()
-                                $('#students-table').DataTable().destroy();
-                                tableBody.html(data.html);
-                                $('#students-table').DataTable({
-                                    order: [
-                                        [0, 'asc']
-                                    ],
-                                    pageLength: 10,
-                                    columnDefs: [{
-                                        targets: [0],
-                                        orderable: false
-                                    }]
+                                if (data.students.length === 0) {
+                                    allLoaded = true;
+                                    return;
+                                }
+
+                                $.each(data.students, function(index, student) {
+                                    var can_give_exam_result = {{ can('give_exam_result') ? 'true' : 'false' }};
+                                    const row = `<tr>
+                                        <td>${offset + index + 1}</td>
+                                        <td>
+                                            <div style="line-height: 1px;">
+                                                <p style="font-weight: bold;color: #000">${student.candidate_name_bn}</p>
+                                                <div style="line-height: 2px;">
+                                                    <p style="font-size: 10px;"><strong>Occupation:</strong> ${student.occupation}</p>
+                                                    <p style="font-size: 10px;"><strong>Regis. No:</strong> ${student.registration_number}</p>
+                                                    <p style="font-size: 10px;"><strong>District:</strong> ${student.district}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-${student.status === 'Pending' ? 'warning' : 'success'}">${student.status}</span></td>
+                                        <td><span class="badge badge-${student.exam_status === 'Fail' ? 'danger' : student.exam_status === 'Pending' ? 'warning' : 'success'}">${
+                                            programType === 'General'
+                                                ? student.exam_status === 'Fail' ? 'Optainane ' : student.exam_status === 'Pending' ? 'Pending' : 'Promising'
+                                                : student.exam_status === 'Fail' ? 'Not Competent yet ' : student.exam_status === 'Pending' ? 'Pending' : 'Competent'
+                                        }</span></td>
+                                        <td><span class="badge badge-${student.districts_admin_status === 'Pending' ? 'warning' : 'success'}">${student.districts_admin_status}</span></td>
+                                        <td><span class="badge badge-${student.chairmen_status === 'Pending' ? 'warning' : 'success'}">${student.chairmen_status}</span></td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-outline-primary btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="im im-icon-List2" data-placement="top" title="Actions">Action</i>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" href="/students/${student.id}"><i class="im im-icon-Eye"></i> View</a>
+                                                    ${student.status !== 'Chairman Approved' ? `
+                                                        <a class="dropdown-item" href="/students/${student.id}/edit"><i class="im im-icon-Pen"></i> Edit</a>` : ''
+                                                    }
+                                                    ${student.status === 'Waiting for the exam results from the Assessment Center' && can_give_exam_result ? `
+                                                        <a class="dropdown-item" onclick="give_exam_result(${student.id})" href="javascript:void(0);"><i class="im im-icon-Pencil-Ruler"></i> Give Exam Result</a>` : ''
+                                                    }
+                                                    ${student.status === 'Waiting for Chairman Approval' && can_chairman ? `
+                                                        <a class="dropdown-item" href="/students/${student.id}/chairman-approve"><i class="im im-icon-Approved-Window"></i> Approve</a>` : ''
+                                                    }
+                                                    ${student.exam_status === 'Pending' ? `
+                                                        <form method="POST" action="/students/${student.id}" onsubmit="return confirm('Are you sure?');">
+                                                            <input type="hidden" name="_method" value="DELETE" />
+                                                            <button class="dropdown-item" type="submit"><i class="im im-icon-Remove"></i> Delete</button>
+                                                        </form>` : ''
+                                                    }
+                                                    ${student.status === 'Chairman Approved' && student.exam_status !== 'Fail' ? `
+                                                        <a class="dropdown-item" target="_blank" href="/students/${student.id}/generate-certificate"><i class="im im-icon-People-onCloud"></i> Generate Certificate</a>` : ''
+                                                    }
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                    </tr>`;
+                                    $('#students-table-body').append(row);
                                 });
+                                loader_off()
+
+                                offset += limit;
+                                loading = false;
                             },
                             error: function() {
-                                alert('Error fetching student data.');
+                               
+                                loading = false;
                             }
                         });
                     }
-                    
-                    
+
+                    function setupScrollLazyLoading() {
+                        $(window).scroll(function() {
+                            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 1500) {
+                                loadStudents();
+                            }
+                        });
+                    }
+
+                    // Initialize
+                    $(document).ready(function() {
+                        offset = 0;
+                        $('#students-table-body').empty();
+                        loadStudents();
+                        setupScrollLazyLoading();
+
+                        // Optional: reload when filters change
+                        $('#filter_program, #filter_occupation, input[name="status_filter"]').change(function() {
+                            offset = 0;
+                            allLoaded = false;
+                            $('#students-table-body').empty();
+                            loadStudents();
+                        });
+                    });
+
+
+                    function createTable() {
+                                                loader_on();
+
+                        offset = 0;
+                        allLoaded = false;
+                        $('#students-table-body').empty();
+                        loadStudents();
+                    }
+
                     $(document).ready(function() {
                         $('#filter_program, #filter_occupation').change(function() {
                             createTable();

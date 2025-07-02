@@ -49,6 +49,8 @@ class StudentController extends AppBaseController
     }
     public function get_table(Request $request)
     {
+        $limit = $request->input('limit', 50); // default 50
+        $offset = $request->input('offset', 0);
         $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
             ->join('districts', 'students.district_id', '=', 'districts.id')
             ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
@@ -88,93 +90,15 @@ class StudentController extends AppBaseController
 
 
 
-        $students = $students->get();
+        $total = $students->count();
+        $students = $students->offset($offset)->limit($limit)->get();
 
 
-        $html = '';
-        foreach ($students as $key => $student) {
-            $html .= '<tr>';
-            $html .= '<td>' . ($key + 1) . '</td>';
-            $html .= '<td>';
-            $html .= '<div style="line-height: 1px;">';
-            $html .= '<p style="font-weight: bold;color: #000"> ' . $student->candidate_name_bn . '</p>';
-            $html .= '<div style="line-height: 2px;">';
-            $html .= '<p style="font-size: 10px;"><strong>Occupation:</strong> ' . $student->occupation . '</p>';
-            $html .= '<p style="font-size: 10px;"><strong>Regis. No:</strong> ' . $student->registration_number . '</p>';
-            $html .= '<p style="font-size: 10px;"><strong>District:</strong> ' . $student->district . '</p>';
-            $html .= '</div>';
-            $html .= '</div>';
-            $html .= '</td>';
-            $html .= '<td width="10%"><span class="badge badge-' . ($student->status == 'Pending' ? 'warning' : 'success') . '">' . $student->status . '</span></td>';
 
-            if ($request->has('program_type') && $request->program_type == 'General') {
-                $html .= '<td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Optainane ' : ($student->exam_status == 'Pending' ? 'Pending' : 'Promising')) . '</span></td>';
-            } else {
-                $html .= '<td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Not Competent yet ' : ($student->exam_status == 'Pending' ? 'Pending' : 'Competent')) . '</span></td>';
-            }
-
-            $html .= '<td><span class="badge badge-' . ($student->districts_admin_status == 'Pending' ? 'warning' : 'success') . '">' . $student->districts_admin_status . '</span></td>';
-            $html .= '<td><span class="badge badge-' . ($student->chairmen_status == 'Pending' ? 'warning' : 'success') . '">' . $student->chairmen_status . '</span></td>';
-            $html .= '<td>';
-            $html .= '<div class="btn-group">';
-            $html .= '<button type="button" class="btn btn-outline-primary btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
-            $html .= '<i class="im im-icon-List2" data-placement="top" title="Actions">Action</i>';
-            $html .= '</button>';
-            $html .= '<div class="dropdown-menu">';
-            if ($request->has('program_type') && $request->program_type == 'General') {
-                $html .= '<a class="dropdown-item" href="' . route('general_students.show', [$student->id]) . '"><i class="im im-icon-Eye"></i> View</a>';
-            } else {
-                $html .= '<a class="dropdown-item" href="' . route('students.show', [$student->id]) . '"><i class="im im-icon-Eye"></i> View</a>';
-            }
-            if ($student->status != 'Chairman Approved') {
-                if ($request->has('program_type') && $request->program_type == 'General') {
-                    $html .= '<a class="dropdown-item" href="' . route('general_students.edit', [$student->id]) . '"><i class="im im-icon-Pen"></i> Edit</a>';
-                } else {
-                    $html .= '<a class="dropdown-item" href="' . route('students.edit', [$student->id]) . '"><i class="im im-icon-Pen"></i> Edit</a>';
-                }
-            }
-            if (can('give_exam_result') && $student->status == 'Waiting for the exam results from the Assessment Center') {
-                $html .= '<a class="dropdown-item" onclick="give_exam_result(' . $student->id . ')" href="javascript:void(0);"><i class="im im-icon-Pencil-Ruler"></i> Give Exam Result</a>';
-            }
-            if (can('district_admin') && $student->status == 'Waiting for District Admin Approval') {
-                // $html .= '<a class="dropdown-item" href="' . route('students.forward_to_chairman', [$student->id]) . '"><i class="im im-icon-Arrow-Back"></i> Approve And Send To Chairman</a>';
-            }
-            if (can('chairman') && $student->status == 'Waiting for Chairman Approval') {
-                $html .= '<a class="dropdown-item" href="' . route('students.chairman_approve', [$student->id]) . '"><i class="im im-icon-Approved-Window"></i> Approve</a>';
-            }
-            if ($student->exam_status == 'Pending') {
-                if (request()->is('general_students*')) {
-
-                    $html .= Form::open(['route' => ['students.destroy', $student->id], 'method' => 'delete']);
-                } else {
-                    $html .= Form::open(['route' => ['general_students.destroy', $student->id], 'method' => 'delete']);
-                }
-
-                $html .= Form::button('<i class="im im-icon-Remove"></i> Delete', [
-                    'type' => 'submit',
-                    'class' => 'dropdown-item',
-                    'onclick' => "return confirm('Are you sure?')",
-                ]);
-                $html .= Form::close();
-
-            }
-            if ($student->status == 'Chairman Approved' && $student->exam_status != 'Fail') {
-                $html .= '<a class="dropdown-item" target="_blank" href="' . route('students.generate_certificate', [$student->id]) . '"><i class="im im-icon-People-onCloud"></i> Generate Certificate</a>';
-            }
-
-            // if ($student->status == 'Chairman Approved' && $student->exam_status != 'Fail') {
-            //     $html .= '<a class="dropdown-item" target="_blank" href="' . route('students.generate_certificate', [$student->id]) . '"><i class="im im-icon-People-onCloud"></i> Generate Certificate</a>';
-            // }
-
-
-            $html .= '</div>';
-            $html .= '</div>';
-            $html .= '</td>';
-            $html .= '</tr>';
-        }
         return response()->json([
             'success' => true,
-            'html' => $html
+            'students' => $students,
+            'total' => $total
         ]);
     }
     /**
@@ -478,8 +402,9 @@ class StudentController extends AppBaseController
         return view('students.qr_details')->with('student', $student);
     }
 
-    public function forwardToAssessmentCenter_modal()
+    public function forwardToAssessmentCenter_modal(Request $request)
     {
+
         $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
             ->join('districts', 'students.district_id', '=', 'districts.id')
             ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
@@ -487,6 +412,14 @@ class StudentController extends AppBaseController
             ->where('students.assessment_center', null);
         if (!can('chairman') && can('district_admin')) {
             $students = $students->where('students.district_id', auth()->user()->district_id);
+        }
+
+        
+        if ($request->has('filter_occupation') && $request->filter_occupation != null && $request->filter_occupation != '') {
+            $students = $students->where('students.occupation_id', $request->filter_occupation);
+        }
+        if ($request->has('filter_program') && $request->filter_program != null && $request->filter_program != '') {
+            $students = $students->where('students.program_id', $request->filter_program);
         }
 
 
@@ -540,6 +473,7 @@ class StudentController extends AppBaseController
                 $student = Student::find($studentId);
                 $student->assessment_center = $assessment_center_id;
                 $student->assessment_date = $assessment_date;
+                $student->training_end_date = $assessment_date;
                 $student->assessment_center_registration_number = $assessment_center->registration_number;
                 $student->status = 'Waiting for the exam results from the Assessment Center';
                 $student->save();
@@ -1063,7 +997,7 @@ class StudentController extends AppBaseController
             ];
             // $prev_data=Student::where('registration_number',$value['registration_number'],)->get();
             // if (!count($prev_data)>0) {
-                Student::create($data);
+            Student::create($data);
             //}
         }
         echo 'success';

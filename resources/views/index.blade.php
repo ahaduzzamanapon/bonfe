@@ -32,7 +32,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <select id="dashboard_occupation" name="dashboard_occupation" class="form-control" onchange="fetchDashboardData()">
-                                    <option value="">Select Occupation</option>
+                                    <option value="">Select Trade(Course)</option>
                                     @foreach ($occupations as $occupation)
                                         <option value="{{ $occupation->id }}">{{ $occupation->title }}</option>
                                     @endforeach

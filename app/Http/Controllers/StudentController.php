@@ -76,6 +76,24 @@ class StudentController extends AppBaseController
         if ($request->has('occupation_id') && $request->occupation_id != null) {
             $students = $students->where('students.occupation_id', $request->occupation_id);
         }
+        if($request->has('program_id') && $request->program_id != null && $request->program_id != '') {
+            $students = $students->where('students.program_id', $request->program_id);
+        }
+
+
+        if ($request->has('district_id') && $request->district_id != null && $request->district_id != '') {
+            $students = $students->where('students.district_id', $request->district_id);
+        }
+        if ($request->has('upajila_id') && $request->upajila_id != null && $request->upajila_id != '') {
+            $students = $students->where('students.upajila_id', $request->upajila_id);
+        }
+        if ($request->has('search_term') && $request->search_term != null && $request->search_term != '') {
+            $students = $students->where(function ($query) use ($request) {
+                $query->where('students.candidate_name', 'like', '%' . $request->search_term . '%')
+                    ->orWhere('students.registration_number', 'like', '%' . $request->search_term . '%')
+                    ->orWhere('students.candidate_name_bn', 'like', '%' . $request->search_term . '%');
+            });
+        }
 
 
         if ($request->has('program_type') && $request->program_type == 'General') {
@@ -354,6 +372,21 @@ class StudentController extends AppBaseController
             'data' => $student
         ]);
     }
+    public function give_candidate_id_submit(Request $request)
+    {
+
+
+       
+        $student = Student::find($request->studentId);
+        $student->candidate_id = $request->candidate_id_field;
+ 
+        $student->save();
+        return response()->json([
+            'success' => true,
+            'message' => "Result submitted successfully",
+            'data' => $student
+        ]);
+    }
     public function forward_to_chairman($studentId)
     {
         $student = Student::find($studentId);
@@ -421,6 +454,26 @@ class StudentController extends AppBaseController
         if ($request->has('filter_program') && $request->filter_program != null && $request->filter_program != '') {
             $students = $students->where('students.program_id', $request->filter_program);
         }
+        
+        if ($request->has('district_id') && $request->district_id != null && $request->district_id != '') {
+            $students = $students->where('students.district_id', $request->district_id);
+        }
+        if ($request->has('upajila_id') && $request->upajila_id != null && $request->upajila_id != '') {
+            $students = $students->where('students.upajila_id', $request->upajila_id);
+        }
+        if ($request->has('search_term') && $request->search_term != null && $request->search_term != '') {
+            $students = $students->where(function ($query) use ($request) {
+                $query->where('students.candidate_name', 'like', '%' . $request->search_term . '%')
+                    ->orWhere('students.registration_number', 'like', '%' . $request->search_term . '%')
+                    ->orWhere('students.candidate_name_bn', 'like', '%' . $request->search_term . '%');
+            });
+        }
+
+
+        
+
+
+
 
 
         $students = $students->get();

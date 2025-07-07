@@ -194,7 +194,7 @@
                     <a class="nav-link {!! Request::is('occupations*') ? 'active' : '' !!}" href="{{ route('occupations.index') }}">
                         <i class="icon im im-icon-Structure"></i>
                         <i class="sidenav-mini-icon"> O </i>
-                        <span class="item-name">Trade/Course</span>
+                        <span class="item-name">Trade(Course)</span>
                     </a>
                 </li>
             @endif

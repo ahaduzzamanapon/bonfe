@@ -21,7 +21,7 @@
 
 <li class="{!! (Request::is('occupations*') ? 'active' : '' ) !!}">
     <a href="{{ route('occupations.index') }}">
-        <span class="mm-text ">Trade/Course</span>
+        <span class="mm-text ">Trade(Course)</span>
         <span class="menu-icon"><i class="im im-icon-Structure"></i></span>
     </a>
 </li>

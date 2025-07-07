@@ -112,6 +112,73 @@
 </script>
 {{-- exam result modal --}}
 
+{{--give_candidate_id_modal --}}
+<!-- Modal -->
+<div class="modal fade" id="give_candidate_id_modal" tabindex="-1" role="dialog" aria-labelledby="give_candidate_id_modalTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Give Candidate ID</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    onclick="$('#give_candidate_id_modal').modal('hide')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+
+                        <label for="candidate_id_field">Candidate ID</label>
+                        <input type="text" class="form-control" id="candidate_id_field">
+                    </div>
+                  
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="$('#give_candidate_id_modal').modal('hide')"
+                    data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="give_candidate_id_submit()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function give_candidate_id_submit() {
+        candidate_id_field = $('#candidate_id_field').val();
+          const studentId = localStorage.getItem('student_id_for_exam_result');
+
+        if (!studentId && candidate_id_field === '') {
+            alert('Please select a result and ensure a student ID is set');
+            return false;
+        }
+
+
+       
+        const formData = new FormData();
+        formData.append('_token', '{{ csrf_token() }}');
+        formData.append('candidate_id_field', candidate_id_field);
+        formData.append('studentId', studentId);
+
+        $.ajax({
+            url: '{{ route('give_candidate_id_submit') }}',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function () {
+                alert('Result submitted successfully');
+                $('#give_candidate_id_modal').modal('hide');
+                createTable();
+            },
+            error: function () {
+                alert('Failed to submit exam result');
+            }
+        });
+    }
+</script>
+{{-- give_candidate_id_modal --}}
+
 
 
 
@@ -190,12 +257,20 @@
         forwardToAssessmentCenter_modal_body_loader_on()
         filter_occupation = $('#filter_occupation').val();
         filter_program = $('#filter_program').val();
+        district_id = $('#district_id').val();
+        upajila_id = $('#upajila_id').val();
+        search_term = $('#search_term').val();
+      
+
         $.ajax({
             url: '{{ route('forwardToAssessmentCenter_modal') }}',
             type: 'GET',
             data: {
                 filter_occupation: filter_occupation,
-                filter_program: filter_program
+                filter_program: filter_program,
+                district_id: district_id,
+                upajila_id: upajila_id,
+                search_term: search_term,
             },
             success: function (data) {
                 $('#forwardToAssessmentCenter_modal_body').html(data);

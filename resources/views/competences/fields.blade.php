@@ -7,14 +7,14 @@
 </div>
 
 <?php
-$Occupation = \App\Models\Occupation::all()->pluck('title', 'id')->prepend('Select Occupation', '')->toArray();
+$Occupation = \App\Models\Occupation::all()->pluck('title', 'id')->prepend('Select Trade (Course)', '')->toArray();
 
 ?>
 
 <!-- Occupation Id Field -->
 <div class="col-md-3">
     <div class="form-group">
-        {!! Form::label('occupation_id', 'Occupation', ['class' => 'control-label']) !!}
+        {!! Form::label('occupation_id', 'Trade (Course)', ['class' => 'control-label']) !!}
         {!! Form::select('occupation_id', $Occupation, null, ['class' => 'form-control']) !!}
     </div>
 </div>

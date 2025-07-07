@@ -2,7 +2,7 @@
 
 {{-- Page title --}}
 @section('title')
-Trade/Course @parent
+Trade(Course) @parent
 @stop
 
 @section('content')

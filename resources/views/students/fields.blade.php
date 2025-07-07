@@ -40,7 +40,7 @@
 <!-- Occupation Id Field -->
 <div class="col-md-3 @if( Request::is('general_students*')) d-none @endif">
     <div class="form-group">
-        {!! Form::label('occupation_id', 'Trade/Course Name', ['class' => 'control-label']) !!}
+        {!! Form::label('occupation_id', 'Trade(Course) Name', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
         {!! Form::select('occupation_id', $Occupation, null, ['class' => 'form-control']) !!}
     </div>
@@ -58,7 +58,7 @@
 
 
 <!-- Candidate Id Field -->
-<div class="col-md-3">
+<div class="col-md-3 d-none">
     <div class="form-group">
         {!! Form::label('candidate_id', 'Candidate Id', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
@@ -134,6 +134,15 @@
         {!! Form::text('nid', null, ['class' => 'form-control']) !!}
     </div>
 </div>
+<!-- Gender Field -->
+<div class="col-md-3">
+    <div class="form-group">
+        {!! Form::label('gender', 'Gender', ['class' => 'control-label']) !!}
+        <span style="color: red">*</span>
+        {!! Form::select('gender', ['' => 'Select Gender','Male' => 'Male', 'Female' => 'Female', 'Other' => 'Other'], null, ['class' => 'form-control']) !!}
+    </div>
+</div>
+
 
 @php
     if (!can('chairman') && can('district_admin')) {
@@ -313,14 +322,6 @@
     </div>
 </div>
 
-<!-- Gender Field -->
-<div class="col-md-3">
-    <div class="form-group">
-        {!! Form::label('gender', 'Gender', ['class' => 'control-label']) !!}
-        <span style="color: red">*</span>
-        {!! Form::select('gender', ['' => 'Select Gender','Male' => 'Male', 'Female' => 'Female', 'Other' => 'Other'], null, ['class' => 'form-control']) !!}
-    </div>
-</div>
 
 
 

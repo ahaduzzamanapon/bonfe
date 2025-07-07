@@ -56,6 +56,7 @@ Route::group(['middleware' => 'auth'], function () {
     include 'web_builder.php';
 
     Route::post('submit_exam_result', 'StudentController@submit_exam_result')->name('submit_exam_result');
+    Route::post('give_candidate_id_submit', 'StudentController@give_candidate_id_submit')->name('give_candidate_id_submit');
     Route::get('forward_to_chairman/{id}', 'StudentController@forward_to_chairman')->name('students.forward_to_chairman');
     Route::get('chairman_approve/{id}', 'StudentController@chairman_approve')->name('students.chairman_approve');
     Route::get('generate_certificate/{id}', 'StudentController@generate_certificate')->name('students.generate_certificate');

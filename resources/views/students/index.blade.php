@@ -14,12 +14,12 @@
 }
 </style>
     <!-- Content Header (Page header) -->
-    <section class="content-header">
+    {{-- <section class="content-header">
         <div aria-label="breadcrumb" class="card-breadcrumb">
             <h5><a href="{{ url('/') }}" style="text-decoration: none; color: black;">Dashboard</a> > Lerner </h5>
         </div>
         <div class="separator-breadcrumb border-top"></div>
-    </section>
+    </section> --}}
 
     <!-- Main content -->
     <div class="content">
@@ -57,7 +57,7 @@
             </section>
             <div class="card-body table-responsive">
                 <div class="row">
-                    <div class="col-sm-12 col-md-7">
+                    <div class="col-sm-12 col-md-12">
                         <div style="margin-bottom: 13px;">
                             <strong>Filter By:</strong>
                         </div>
@@ -112,11 +112,11 @@
                     }
                     $occupations = \App\Models\Occupation::latest()->get();
                     @endphp
-                    <div class="col-sm-12 col-md-5">
+                    <div class="col-sm-12 col-md-12">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-2">
                                 <div class="form-group">
-                                    <label for="search">Select Program:</label>
+                                    <label for="search">Program:</label>
                                     <select id="filter_program" class="form-control">
                                         <option value="">All</option>
                                         @foreach ($programs as $key => $program)
@@ -126,9 +126,9 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-2">
                                 <div class="form-group">
-                                    <label for="search">Select Occupation:</label>
+                                    <label for="search">Trade(Course):</label>
                                     <select id="filter_occupation" class="form-control">
                                         <option value="">All</option>
                                         @foreach ($occupations as $occupation)
@@ -136,6 +136,48 @@
                                         @endforeach
                                     </select>
                                 </div>
+                            </div>
+                            @php
+                                if (!can('chairman') || !can('district_admin')) {
+                                    $districts = \App\Models\District::where('id', auth()->user()->district_id)
+                                        ->pluck('name_en', 'id')
+                                        ->toArray();
+                                    $upazilas = \App\Models\Upazila::where('dis_id', auth()->user()->district_id)
+                                        ->pluck('name_en', 'id')
+                                        ->prepend('Select Upazila', '')
+                                        ->toArray();
+                                } else {
+                                    $districts = \App\Models\District::all()->pluck('name_en', 'id')->prepend('Select District', '')->toArray();
+                                    $upazilas = \App\Models\Upazila::all()->pluck('name_en', 'id')->prepend('Select Upazila', '')->toArray();
+                                }
+                            @endphp
+
+                            
+                            <!-- district_id Field -->
+                            <div class="col-md-2 @if(!can('chairman') || !can('district_admin')) d-none @endif">
+                                <div class="form-group">
+                                    {!! Form::label('district_id', 'District', ['class' => 'control-label']) !!}
+                                    {!! Form::select('district_id', $districts, null, ['class' => 'form-control select2']) !!}
+                                </div>
+                            </div>
+
+
+                            <!-- Upajila Id Field -->
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    {!! Form::label('upajila_id', 'Upazila/City', ['class' => 'control-label']) !!}
+                                    {!! Form::select('upajila_id', $upazilas, null, ['class' => 'form-control select2']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    {!! Form::label('search_term', 'Search', ['class' => 'control-label']) !!}
+                                    {!! Form::text('search_term', null, ['class' => 'form-control']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                {!! Form::label('search_term', '.', ['class' => 'control-label text-white']) !!}
+                               <a class="btn btn-primary" href="#" onclick="createTable()">Search</a>
                             </div>
                         </div>
                     </div>
@@ -157,6 +199,9 @@
                     </tbody>
                 </table>
 
+          
+      
+
             @section('footer_scripts')
                 <script>
                     function loader_on() {
@@ -177,14 +222,20 @@
                     let allLoaded = false;
 
                     function loadStudents() {
+
+                  
+                        
                         if (loading || allLoaded) return;
                         loading = true;
 
                         const statusFilter = $('input[name="status_filter"]:checked').val();
                         const programId = $('#filter_program').val();
                         const occupationId = $('#filter_occupation').val();
+                        const district_id = $('#district_id').val();
+                        const upajila_id = $('#upajila_id').val();
+                        const search_term = $('#search_term').val();
                         const programType = '{{ Request::is('general_students') ? "General" : "Technical" }}';
-
+                        console.log('loadStudents');
 
                         $.ajax({
                             url: "{{ route('students.get_table') }}",
@@ -195,10 +246,16 @@
                                 status_filter: statusFilter,
                                 program_id: programId,
                                 occupation_id: occupationId,
-                                program_type: programType
+                                program_type: programType,
+                                district_id: district_id,
+                                upajila_id: upajila_id,
+                                search_term: search_term
+
                             },
                             success: function(data) {
+                                
                                 if (data.students.length === 0) {
+                                    loading = false;
                                     allLoaded = true;
                                     return;
                                 }
@@ -237,6 +294,9 @@
                                                     }
                                                     ${student.status === 'Waiting for the exam results from the Assessment Center' && can_give_exam_result ? `
                                                         <a class="dropdown-item" onclick="give_exam_result(${student.id})" href="javascript:void(0);"><i class="im im-icon-Pencil-Ruler"></i> Give Exam Result</a>` : ''
+                                                    }
+                                                    ${student.status === 'Waiting for the exam results from the Assessment Center' && student.candidate_id=='' ? `
+                                                        <a class="dropdown-item" onclick="give_candidate_id(${student.id})" href="javascript:void(0);"><i class="im im-icon-People-onCloud"></i> Give Candidate Id</a>` : ''
                                                     }
                                                     ${student.status === 'Waiting for Chairman Approval' && can_chairman ? `
                                                         <a class="dropdown-item" href="/students/${student.id}/chairman-approve"><i class="im im-icon-Approved-Window"></i> Approve</a>` : ''
@@ -284,14 +344,32 @@
                         loadStudents();
                         setupScrollLazyLoading();
 
-                        // Optional: reload when filters change
-                        $('#filter_program, #filter_occupation, input[name="status_filter"]').change(function() {
-                            offset = 0;
-                            allLoaded = false;
-                            $('#students-table-body').empty();
-                            loadStudents();
-                        });
+                        // // Optional: reload when filters change
+                        // $('#filter_program, #filter_occupation, input[name="status_filter"]').change(function() {
+                        //     offset = 0;
+                        //     allLoaded = false;
+                        //     $('#students-table-body').empty();
+                        //     loadStudents();
+                        // });
                     });
+
+                     $('#district_id').change(function() {
+                    var districtId = $(this).val();
+                    $.ajax({
+                        url: "{{ route('get_upazilas') }}",
+                        type: "GET",
+                        data: {
+                            district_id: districtId
+                        },
+                        success: function(data) {
+                            $('#upajila_id').empty();
+                            $('#upajila_id').append('<option value="">Select Upazila</option>');
+                            $.each(data, function(index, upajila) {
+                                $('#upajila_id').append('<option value="' + upajila.id + '">' + upajila.name + '</option>');
+                            });
+                        }
+                    });
+                });
 
 
                     function createTable() {
@@ -304,7 +382,7 @@
                     }
 
                     $(document).ready(function() {
-                        $('#filter_program, #filter_occupation').change(function() {
+                        $('#filter_program, #filter_occupation, #district_id, #upajila_id, #search_term').change(function() {
                             createTable();
                         });
                         createTable();
@@ -326,6 +404,12 @@
                             error: function() {
                             }
                         });
+                    }
+                </script>
+                <script>
+                    function give_candidate_id(id) {
+                        $('#give_candidate_id_modal').modal('show');
+                        localStorage.setItem('give_candidate_id', id);
                     }
                 </script>
 

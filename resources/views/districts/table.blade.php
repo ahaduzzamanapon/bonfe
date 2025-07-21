@@ -12,7 +12,7 @@
         <tbody>
         @foreach($districts as $key => $district)
             <tr>
-                <td>{{ $district->id }}</td>
+            <td>{{  $key+1 }}</td>
             <td>{{ $district->name_bn }}</td>
             <td>{{ $district->name_en }}</td>
          

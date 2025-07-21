@@ -5,85 +5,178 @@
         <span class="item-name">Dashboard</span>
     </a>
 </li>
-@if (can('student'))
-    <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="collapse" href="#student_menu" role="button" aria-expanded="false"
-            aria-controls="student_menu">
-            <i class="icon im im-icon-User"></i>
-            <span class="item-name">Pre vocational</span>
-            <i class="right-icon im im-icon-Arrow-Right"></i>
-        </a>
-        <ul class="sub-nav collapse {!! Request::is('students*') || Request::is('roleAndPermissions*') ? 'show' : '' !!}" id="student_menu" data-bs-parent="#sidebar-menu">
-            <li class="nav-item">
-                <a class="nav-link {!! Request::is('students') ? 'active' : '' !!}" aria-current="page" href="{{ route('students.index') }}">
-                    <i class="icon im im-icon-Student-Hat"></i>
-                    <span class="item-name">Learner</span>
-                </a>
-            </li>
-            @if (can('district_admin'))
+
+
+@if(!can('assessment_centers_controller') )
+    @if (can('student'))
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#student_menu" role="button" aria-expanded="false"
+                aria-controls="student_menu">
+                <i class="icon im im-icon-User"></i>
+                <span class="item-name">Pre vocational</span>
+                <i class="right-icon im im-icon-Arrow-Right"></i>
+            </a>
+            <ul class="sub-nav collapse {!! Request::is('students*') || Request::is('roleAndPermissions*') ? 'show' : '' !!}" id="student_menu" data-bs-parent="#sidebar-menu">
                 <li class="nav-item">
-                    <a class="nav-link {!! Request::is('students_waiting_for_district_approval') ? 'active' : '' !!}" aria-current="page"
-                        href="{{ route('students.students_waiting_for_district_approval') }}">
+                    <a class="nav-link {!! Request::is('students') ? 'active' : '' !!}" aria-current="page" href="{{ route('students.index') }}">
                         <i class="icon im im-icon-Student-Hat"></i>
-                        <span class="item-name">District Approval</span>
+                        <span class="item-name">Learner</span>
                     </a>
                 </li>
-            @endif
-            @if (can('chairman'))
+                @if (can('district_admin'))
+                    <li class="nav-item">
+                        <a class="nav-link {!! Request::is('students_waiting_for_district_approval') ? 'active' : '' !!}" aria-current="page"
+                            href="{{ route('students.students_waiting_for_district_approval') }}">
+                            <i class="icon im im-icon-Student-Hat"></i>
+                            <span class="item-name">District Approval</span>
+                        </a>
+                    </li>
+                @endif
+                @if (can('chairman'))
+                    <li class="nav-item">
+                        <a class="nav-link {!! Request::is('students_waiting_for_chairman_approval') ? 'active' : '' !!}" aria-current="page"
+                            href="{{ route('students.students_waiting_for_chairman_approval') }}">
+                            <i class="icon im im-icon-Student-Hat"></i>
+                            <span class="item-name">Chairman Approval</span>
+                        </a>
+                    </li>
+                @endif
+
+
+            </ul>
+        </li>
+
+
+    @endif
+    @if (can('student'))
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#general_student_menu" role="button" aria-expanded="false"
+                aria-controls="student_menu">
+                <i class="icon im im-icon-User"></i>
+                <span class="item-name">NFPE </span>
+                <i class="right-icon im im-icon-Arrow-Right"></i>
+            </a>
+            <ul class="sub-nav collapse {!! Request::is('general_students*')  ? 'show' : '' !!}" id="general_student_menu" data-bs-parent="#sidebar-menu">
                 <li class="nav-item">
-                    <a class="nav-link {!! Request::is('students_waiting_for_chairman_approval') ? 'active' : '' !!}" aria-current="page"
-                        href="{{ route('students.students_waiting_for_chairman_approval') }}">
+                    <a class="nav-link {!! Request::is('general_students') ? 'active' : '' !!}" aria-current="page" href="{{ route('general_students.index') }}">
                         <i class="icon im im-icon-Student-Hat"></i>
-                        <span class="item-name">Chairman Approval</span>
+                        <span class="item-name">Learner</span>
                     </a>
                 </li>
-            @endif
+                @if (can('district_admin'))
+                    <li class="nav-item">
+                        <a class="nav-link {!! Request::is('general_students_waiting_for_district_approval') ? 'active' : '' !!}" aria-current="page"
+                            href="{{ route('general_students.students_waiting_for_district_approval') }}">
+                            <i class="icon im im-icon-Student-Hat"></i>
+                            <span class="item-name">NFPE District Approval</span>
+                        </a>
+                    </li>
+                @endif
+                @if (can('chairman'))
+                    <li class="nav-item">
+                        <a class="nav-link {!! Request::is('general_students_waiting_for_chairman_approval') ? 'active' : '' !!}" aria-current="page"
+                            href="{{ route('general_students.students_waiting_for_chairman_approval') }}">
+                            <i class="icon im im-icon-Student-Hat"></i>
+                            <span class="item-name">NFPE Chairman Approval</span>
+                        </a>
+                    </li>
+                @endif
 
 
-        </ul>
-    </li>
+            </ul>
+        </li>
 
 
-@endif
-@if (can('student'))
-    <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="collapse" href="#general_student_menu" role="button" aria-expanded="false"
-            aria-controls="student_menu">
-            <i class="icon im im-icon-User"></i>
-            <span class="item-name">NFPE </span>
-            <i class="right-icon im im-icon-Arrow-Right"></i>
-        </a>
-        <ul class="sub-nav collapse {!! Request::is('general_students*')  ? 'show' : '' !!}" id="general_student_menu" data-bs-parent="#sidebar-menu">
-            <li class="nav-item">
-                <a class="nav-link {!! Request::is('general_students') ? 'active' : '' !!}" aria-current="page" href="{{ route('general_students.index') }}">
-                    <i class="icon im im-icon-Student-Hat"></i>
-                    <span class="item-name">Learner</span>
-                </a>
-            </li>
-            @if (can('district_admin'))
+    @endif
+@else
+@php
+$occupation_id  = auth()->user()->occupation;
+if ($occupation_id == null) {
+    $occupation_id = 1;
+}
+$occupation = \App\Models\Occupation::find($occupation_id);
+@endphp
+
+ @if (can('student') && $occupation->title != 'General')
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#student_menu" role="button" aria-expanded="false"
+                aria-controls="student_menu">
+                <i class="icon im im-icon-User"></i>
+                <span class="item-name">Pre vocational</span>
+                <i class="right-icon im im-icon-Arrow-Right"></i>
+            </a>
+            <ul class="sub-nav collapse {!! Request::is('students*') || Request::is('roleAndPermissions*') ? 'show' : '' !!}" id="student_menu" data-bs-parent="#sidebar-menu">
                 <li class="nav-item">
-                    <a class="nav-link {!! Request::is('general_students_waiting_for_district_approval') ? 'active' : '' !!}" aria-current="page"
-                        href="{{ route('general_students.students_waiting_for_district_approval') }}">
+                    <a class="nav-link {!! Request::is('students') ? 'active' : '' !!}" aria-current="page" href="{{ route('students.index') }}">
                         <i class="icon im im-icon-Student-Hat"></i>
-                        <span class="item-name">NFPE District Approval</span>
+                        <span class="item-name">Learner</span>
                     </a>
                 </li>
-            @endif
-            @if (can('chairman'))
+                @if (can('district_admin'))
+                    <li class="nav-item">
+                        <a class="nav-link {!! Request::is('students_waiting_for_district_approval') ? 'active' : '' !!}" aria-current="page"
+                            href="{{ route('students.students_waiting_for_district_approval') }}">
+                            <i class="icon im im-icon-Student-Hat"></i>
+                            <span class="item-name">District Approval</span>
+                        </a>
+                    </li>
+                @endif
+                @if (can('chairman'))
+                    <li class="nav-item">
+                        <a class="nav-link {!! Request::is('students_waiting_for_chairman_approval') ? 'active' : '' !!}" aria-current="page"
+                            href="{{ route('students.students_waiting_for_chairman_approval') }}">
+                            <i class="icon im im-icon-Student-Hat"></i>
+                            <span class="item-name">Chairman Approval</span>
+                        </a>
+                    </li>
+                @endif
+
+
+            </ul>
+        </li>
+
+
+    @endif
+    @if (can('student') && $occupation->title == 'General')
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#general_student_menu" role="button" aria-expanded="false"
+                aria-controls="student_menu">
+                <i class="icon im im-icon-User"></i>
+                <span class="item-name">NFPE </span>
+                <i class="right-icon im im-icon-Arrow-Right"></i>
+            </a>
+            <ul class="sub-nav collapse {!! Request::is('general_students*')  ? 'show' : '' !!}" id="general_student_menu" data-bs-parent="#sidebar-menu">
                 <li class="nav-item">
-                    <a class="nav-link {!! Request::is('general_students_waiting_for_chairman_approval') ? 'active' : '' !!}" aria-current="page"
-                        href="{{ route('general_students.students_waiting_for_chairman_approval') }}">
+                    <a class="nav-link {!! Request::is('general_students') ? 'active' : '' !!}" aria-current="page" href="{{ route('general_students.index') }}">
                         <i class="icon im im-icon-Student-Hat"></i>
-                        <span class="item-name">NFPE Chairman Approval</span>
+                        <span class="item-name">Learner</span>
                     </a>
                 </li>
-            @endif
+                @if (can('district_admin'))
+                    <li class="nav-item">
+                        <a class="nav-link {!! Request::is('general_students_waiting_for_district_approval') ? 'active' : '' !!}" aria-current="page"
+                            href="{{ route('general_students.students_waiting_for_district_approval') }}">
+                            <i class="icon im im-icon-Student-Hat"></i>
+                            <span class="item-name">NFPE District Approval</span>
+                        </a>
+                    </li>
+                @endif
+                @if (can('chairman'))
+                    <li class="nav-item">
+                        <a class="nav-link {!! Request::is('general_students_waiting_for_chairman_approval') ? 'active' : '' !!}" aria-current="page"
+                            href="{{ route('general_students.students_waiting_for_chairman_approval') }}">
+                            <i class="icon im im-icon-Student-Hat"></i>
+                            <span class="item-name">NFPE Chairman Approval</span>
+                        </a>
+                    </li>
+                @endif
 
 
-        </ul>
-    </li>
+            </ul>
+        </li>
 
 
+    @endif
 @endif
 
 {{-- Users Management --}}

@@ -170,7 +170,7 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('multiple_district', 'Multiple District',['class'=>'control-label']) !!}
-        {!! Form::select('multiple_district[]',$districts_multi,isset($multiple_district) ? $multiple_district : [], ['class' => 'form-control select2','multiple'=>'multiple']) !!}
+        {!! Form::select('multiple_district[]',isset($districts_multi) ? $districts_multi : [],isset($multiple_district) ? $multiple_district : [], ['class' => 'form-control select2','multiple'=>'multiple']) !!}
     </div>
 </div>
 
@@ -184,7 +184,7 @@
 <!-- Group Id Field -->
 <div class="col-md-3">
     <div class="form-group">
-        {!! Form::label('occupation', 'Occupation',['class'=>'control-label']) !!}
+        {!! Form::label('occupation', 'Trade(Course)',['class'=>'control-label']) !!}
         {!! Form::select('occupation',$Occupation, null, ['class' => 'form-control']) !!}
     </div>
 </div>

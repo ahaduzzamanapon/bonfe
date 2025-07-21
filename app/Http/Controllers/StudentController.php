@@ -76,7 +76,7 @@ class StudentController extends AppBaseController
         if ($request->has('occupation_id') && $request->occupation_id != null) {
             $students = $students->where('students.occupation_id', $request->occupation_id);
         }
-        if($request->has('program_id') && $request->program_id != null && $request->program_id != '') {
+        if ($request->has('program_id') && $request->program_id != null && $request->program_id != '') {
             $students = $students->where('students.program_id', $request->program_id);
         }
 
@@ -376,10 +376,18 @@ class StudentController extends AppBaseController
     {
 
 
-       
         $student = Student::find($request->studentId);
+
+        $students = Student::where('occupation_id', $student->occupation_id)->where('candidate_id', $request->candidate_id_field)->get();
+
+        if (count($students) > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => "Candidate ID already exists in the same occupation",
+            ]);
+        }
+
         $student->candidate_id = $request->candidate_id_field;
- 
         $student->save();
         return response()->json([
             'success' => true,
@@ -413,13 +421,54 @@ class StudentController extends AppBaseController
     {
         $data = route('students.qr_details', $studentId);
         $qrCode = QrCode::size(100)->generate($data);
-        $student = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
-            ->join('districts', 'students.district_id', '=', 'districts.id')
-            ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
+        $student = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation', 'insatitutes.insatitute_name')
+            ->leftJoin('districts', 'students.district_id', '=', 'districts.id')
+            ->leftJoin('occupations', 'students.occupation_id', '=', 'occupations.id')
+            ->leftJoin('insatitutes', 'students.institutionName', '=', 'insatitutes.id')
             ->orderBy('id', 'desc')
             ->where('students.id', $studentId)
             ->first();
-        return view('students.generate_certificate')->with('student', $student)->with('qrCode', $qrCode);
+        if (empty($student)) {
+            return redirect(route('students.index'));
+        }
+        if ($student->exam_status == 'Passed') {
+            return view('students.certificate.pass.certificate_pass_singal')->with('student', $student)->with('qrCode', $qrCode);
+        } else {
+            return view('students.certificate.fail.certificate_fail_singal')->with('student', $student)->with('qrCode', $qrCode);
+        }
+    }
+
+     public function generateCertificate_send(Request $request)
+    {
+      
+        $studentIds = $request->student_ids_generateCertificate;
+
+        $html = '';
+        foreach ($studentIds as $studentId) {
+            $student = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation', 'insatitutes.insatitute_name')
+                ->leftJoin('districts', 'students.district_id', '=', 'districts.id')
+                ->leftJoin('occupations', 'students.occupation_id', '=', 'occupations.id')
+                ->leftJoin('insatitutes', 'students.institutionName', '=', 'insatitutes.id')
+                ->orderBy('id', 'desc')
+                ->where('students.id', $studentId)
+                ->first();
+
+            if (empty($student)) {
+                continue;
+            }
+
+            $qrdata = route('students.qr_details', $studentId);
+
+            $qrCode = QrCode::size(100)->generate($qrdata);
+            
+            if ($student->exam_status == 'Passed') {
+                $html .= view('students.certificate.pass.certificate_pass_singal')->with('student', $student)->with('qrCode', $qrCode)->render();
+            } else {
+                $html .= view('students.certificate.fail.certificate_fail_singal')->with('student', $student)->with('qrCode', $qrCode)->render();
+            }
+        }
+
+        return view('students.generateCertificateBulk')->with('html', $html);
     }
 
 
@@ -447,14 +496,14 @@ class StudentController extends AppBaseController
             $students = $students->where('students.district_id', auth()->user()->district_id);
         }
 
-        
+
         if ($request->has('filter_occupation') && $request->filter_occupation != null && $request->filter_occupation != '') {
             $students = $students->where('students.occupation_id', $request->filter_occupation);
         }
         if ($request->has('filter_program') && $request->filter_program != null && $request->filter_program != '') {
             $students = $students->where('students.program_id', $request->filter_program);
         }
-        
+
         if ($request->has('district_id') && $request->district_id != null && $request->district_id != '') {
             $students = $students->where('students.district_id', $request->district_id);
         }
@@ -470,7 +519,7 @@ class StudentController extends AppBaseController
         }
 
 
-        
+
 
 
 
@@ -547,13 +596,15 @@ class StudentController extends AppBaseController
     }
     public function forwardToDistrictAdmin_modal()
     {
-        $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
+        $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation','programs.program_type')
             ->join('districts', 'students.district_id', '=', 'districts.id')
             ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
+            ->join('programs', 'students.program_id', '=', 'programs.id')
             ->orderBy('id', 'desc')
             ->where('students.exam_status', '!=', 'Pending')
             ->where('students.status', '=', 'Waiting for the exam results from the Assessment Center')
             ->get();
+        
         $html = '';
         $html .= '<table class="table table-bordered table-striped table-hover" id="example1">
             <thead>
@@ -574,7 +625,7 @@ class StudentController extends AppBaseController
                 <td style="font-size: 16px;padding: 3px;text-align: -webkit-center;">' . ++$key . '</td>
                 <td style="padding: 3px;" >' . $student->candidate_name . '</td>
                 <td style="padding: 3px;" >' . $student->candidate_id . '</td>
-                <td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Optainane ' : ($student->exam_status == 'Pending' ? 'Pending' : 'Promising')) . '</span></td>
+                <td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->program_type == 'Technical' ? ($student->exam_status == 'Fail' ? 'Not Yet Competent' : 'Competent') : ($student->exam_status == 'Fail' ? 'Optainane ' : ($student->exam_status == 'Pending' ? 'Pending' : 'Promising'))) . '</span></td>
                 <td style="padding: 3px;" >' . $student->occupation . '</td>
                 <td style="padding: 3px;" >' . $student->district . '</td>
             </tr>';
@@ -787,6 +838,7 @@ class StudentController extends AppBaseController
                 $student->status = 'Waiting for District Admin Approval';
                 $student->districts_admin_id = auth()->user()->id;
                 $student->districts_admin_status = "Pending";
+                $student->controller_back_comments = $request->comments;
                 $student->save();
             }
             DB::commit();
@@ -807,6 +859,7 @@ class StudentController extends AppBaseController
 
     public function approveStudent_modal()
     {
+        
         $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
             ->join('districts', 'students.district_id', '=', 'districts.id')
             ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
@@ -872,13 +925,15 @@ class StudentController extends AppBaseController
     }
 
 
-    public function generateCertificate_modal()
+    public function generateCertificate_modal(Request $request)
     {
+        $certificate_type = $request->certificate_type;
         $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
             ->join('districts', 'students.district_id', '=', 'districts.id')
             ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
             ->orderBy('id', 'desc')
             ->where('students.status', '=', 'Chairman Approved')
+            ->where('students.exam_status', '=', $certificate_type)
             ->get();
         $html = '';
         $html .= '<table class="table table-bordered table-striped table-hover" id="example1">
@@ -910,26 +965,7 @@ class StudentController extends AppBaseController
         return response()->json($html);
     }
 
-    public function generateCertificate_send(Request $request)
-    {
-        $student_ids_approveStudent = $request->all()['student_ids_generateCertificate'];
-        $data = [];
-        foreach ($student_ids_approveStudent as $studentId) {
-            $ro = route('students.qr_details', $studentId);
-            $qrCode = QrCode::size(100)->generate($ro);
-            $student = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
-                ->join('districts', 'students.district_id', '=', 'districts.id')
-                ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
-                ->orderBy('id', 'desc')
-                ->where('students.id', $studentId)
-                ->first();
-            $data[] = [
-                'student' => $student,
-                'qrCode' => $qrCode,
-            ];
-        }
-        return view('students.generate_certificate_bulk')->with('data', $data);
-    }
+   
 
     public function get_competences_by_occupation(Request $request)
     {

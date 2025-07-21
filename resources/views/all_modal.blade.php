@@ -16,29 +16,29 @@
                     <div class="form-group">
                         <label for="ExamResult_field">Exam Result</label>
                         <select class="form-control" id="ExamResult_field">
-                            @if( Request::is('general_students*'))
-                            <option value="Passed"> Promising </option>
-                            <option value="Fail"> Optainane </option>
+                            @if(Request::is('general_students*'))
+                                <option value="Passed"> Promising </option>
+                                <option value="Fail"> Optainane </option>
                             @else
-                            <option value="Passed"> Competent </option>
-                            <option value="Fail"> Not Yet Competent </option>
+                                <option value="Passed"> Competent </option>
+                                <option value="Fail"> Not Yet Competent </option>
                             @endif
                         </select>
                     </div>
-                    <div style="padding: 10px;">   
+                    <div style="padding: 10px;">
                         <label for="ExamResult_field">Competence</label>
-                        <div id="competence_pass_div"  style="border: 1px solid;padding: 10px;">
-                           
+                        <div id="competence_pass_div" style="border: 1px solid;padding: 10px;">
+
                         </div>
                     </div>
                     <script>
-                        document.getElementById('ExamResult_field').addEventListener('change', function() {
+                        document.getElementById('ExamResult_field').addEventListener('change', function () {
                             if (this.value === 'Passed') {
                                 document.getElementsByName('competence_ids[]').forEach(input => {
                                     input.checked = true;
                                 })
                             } else {
-                               document.getElementsByName('competence_ids[]').forEach(input => {
+                                document.getElementsByName('competence_ids[]').forEach(input => {
                                     input.checked = false;
                                 })
                             }
@@ -82,7 +82,7 @@
         }
 
         var checkedCompetences = [];
-        $('input[name="competence_ids[]"]:checked').each(function() {
+        $('input[name="competence_ids[]"]:checked').each(function () {
             checkedCompetences.push($(this).val());
         });
 
@@ -114,8 +114,8 @@
 
 {{--give_candidate_id_modal --}}
 <!-- Modal -->
-<div class="modal fade" id="give_candidate_id_modal" tabindex="-1" role="dialog" aria-labelledby="give_candidate_id_modalTitle"
-    aria-hidden="true">
+<div class="modal fade" id="give_candidate_id_modal" tabindex="-1" role="dialog"
+    aria-labelledby="give_candidate_id_modalTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -132,7 +132,7 @@
                         <label for="candidate_id_field">Candidate ID</label>
                         <input type="text" class="form-control" id="candidate_id_field">
                     </div>
-                  
+
                 </div>
             </div>
             <div class="modal-footer">
@@ -146,7 +146,7 @@
 <script>
     function give_candidate_id_submit() {
         candidate_id_field = $('#candidate_id_field').val();
-          const studentId = localStorage.getItem('student_id_for_exam_result');
+        const studentId = localStorage.getItem('give_candidate_id');
 
         if (!studentId && candidate_id_field === '') {
             alert('Please select a result and ensure a student ID is set');
@@ -154,7 +154,7 @@
         }
 
 
-       
+
         const formData = new FormData();
         formData.append('_token', '{{ csrf_token() }}');
         formData.append('candidate_id_field', candidate_id_field);
@@ -260,7 +260,7 @@
         district_id = $('#district_id').val();
         upajila_id = $('#upajila_id').val();
         search_term = $('#search_term').val();
-      
+
 
         $.ajax({
             url: '{{ route('forwardToAssessmentCenter_modal') }}',
@@ -447,8 +447,8 @@
 
 {{-- forwardToAssessmentController_modal start --}}
 <!-- Modal -->
-<div class="modal fade" id="forwardToAssessmentController_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
-    aria-hidden="true">
+<div class="modal fade" id="forwardToAssessmentController_modal" tabindex="-1" role="dialog"
+    aria-labelledby="modelTitleId" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -464,7 +464,8 @@
                 <div id="forwardToAssessmentController_modal_body" style="overflow-y: scroll;height: 50vh;">
                 </div>
                 <div>
-                    <input type="checkbox" name="diss_accept" id="diss_accept" onchange="forwardToAssessmentController_select()">
+                    <input type="checkbox" name="diss_accept" id="diss_accept"
+                        onchange="forwardToAssessmentController_select()">
                     <label for="">I have verified the result and confirm its accuracy.</label>
                 </div>
             </div>
@@ -745,9 +746,9 @@
                     }
                 },
                 error: function () {
-                     alert('Operation successfull');
-                        $('#approveStudent_modal').modal('hide');
-                        createTable();
+                    alert('Operation successfull');
+                    $('#approveStudent_modal').modal('hide');
+                    createTable();
                 }
             });
         } else {
@@ -775,6 +776,10 @@
                 <a class="btn btn-primary" href="javascript:void(0)" onclick="selectAllStudents()">
                     Select All</a>
                 <div id="backToDistrict_modal_body" style="overflow-y: scroll;height: 50vh;">
+                </div>
+                <div class="form-group">
+                    <label for="comments">Comments</label>
+                    <input type="text" class="form-control" name="comments" placeholder="Enter Comments" id="comments">
                 </div>
             </div>
             <div class="modal-footer">
@@ -836,6 +841,7 @@
                 data: {
                     _token: '{{ csrf_token() }}',
                     student_ids_backToDistrict: selected_ids,
+                    comments: $('#comments').val(),
                 },
                 success: function (data) {
                     if (data.success) {
@@ -878,8 +884,25 @@
                 </button>
             </div>
             <div class="modal-body">
-                <a class="btn btn-primary" href="javascript:void(0)" onclick="selectAllStudents()">
-                    Select All</a>
+                <div class="row">
+                    <div class="col-md-2">
+                        <a class="btn btn-primary " href="javascript:void(0)" onclick="selectAllStudents()">Select
+                            All</a>
+                    </div>
+                    <div class="col-md-4">
+                        <select name="certificate_type" id="certificate_type" class="form-control"
+                            onchange="generateCertificate_modal()">
+                            @if(Request::is('general_students*'))
+                                <option value="Passed"> Promising </option>
+                                <option value="Fail"> Optainane </option>
+                            @else
+                                <option value="Passed"> Competent </option>
+                                <option value="Fail"> Not Yet Competent </option>
+                            @endif
+                        </select>
+                    </div>
+
+                </div>
                 <div id="generateCertificate_modal_body" style="overflow-y: scroll;height: 50vh;">
                 </div>
             </div>
@@ -910,6 +933,10 @@
         $.ajax({
             url: '{{ route('generateCertificate_modal') }}',
             type: 'GET',
+            data: {
+                _token: '{{ csrf_token() }}',
+                'certificate_type': $('#certificate_type').val(),
+            },
             success: function (data) {
                 $('#generateCertificate_modal_body').html(data);
             }
@@ -966,7 +993,3 @@
         }
     }
 </script>
-
-
-
-

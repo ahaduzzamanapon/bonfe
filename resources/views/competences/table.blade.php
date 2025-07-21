@@ -2,7 +2,7 @@
     <table class="table table_data" id="competences-table">
         <thead>
             <tr>
-                <th>Id</th>
+                <th>SL</th>
                 <th>Title</th>
                 <th>Occupation
                 </th>
@@ -14,7 +14,7 @@
         <tbody>
         @foreach($competences as $key => $competence)
             <tr>
-                <td>{{ $competence->id }}</td>
+                <td>{{ $key+1 }}</td>
             <td>{{ $competence->title }}</td>
             <td>{{ $competence->occupation_title }}</td>
             <td>{{ $competence->created_at }}</td>

@@ -44,6 +44,7 @@ class CreateStudentsTable extends Migration
             $table->string('training_start_date');
             $table->string('training_end_date');
             $table->string('gender');
+            $table->string('controller_back_comments')->nullable();
             $table->timestamps();
         });
     }

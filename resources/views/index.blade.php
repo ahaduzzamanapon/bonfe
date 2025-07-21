@@ -12,8 +12,21 @@
         <div class="col-md-12">
             <div class="row">
                 @php
-                    $programs = \App\Models\Program::latest()->get();
-                    $occupations = \App\Models\Occupation::latest()->get();
+                    $occupation_id  = auth()->user()->occupation;
+                    $occupation = \App\Models\Occupation::find($occupation_id);
+                    if (can('assessment_centers_controller')) {
+                        if($occupation->program_type == 'General' ){
+                            $programs = \App\Models\Program::where('program_type', 'General')->latest()->get();
+                            $occupations = \App\Models\Occupation::where('title', 'General')->latest()->get();
+                        }else{
+                            $programs = \App\Models\Program::where('program_type', 'Technical')->latest()->get();
+                            $occupations = \App\Models\Occupation::where('title', '!=', 'General')->latest()->get();
+                        }
+                    }else{
+                        $programs = \App\Models\Program::latest()->get();
+                        $occupations = \App\Models\Occupation::latest()->get();
+                    }
+
                 @endphp
                 <h3 class="col-md-6 pull-left">
                     Dashboard
@@ -315,7 +328,12 @@
                         $('#com_fail').html('Optainane');
 
                         $('.indexLink').attr('href', "{{ route('general_students.index') }}");
+                        $('#dashboard_occupation').prop('disabled', true)
+                        $('#dashboard_occupation').val('');
+
                     } else {
+                        $('#dashboard_occupation').prop('disabled', false)
+
                         $('#com_pass').html('Competent');
                         $('#com_fail').html('Not Yet Competent');
 

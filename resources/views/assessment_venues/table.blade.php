@@ -2,7 +2,7 @@
     <table class="table" id="assessmentVenues-table">
         <thead>
             <tr>
-                <th>Id</th>
+                <th>SL</th>
         <th>Venue Name</th>
         <th>Address</th>
         <th>Created At</th>
@@ -13,7 +13,7 @@
         <tbody>
         @foreach($assessmentVenues as $key => $assessmentVenue)
             <tr>
-                <td>{{ $assessmentVenue->id }}</td>
+                <td>{{ $key+1 }}</td>
             <td>{{ $assessmentVenue->venue_name }}</td>
             <td>{{ $assessmentVenue->address }}</td>
             <td>{{ $assessmentVenue->created_at }}</td>

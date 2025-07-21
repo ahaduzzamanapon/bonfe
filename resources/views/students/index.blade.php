@@ -2,7 +2,7 @@
 
 {{-- Page title --}}
 @section('title')
-    Lerner @parent
+    learner @parent
 @stop
 
 @section('content')
@@ -16,7 +16,7 @@
     <!-- Content Header (Page header) -->
     {{-- <section class="content-header">
         <div aria-label="breadcrumb" class="card-breadcrumb">
-            <h5><a href="{{ url('/') }}" style="text-decoration: none; color: black;">Dashboard</a> > Lerner </h5>
+            <h5><a href="{{ url('/') }}" style="text-decoration: none; color: black;">Dashboard</a> > learner </h5>
         </div>
         <div class="separator-breadcrumb border-top"></div>
     </section> --}}
@@ -28,7 +28,7 @@
         <div class="clearfix"></div>
         <div class="card" width="88vw;">
             <section class="card-header">
-                <h5 class="card-title d-inline">Lerner</h5>
+                <h5 class="card-title d-inline">learner</h5>
                 <span class="float-right">
                     @if (can('assessment_centers_controller'))
                         <a class="btn btn-primary pull-right" onclick="forwardToDistrictAdmin_modal()">Forward to District Admin</a>
@@ -66,7 +66,7 @@
                                 <label class="btn btn-outline-primary {{ Request::is('students') ? 'active' : '' }}">
                                     <input onchange="createTable()" class="form-check-input" type="radio"
                                         name="status_filter" id="all" value="all" autocomplete="off"
-                                        {{ Request::is('students') ? 'checked' : '' }}> All Lerner
+                                        {{ Request::is('students') ? 'checked' : '' }}> All learner
                                 </label>
 
                                 @if (can('assessment_centers_controller'))
@@ -138,7 +138,7 @@
                                 </div>
                             </div>
                             @php
-                                if (!can('chairman') || !can('district_admin')) {
+                                if (can('district_admin') || can('assessment_centers_controller')) {
                                     $districts = \App\Models\District::where('id', auth()->user()->district_id)
                                         ->pluck('name_en', 'id')
                                         ->toArray();
@@ -154,7 +154,7 @@
 
                             
                             <!-- district_id Field -->
-                            <div class="col-md-2 @if(!can('chairman') || !can('district_admin')) d-none @endif">
+                            <div class="col-md-2 @if(can('district_admin') || can('assessment_centers_controller')) d-none @endif">
                                 <div class="form-group">
                                     {!! Form::label('district_id', 'District', ['class' => 'control-label']) !!}
                                     {!! Form::select('district_id', $districts, null, ['class' => 'form-control select2']) !!}
@@ -163,7 +163,7 @@
 
 
                             <!-- Upajila Id Field -->
-                            <div class="col-md-2">
+                            <div class="col-md-2 @if(can('district_admin') || can('assessment_centers_controller')) d-none @endif">
                                 <div class="form-group">
                                     {!! Form::label('upajila_id', 'Upazila/City', ['class' => 'control-label']) !!}
                                     {!! Form::select('upajila_id', $upazilas, null, ['class' => 'form-control select2']) !!}
@@ -262,13 +262,14 @@
 
                                 $.each(data.students, function(index, student) {
                                     var can_give_exam_result = {{ can('give_exam_result') ? 'true' : 'false' }};
+                                    var can_chairman = {{ can('chairman') ? 'true' : 'false' }};
                                     const row = `<tr>
                                         <td>${offset + index + 1}</td>
                                         <td>
                                             <div style="line-height: 1px;">
                                                 <p style="font-weight: bold;color: #000">${student.candidate_name_bn}</p>
                                                 <div style="line-height: 2px;">
-                                                    <p style="font-size: 10px;"><strong>Occupation:</strong> ${student.occupation}</p>
+                                                    <p style="font-size: 10px;"><strong>Trade(Course):</strong> ${student.occupation}</p>
                                                     <p style="font-size: 10px;"><strong>Regis. No:</strong> ${student.registration_number}</p>
                                                     <p style="font-size: 10px;"><strong>District:</strong> ${student.district}</p>
                                                 </div>
@@ -295,7 +296,7 @@
                                                     ${student.status === 'Waiting for the exam results from the Assessment Center' && can_give_exam_result ? `
                                                         <a class="dropdown-item" onclick="give_exam_result(${student.id})" href="javascript:void(0);"><i class="im im-icon-Pencil-Ruler"></i> Give Exam Result</a>` : ''
                                                     }
-                                                    ${student.status === 'Waiting for the exam results from the Assessment Center' && student.candidate_id=='' ? `
+                                                    ${student.status === 'Waiting for the exam results from the Assessment Center' && student.candidate_id==null ? `
                                                         <a class="dropdown-item" onclick="give_candidate_id(${student.id})" href="javascript:void(0);"><i class="im im-icon-People-onCloud"></i> Give Candidate Id</a>` : ''
                                                     }
                                                     ${student.status === 'Waiting for Chairman Approval' && can_chairman ? `
@@ -307,7 +308,7 @@
                                                             <button class="dropdown-item" type="submit"><i class="im im-icon-Remove"></i> Delete</button>
                                                         </form>` : ''
                                                     }
-                                                    ${student.status === 'Chairman Approved' && student.exam_status !== 'Fail' ? `
+                                                    ${student.status === 'Chairman Approved' ? `
                                                         <a class="dropdown-item" target="_blank" href="/students/${student.id}/generate-certificate"><i class="im im-icon-People-onCloud"></i> Generate Certificate</a>` : ''
                                                     }
                                                 </div>

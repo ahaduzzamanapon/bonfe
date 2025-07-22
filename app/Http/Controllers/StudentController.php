@@ -707,8 +707,7 @@ class StudentController extends AppBaseController
             foreach ($student_ids_forwardToChairman as $studentId) {
                 $student = Student::find($studentId);
                 $student->status = 'Waiting for Chairman Approval';
-                $student->districts_admin_id = auth()->user()->id;
-                $student->districts_admin_status = "Approved";
+                $student->controller_id = auth()->user()->id;
                 $student->save();
             }
             DB::commit();
@@ -927,6 +926,10 @@ class StudentController extends AppBaseController
 
     public function generateCertificate_modal(Request $request)
     {
+
+        
+
+
         $certificate_type = $request->certificate_type;
         $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
             ->join('districts', 'students.district_id', '=', 'districts.id')

@@ -63,6 +63,7 @@ class Student extends Model
         'exam_result_sheet',
         'chairmen_id',
         'chairmen_status',
+        'controller_id',
         'districts_admin_id',
         'districts_admin_status',
         'notified',

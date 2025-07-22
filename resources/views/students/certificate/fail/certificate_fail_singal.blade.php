@@ -4,8 +4,7 @@
 <head>
     <meta charset="utf-8">
     <title>Certificate</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
     <style>
         @page {
             size: A4;
@@ -15,13 +14,12 @@
         body {
             margin: 0;
             padding: 0;
-            background: #000000;
+            background: #ffffffff;
         }
 
         .certificate {
             width: 210mm;
             height: 297mm;
-            page-break-after: always;
             position: relative;
             background: url('{{ asset('assets/images/bg_fail.jpg') }}') no-repeat center center;
             background-size: cover;
@@ -39,7 +37,7 @@
             align-items: center;
             text-align: center;
             font-family: 'Georgia', serif;
-            color: #000;
+            color: #000000ff;
         }
 
         h1 {
@@ -65,17 +63,18 @@
             font-weight: 400;
             font-size: 16.6px;
             line-height: 21px;
-            color: #305A76;
+            color: #000000ff;
             text-align: justify;
+            margin-top: 20px;
         }
 
         .skills {
             display: flex;
             gap: 46px;
             text-align: left;
-            border: 1px solid #305875;
+            border: 1px solid #000000ff;
             padding: 6px 19px;
-            min-width: 82%;
+            min-width: 77%;
             justify-content: space-between;
         }
 
@@ -88,7 +87,7 @@
         .skills ul li {
             font-size: 14px;
             line-height: 22px;
-            color: #305875;
+            color: #000000ff;
             max-width: 280px;
         }
 
@@ -99,7 +98,7 @@
             display: flex;
             justify-content: space-between;
             font-size: 16px;
-            color: #305875;
+            color: #000000ff;
         }
 
         .header_text {
@@ -115,11 +114,12 @@
 <body>
     <div class="certificate">
         <div class="content">
-            <div style="padding-top: 77px;width: 84%;">
+            <div style="padding-top: 77px;width: 82%;">
                 <div class="row" style="justify-self: center;">
                     <span class="header_text">NON-FORMAL EDUCATION BOARD, BANGLADESH</span>
                 </div>
-                <div class="row" style="align-items: anchor-center;padding: 0px 26px;">
+                <div class="row"
+                    style="align-items: anchor-center;padding: 0px 26px;display: flex;justify-content: space-between;">
                     <div class="col-md-4">
                         <div class="row"
                             style="display: flex;flex-direction: column;align-items: flex-start;font-family: sans-serif;"">
@@ -151,16 +151,21 @@
                     </div>
                 </div>
 
-                {{-- <div class="name">{{$student->candidate_name?$student->candidate_name:$student->candidate_name_bn}}</div> --}}
+                {{-- <div class="name">{{$student->candidate_name?$student->candidate_name:$student->candidate_name_bn}}
+                </div> --}}
                 <div class="description">
-                    This is to certify that {{$student->candidate_name?$student->candidate_name:$student->candidate_name_bn}}, Mother's Name: {{$student->mother_name}},
+                    This is to certify that
+                    {{$student->candidate_name ? $student->candidate_name : $student->candidate_name_bn}}, Mother's
+                    Name:
+                    {{$student->mother_name}},
                     Father's Name: {{$student->father_name}}, Date of
-                    Birth: {{$student->date_of_birth}}, Birth Registration No: {{$student->brn}} has  <strong>partially
-                    com-pleted </strong>
+                    Birth: {{$student->date_of_birth}}, Birth Registration No: {{$student->brn}} has <strong>partially
+                        com-pleted </strong>
                     Prevocational Level course in <strong>{{$student->occupation}} (460 hours)</strong>
                     under the Bangladesh National Qualification Framework (BNQF)
                     conducted by {{ $student->insatitute_name ? $student->insatitute_name : '.....................' }}
-                    from {{ $student->training_start_date }} to {{ $student->training_end_date }}.The participant was assessed in a total of 14 units of competency
+                    from {{ $student->training_start_date }} to {{ $student->training_end_date }}.The participant was
+                    assessed in a total of 14 units of competency
                     and
                     has been found competent/Not yet competent in the following unit(s):
                 </div>
@@ -176,7 +181,14 @@
                             ->join('competences', 'student_competence_models.competence_id', '=', 'competences.id')
                             ->where('student_id', $student->id)
                             ->get();
+                        $cimpitent_id = [];
+                        foreach ($student_competence_models as $key => $student_competence_model) {
+                            $cimpitent_id[] = $student_competence_model->competence_id;
+                        }
                         $total = count($student_competence_models);
+                        if ($total == 0) {
+                            echo '<p>No Competency Found</p>';
+                        }
                         $hulft = ceil($total / 2);
                     @endphp
                     <ul>
@@ -191,20 +203,26 @@
                     </ul>
                 </div>
                 <span
-                    style="font-family: Inter;font-weight: 700;font-size: 17px;line-height: 100%;margin-bottom: 9px;">Not yet Competent:</span>
+                    style="font-family: Inter;font-weight: 700;font-size: 17px;line-height: 100%;margin-bottom: 9px;margin-top: 15px;">Not
+                    yet Competent:</span>
                 <div class="skills">
                     @php
-                        //dd($student);
-                        $student_competence_models = DB::table('student_competence_models')
-                            ->select('student_competence_models.*', 'competences.title')
-                            ->join('competences', 'student_competence_models.competence_id', '=', 'competences.id')
-                            ->where('student_id', $student->id)
+
+                        $notYetCompetentCompetences = DB::table('competences')
+                            ->select('title')
+                            ->where('occupation_id', $student->occupation_id)
+                            ->whereNotIn('id', $cimpitent_id)
                             ->get();
-                        $total = count($student_competence_models);
+
+
+                        $total = count($notYetCompetentCompetences);
+                        if ($total == 0) {
+                            echo '<p>No Competency Found</p>';
+                        }
                         $hulft = ceil($total / 2);
                     @endphp
                     <ul>
-                        @foreach ($student_competence_models as $key => $student_competence_model)
+                        @foreach ($notYetCompetentCompetences as $key => $student_competence_model)
                             @if ($key == $hulft)
                                 </ul>
                                 <ul>
@@ -215,16 +233,18 @@
                     </ul>
                 </div>
 
-                
 
 
-                <div style="margin-top: 2px;">
+
+                <div style="margin-top: 2px;position: absolute;bottom: 31mm;right: 93mm;">
                     {{ $qrCode }}
                 </div>
 
                 <div class="footer">
-                    <div style="border-top: 1px solid #305875;">Assistant<br>(DBNFE)</div>
-                    <div style="border-top: 1px solid #305875;">Assessment Controller<br>Non-Formal Education Board, Bangladesh</div>
+                    <div style="border-top: 1px solid #000000ff;">Assistant Director<br>(DBNFE)</div>
+                    <div style="border-top: 1px solid #000000ff;">Assessment Controller<br>Non-Formal Education Board,
+                        <br> Bangladesh
+                    </div>
                 </div>
             </div>
         </div>

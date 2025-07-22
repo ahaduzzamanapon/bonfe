@@ -36,6 +36,7 @@ class CreateStudentsTable extends Migration
             $table->string('exam_status');
             $table->string('chairmen_id');
             $table->string('chairmen_status');
+            $table->string('controller_id')->nullable();
             $table->string('districts_admin_id');
             $table->string('districts_admin_status');
             $table->string('age');

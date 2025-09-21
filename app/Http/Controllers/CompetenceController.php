@@ -24,6 +24,7 @@ class CompetenceController extends AppBaseController
         /** @var Competence $competences */
         $competences = Competence::select('competences.*', 'occupations.title as occupation_title')
             ->join('occupations', 'competences.occupation_id', '=', 'occupations.id')
+            ->orderBy('competences.occupation_id', 'desc')
             ->get();
 
         return view('competences.index')

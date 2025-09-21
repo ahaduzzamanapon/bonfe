@@ -26,7 +26,6 @@
                         $programs = \App\Models\Program::latest()->get();
                         $occupations = \App\Models\Occupation::latest()->get();
                     }
-
                 @endphp
                 <h3 class="col-md-6 pull-left">
                     Dashboard
@@ -229,24 +228,25 @@
                     </div>
                 </a>
             </div>
-            <div class="dashboard_card">
-                <a class="indexLink" href="{{ route('students.students_waiting_for_chairman_approval') }}"
-                    style="text-decoration: none!important;">
+             <div class="dashboard_card">
+                <a href="{{ route('students.index') }}"
+                    style="text-decoration: none!important;" class="indexLink">
                     <div class="custom-card ">
-                        <div class="card-icon fuchsia">
+                        <div class="card-icon aqua">
                             <i class="icon im im-icon-Map"></i>
                         </div>
                         <div class="card-content">
-                            <h3 id="waiting_for_chairman">
+                            <h3 id="waiting_for_assessment_center">
                                 <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
                             </h3>
-                            <p>Waiting for Chairman's Approval</p>
+                            <p>Waiting for Assessment Center Approval</p>
                         </div>
                     </div>
                 </a>
             </div>
+           
             <div class="dashboard_card">
-                <a href="{{ route('students.students_waiting_for_district_approval') }}"
+                <a href="{{ route('students.index') }}"
                     style="text-decoration: none!important;" class="indexLink">
                     <div class="custom-card ">
                         <div class="card-icon aqua">
@@ -261,6 +261,40 @@
                     </div>
                 </a>
             </div>
+
+            <div class="dashboard_card">
+                <a href="{{ route('students.index') }}"
+                    style="text-decoration: none!important;" class="indexLink">
+                    <div class="custom-card ">
+                        <div class="card-icon aqua">
+                            <i class="icon im im-icon-Map"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="waiting_for_assessment_controller">
+                                <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
+                            </h3>
+                            <p>Waiting for Assessment Controller Approval</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+             <div class="dashboard_card">
+                <a class="indexLink" href="{{ route('students.index') }}"
+                    style="text-decoration: none!important;">
+                    <div class="custom-card ">
+                        <div class="card-icon fuchsia">
+                            <i class="icon im im-icon-Map"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="waiting_for_chairman">
+                                <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
+                            </h3>
+                            <p>Waiting for Chairman's Approval</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+           
 
 
             <div class="dashboard_card">
@@ -281,7 +315,7 @@
 
 
 
-            <div class="col-md-12" style="padding: 8px 28px 1px 86px;">
+            {{-- <div class="col-md-12" style="padding: 8px 28px 1px 86px;">
                 <div class="row" style="gap: 50px;">
                     <div class="col-md-5"
                         style="box-shadow: 0px 0px 7px 1px #bababa;background: #ffffff;border-radius: 7px;">
@@ -297,13 +331,13 @@
                     </div>
 
                 </div>
-            </div>
+            </div> --}}
 
 
         </div>
     </section>
 @section('footer_scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> --}}
 
     <script>
         function fetchDashboardData() {
@@ -313,7 +347,8 @@
             $('#waiting_for_chairman').html('<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>');
             $('#waiting_for_district').html('<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>');
             $('#generated_certificate').html('<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>');
-        
+            $('#waiting_for_assessment_center').html('<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>');
+            $('#waiting_for_assessment_controller').html('<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>');
             $.ajax({
                 url: "{{ route('dashboard.data') }}",
                 method: "GET",
@@ -345,54 +380,56 @@
                     $('#waiting_for_chairman').html(data.waiting_for_chairman);
                     $('#waiting_for_district').html(data.waiting_for_district);
                     $('#generated_certificate').html(data.generated_certificate);
-                    drawPieCharts(data,program_type);
+                    $('#waiting_for_assessment_center').html(data.generated_certificate);
+                    $('#waiting_for_assessment_controller').html(data.generated_certificate);
+                    //drawPieCharts(data,program_type);
                 }
             });
         }
-        function drawPieCharts(data, program_type) {
+        // function drawPieCharts(data, program_type) {
 
-            if (window.myPieChart) {
-                window.myPieChart.destroy();
-            }
+        //     if (window.myPieChart) {
+        //         window.myPieChart.destroy();
+        //     }
 
-            if (window.myPieChart2) {
-                window.myPieChart2.destroy();
-            }
+        //     if (window.myPieChart2) {
+        //         window.myPieChart2.destroy();
+        //     }
 
-            $('#studentPieChart').empty();
-            $('#studentapprovalPieChart').empty();
+        //     $('#studentPieChart').empty();
+        //     $('#studentapprovalPieChart').empty();
 
 
-            const ctx = document.getElementById('studentPieChart').getContext('2d');
-            const ctx2 = document.getElementById('studentapprovalPieChart').getContext('2d');
+        //     const ctx = document.getElementById('studentPieChart').getContext('2d');
+        //     const ctx2 = document.getElementById('studentapprovalPieChart').getContext('2d');
            
 
-            const pieData = program_type === 'General' ? 
-                { labels: ['Promising', 'Optainane'], data: [data.total_passed_students, data.total_failed_students] } : 
-                { labels: ['Competent', 'Not Yet Competent'], data: [data.total_passed_students, data.total_failed_students] };
+        //     const pieData = program_type === 'General' ? 
+        //         { labels: ['Promising', 'Optainane'], data: [data.total_passed_students, data.total_failed_students] } : 
+        //         { labels: ['Competent', 'Not Yet Competent'], data: [data.total_passed_students, data.total_failed_students] };
 
-            window.myPieChart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: pieData.labels,
-                    datasets: [{
-                        data: pieData.data,
-                        backgroundColor: ['#28a745', '#dc3545']
-                    }]
-                }
-            });
+        //     window.myPieChart = new Chart(ctx, {
+        //         type: 'pie',
+        //         data: {
+        //             labels: pieData.labels,
+        //             datasets: [{
+        //                 data: pieData.data,
+        //                 backgroundColor: ['#28a745', '#dc3545']
+        //             }]
+        //         }
+        //     });
 
-            window.myPieChart2 = new Chart(ctx2, {
-                type: 'pie',
-                data: {
-                    labels: ['Waiting for Chairman', 'Waiting for District', 'Generated Certificate'],
-                    datasets: [{
-                        data: [data.waiting_for_chairman, data.waiting_for_district, data.generated_certificate],
-                        backgroundColor: ['#ffc107', '#17a2b8', '#6c757d']
-                    }]
-                }
-            });
-        }
+        //     window.myPieChart2 = new Chart(ctx2, {
+        //         type: 'pie',
+        //         data: {
+        //             labels: ['Waiting for Chairman', 'Waiting for District', 'Generated Certificate'],
+        //             datasets: [{
+        //                 data: [data.waiting_for_chairman, data.waiting_for_district, data.generated_certificate],
+        //                 backgroundColor: ['#ffc107', '#17a2b8', '#6c757d']
+        //             }]
+        //         }
+        //     });
+        // }
 
         $(document).ready(fetchDashboardData);
     </script>

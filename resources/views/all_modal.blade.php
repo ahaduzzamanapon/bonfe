@@ -102,7 +102,7 @@
             success: function () {
                 alert('Result submitted successfully');
                 $('#exam_result_modal').modal('hide');
-                location.reload();
+                createTable();
             },
             error: function () {
                 alert('Failed to submit exam result');
@@ -777,10 +777,7 @@
                     Select All</a>
                 <div id="backToDistrict_modal_body" style="overflow-y: scroll;height: 50vh;">
                 </div>
-                <div class="form-group">
-                    <label for="comments">Comments</label>
-                    <input type="text" class="form-control" name="comments" placeholder="Enter Comments" id="comments">
-                </div>
+              
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal"
@@ -830,6 +827,16 @@
 
     function backToDistrict_submit() {
         var student_ids_backToDistrict = $('.backTodistrict_modal_select');
+
+        var backToDistrict_comments = [];
+        $('.backToDistrict_comments').each(function(){
+            backToDistrict_comments.push($(this).val());
+        });
+       
+        
+
+
+
         var selected_ids = student_ids_backToDistrict.filter(':checked').map(
             function () {
                 return this.value;
@@ -841,7 +848,7 @@
                 data: {
                     _token: '{{ csrf_token() }}',
                     student_ids_backToDistrict: selected_ids,
-                    comments: $('#comments').val(),
+                    comments: backToDistrict_comments,
                 },
                 success: function (data) {
                     if (data.success) {
@@ -972,6 +979,78 @@
         }
         $('#generateCertificate_modal').modal('hide');
 
+    }
+</script>
+{{-- generateCertificate_modal end --}}
+
+
+
+
+<script>
+    function selectAllStudents() {
+        var student_ids_forwardToAssessmentCenter = $('input[name="student_ids[]"]');
+        var selected_ids = student_ids_forwardToAssessmentCenter.filter(':checked').map(function () {
+            return this.value;
+        }).get();
+        if (selected_ids.length > 0) {
+            student_ids_forwardToAssessmentCenter.prop('checked', false);
+        } else {
+            student_ids_forwardToAssessmentCenter.trigger('click');
+            student_ids_forwardToAssessmentCenter.prop('checked', true);
+        }
+    }
+</script>
+
+
+
+
+
+{{-- viewResult --}}
+<!-- Modal -->
+<div class="modal fade" id="viewResult_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Result sheet</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    onclick="$('#viewResult_modal').modal('hide')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                
+                <div id="result_sheet_body" style="overflow-y: scroll;height: 71vh;">
+                    
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                    onclick="$('#viewResult_modal').modal('hide')">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function viewResult($student_id) {
+        $('#viewResult_modal').modal('show');
+        
+        $.ajax({
+            url: '{{ route('viewResult') }}',
+            type: 'GET',
+            data: {
+                _token: '{{ csrf_token() }}',
+                'student_id': $student_id,
+            },
+            success: function (data) {
+                console.log();
+                
+                $('#result_sheet_body').html('');
+                var html ='<iframe src="' + data.html + '" width="100%" height="100%" frameborder="0" si></iframe>';
+                $('#result_sheet_body').html(html);
+            }
+        })
     }
 </script>
 {{-- generateCertificate_modal end --}}

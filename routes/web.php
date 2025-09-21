@@ -64,6 +64,7 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     Route::get('students_waiting_for_district_approval', 'StudentController@students_waiting_for_district_approval')->name('students.students_waiting_for_district_approval');
+    Route::get('students_back_to_district_approval', 'StudentController@students_back_to_district_approval')->name('students.students_back_to_district_approval');
     Route::get('students_waiting_for_chairman_approval', 'StudentController@students_waiting_for_chairman_approval')->name('students.students_waiting_for_chairman_approval');
     
     Route::get('general_students_waiting_for_district_approval', 'StudentController@students_waiting_for_district_approval')->name('general_students.students_waiting_for_district_approval');
@@ -93,6 +94,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('generateCertificate_modal', 'StudentController@generateCertificate_modal')->name('generateCertificate_modal');
     Route::get('generateCertificate_send', 'StudentController@generateCertificate_send')->name('generateCertificate_send');
     Route::get('get_competences_by_occupation', 'StudentController@get_competences_by_occupation')->name('get_competences_by_occupation');
+    Route::get('viewResult', 'StudentController@viewResult')->name('viewResult');
 
     Route::get('/dashboard-data', [HomeController::class, 'getDashboardData'])->name('dashboard.data');
 

@@ -117,9 +117,8 @@
             <div style="padding-top: 77px;width: 82%;">
                 <div class="row" style="justify-self: center;">
                     <span class="header_text">NON-FORMAL EDUCATION BOARD, BANGLADESH</span>
-                </div>
-                <div class="row"
-                    style="align-items: anchor-center;padding: 0px 26px;display: flex;justify-content: space-between;">
+                </div> 
+                <div class="row" style="align-items: anchor-center;padding: 24px 26px;display: flex;justify-content: space-between;">
                     <div class="col-md-4">
                         <div class="row"
                             style="display: flex;flex-direction: column;align-items: flex-start;font-family: sans-serif;"">
@@ -153,7 +152,7 @@
 
                 {{-- <div class="name">{{$student->candidate_name?$student->candidate_name:$student->candidate_name_bn}}
                 </div> --}}
-                <div class="description">
+                <div class="description  mt-3">
                         This is to certify that <strong>
                             {{$student->candidate_name ? $student->candidate_name : $student->candidate_name_bn}} </strong>
                         , Mother's Name: {{$student->mother_name}},
@@ -208,9 +207,22 @@
                 </div>
 
                 <div class="footer">
-                    <div style="border-top: 1px solid #305875;">Assistant Director<br>(DBNFE)
+                    
+                    <div style="display: flex;flex-direction: column;align-items: center;padding: 28px 0;justify-content: flex-end;">
+                        <span style="font-size: 16px;font-weight: 600;margin-top: 5px; border-top: 1px solid #000000ff;">Assistant Director</span>
+                        <span style="font-size: 14px;">(DBNFE)</span>
                     </div>
-                    <div style="border-top: 1px solid #305875;">Chairman<br>Non-Formal Education Board,<br> Bangladesh
+                    @php
+                        $AssessmentController = DB::table('users')
+                            ->where('id', $student->chairmen_id)
+                            ->first();
+                    @endphp
+                 
+                    <div style="display: flex;flex-direction: column;align-items: center;padding: 10px 0;justify-content: flex-end;">
+                        <img src="{{ asset($AssessmentController->signature) }}" alt="" style="width: 100px;object-fit: contain;">
+                        <span style="font-size: 16px;font-weight: 600;margin-top: 5px; border-top: 1px solid #000000ff;">Chairman</span>
+                        <span style="font-size: 14px;">Non-Formal Education Board</span>
+                        <span style="font-size: 14px;">Bangladesh</span>
                     </div>
                 </div>
             </div>

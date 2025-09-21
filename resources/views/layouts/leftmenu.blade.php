@@ -32,6 +32,15 @@
                         </a>
                     </li>
                 @endif
+                @if (can('district_admin'))
+                    <li class="nav-item">
+                        <a class="nav-link {!! Request::is('students_back_to_district_approval') ? 'active' : '' !!}" aria-current="page"
+                            href="{{ route('students.students_back_to_district_approval') }}">
+                            <i class="icon im im-icon-Student-Hat"></i>
+                            <span class="item-name">Back to District</span>
+                        </a>
+                    </li>
+                @endif
                 @if (can('chairman'))
                     <li class="nav-item">
                         <a class="nav-link {!! Request::is('students_waiting_for_chairman_approval') ? 'active' : '' !!}" aria-current="page"

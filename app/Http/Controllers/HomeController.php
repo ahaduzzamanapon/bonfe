@@ -49,134 +49,68 @@ class HomeController extends Controller
         return response()->json($upazilas);
     }
 
+
     public function getDashboardData(Request $request)
     {
 
         $program_id = $request->program_id;
         $occupation_id = $request->occupation_id;
 
-        $query = DB::table('students');
-
-        if (!can('chairman') && can('district_admin')) {
-            $query = $query->where('students.district_id', auth()->user()->district_id);
-        }
-
-        if (!can('chairman') && !can('district_admin') && can('assessment_centers_controller')) {
-            $query = $query->where('students.assessment_center', auth()->user()->assessment_center)->where('students.occupation_id', auth()->user()->occupation);
-        }         
-
-        if ($program_id) {
-            $query = $query->where('students.program_id', $program_id);
-        }
-        if ($occupation_id) {
-            $query = $query->where('students.occupation_id', $occupation_id);
-        }
-
-        $total_students = $query->count();
-
-        $passedQuery = DB::table('students')->where('exam_status', 'Passed');
-        if (!can('chairman') && can('district_admin')) {
-            $passedQuery = $passedQuery->where('students.district_id', auth()->user()->district_id);
-        }
-
-        if (!can('chairman') && !can('district_admin') && can('assessment_centers_controller')) {
-            $passedQuery = $passedQuery->where('students.assessment_center', auth()->user()->assessment_center)->where('students.occupation_id', auth()->user()->occupation);
-        } 
+// user table  id,name,last_name,email,designation_id,district_id,date_of_birth,date_of_join,gender,address,phone_number,image,signature,salary,nid,group_id,assessment_center,occupation,education,blood_group,religion,marital_status,punch_id,emp_id,experience,email_verified_at,password,remember_token,created_at,updated_at
+// students table id,program_id,occupation_id,registration_number,candidate_id,candidate_name,candidate_name_bn,brn,father_name,mother_name,image,attachment,nid,district_id,upajila_id,address,date_of_birth,mobile_number,email,admitted_from,institutionName,assessment_date,assessment_venue,assessment_center,assessment_center_registration_number,age,literacy_status,educational_qualification,training_start_date,training_end_date,gender,status,exam_status,exam_result_sheet,chairmen_id,chairmen_status,controller_id,districts_admin_id,districts_admin_status,controller_back_comments,notified,created_at,updated_at
 
 
+// sample of filter 
 
-
-        if ($program_id) {
-            $passedQuery = $passedQuery->where('students.program_id', $program_id);
-        }
-        if ($occupation_id) {
-            $passedQuery = $passedQuery->where('students.occupation_id', $occupation_id);
-        }
-        $total_passed_students = $passedQuery->count();
-
-
-
-
-        $failQuery = DB::table('students')->where('exam_status', 'Fail');
-        if (!can('chairman') && can('district_admin')) {
-            $failQuery = $failQuery->where('students.district_id', auth()->user()->district_id);
-        }
-
-        if (!can('chairman') && !can('district_admin') && can('assessment_centers_controller')) {
-            $failQuery = $failQuery->where('students.assessment_center', auth()->user()->assessment_center)->where('students.occupation_id', auth()->user()->occupation);
-        } 
-
-        if ($program_id) {
-            $failQuery = $failQuery->where('students.program_id', $program_id);
-        }
-        if ($occupation_id) {
-            $failQuery = $failQuery->where('students.occupation_id', $occupation_id);
-        }
-        $total_failed_students = $failQuery->count();
+// if(can('filtered_by_multi_district')){
+//     student.where('district_id', auth()->user()->district_id);
+// }
 
 
 
 
 
-        $waiting_for_chairman = DB::table('students')
-            ->where('exam_status', 'Passed')
-            ->where('status', 'Waiting for Chairman Approval');
-        if (!can('chairman') && can('district_admin')) {
-            $waiting_for_chairman = $waiting_for_chairman->where('students.district_id', auth()->user()->district_id);
-        }
-        if (!can('chairman') && !can('district_admin') && can('assessment_centers_controller')) {
-            $waiting_for_chairman = $waiting_for_chairman->where('students.assessment_center', auth()->user()->assessment_center)->where('students.occupation_id', auth()->user()->occupation);
-        }
-        if ($program_id) {
-            $waiting_for_chairman = $waiting_for_chairman->where('students.program_id', $program_id);
-        }
-        if ($occupation_id) {
-            $waiting_for_chairman = $waiting_for_chairman->where('students.occupation_id', $occupation_id);
-        }
-        $waiting_for_chairman = $waiting_for_chairman->count();
-
-        $waiting_for_district = DB::table('students')
-            ->where('exam_status', 'Passed')
-            ->where('status', 'Waiting for District Admin Approval');
-        if (!can('chairman') && can('district_admin')) {
-            $waiting_for_district = $waiting_for_district->where('students.district_id', auth()->user()->district_id);
-        }
-        if (!can('chairman') && !can('district_admin') && can('assessment_centers_controller')) {
-            $waiting_for_district = $waiting_for_district->where('students.assessment_center', auth()->user()->assessment_center)->where('students.occupation_id', auth()->user()->occupation);
-        }
-        if ($program_id) {
-            $waiting_for_district = $waiting_for_district->where('students.program_id', $program_id);
-        }
-        if ($occupation_id) {
-            $waiting_for_district = $waiting_for_district->where('students.occupation_id', $occupation_id);
-        }
-        $waiting_for_district = $waiting_for_district->count();
-
-        $generated_certificate = DB::table('students')
-            ->where('exam_status', 'Passed')
-            ->where('status', 'Chairman Approved');
-
-        if (!can('chairman') && can('district_admin')) {
-            $generated_certificate = $generated_certificate->where('students.district_id', auth()->user()->district_id);
-        }
-        if (!can('chairman') && !can('district_admin') && can('assessment_centers_controller')) {
-            $generated_certificate = $generated_certificate->where('students.assessment_center', auth()->user()->assessment_center)->where('students.occupation_id', auth()->user()->occupation);
-        }
-        if ($program_id) {
-            $generated_certificate = $generated_certificate->where('students.program_id', $program_id);
-        }
-        if ($occupation_id) {
-            $generated_certificate = $generated_certificate->where('students.occupation_id', $occupation_id);
-        }
-        $generated_certificate = $generated_certificate->count();
 
         $program_type = DB::table('programs')->where('id', $program_id)->first()->program_type;
 
+        $studentsQuery = DB::table('students')
+            ->where('program_id', $program_id);
 
+        if ($occupation_id) {
+            $studentsQuery->where('occupation_id', $occupation_id);
+        }
 
+     if (!can('get_all_student')) {
+        
+        if (can('filtered_by_multi_district')) {
+            $userDistricts = MultipleDistrict::where('user_id', auth()->user()->id)
+                ->pluck('district_id')
+                ->toArray();
+            $studentsQuery->whereIn('district_id', $userDistricts);
+        }
+        if (can('filtered_by_own_district')) {
+            $studentsQuery->where('district_id', auth()->user()->district_id);
+        }
+        
+        if (can('filtered_by_own_district')) {
+            $studentsQuery->where('district_id', auth()->user()->district_id);
+        }
 
-
-
+        if (can('filtered_by_own_tread')) {
+            $studentsQuery->where('occupation_id', auth()->user()->occupation);
+        }
+        if (can('filtered_by_own_center')) {
+            $studentsQuery->where('occupation_id', auth()->user()->assessment_center);
+        }
+    }
+        $total_students = $studentsQuery->count();
+        $total_passed_students = $studentsQuery->where('exam_status', 'Passed')->count();
+        $total_failed_students = $studentsQuery->where('exam_status', 'Fail')->count();
+        $waiting_for_chairman = $studentsQuery->where('status', 'Waiting for Chairman Approval')->count();
+        $waiting_for_district = $studentsQuery->where('status', 'Waiting for District Admin Approval')->count();
+        $generated_certificate = $studentsQuery->where('status', 'Chairman Approved')->count();
+        $waiting_for_assessment_center = $studentsQuery->where('status', 'Waiting for the exam results from the Assessment Center')->count();
+        $waiting_for_assessment_controller = $studentsQuery->where('status', 'Waiting for Assessment Controller Approval')->count();
         return response()->json([
             'total_students' => $total_students,
             'total_passed_students' => $total_passed_students,
@@ -184,6 +118,8 @@ class HomeController extends Controller
             'waiting_for_chairman' => $waiting_for_chairman,
             'waiting_for_district' => $waiting_for_district,
             'generated_certificate' => $generated_certificate,
+            'waiting_for_assessment_center' => $waiting_for_assessment_center,
+            'waiting_for_assessment_controller' => $waiting_for_assessment_controller,
             'program_type' => $program_type
         ]);
     }

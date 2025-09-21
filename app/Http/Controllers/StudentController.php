@@ -7,6 +7,7 @@ use App\Models\Competence;
 use App\Models\Student;
 use App\Models\Upazila;
 use App\Models\Occupation;
+use App\Models\Insatitute;
 
 
 use App\Http\Requests\CreateStudentRequest;
@@ -23,6 +24,7 @@ use DateTime;
 
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ExcelDataImport;
+
 
 
 
@@ -44,6 +46,10 @@ class StudentController extends AppBaseController
         return view('students.index');
     }
     public function students_waiting_for_chairman_approval(Request $request)
+    {
+        return view('students.index');
+    }
+    public function students_back_to_district_approval(Request $request)
     {
         return view('students.index');
     }
@@ -71,7 +77,11 @@ class StudentController extends AppBaseController
                 $students = $students->where('students.status', 'Waiting for Chairman Approval');
             } elseif ($request->status_filter == 'waiting_for_assessment_center_approval') {
                 $students = $students->where('students.status', 'Waiting for the exam results from the Assessment Center');
+            } elseif ($request->status_filter == 'back_to_district_approval') {
+                $students = $students->where('students.status', 'Waiting for District Admin Approval');
+                $students = $students->whereNotNull('students.controller_back_comments');
             }
+
         }
         if ($request->has('occupation_id') && $request->occupation_id != null) {
             $students = $students->where('students.occupation_id', $request->occupation_id);
@@ -358,6 +368,8 @@ class StudentController extends AppBaseController
         $student->save();
         $checkedCompetences = explode(',', $request->checkedCompetences);
 
+        StudentCompetenceModel::where('student_id', $request->studentId)->delete();
+
         foreach ($checkedCompetences as $competenceId) {
             $StudentCompetenceModel = new StudentCompetenceModel();
             $StudentCompetenceModel->student_id = $request->studentId;
@@ -438,9 +450,9 @@ class StudentController extends AppBaseController
         }
     }
 
-     public function generateCertificate_send(Request $request)
+    public function generateCertificate_send(Request $request)
     {
-      
+
         $studentIds = $request->student_ids_generateCertificate;
 
         $html = '';
@@ -460,7 +472,7 @@ class StudentController extends AppBaseController
             $qrdata = route('students.qr_details', $studentId);
 
             $qrCode = QrCode::size(100)->generate($qrdata);
-            
+
             if ($student->exam_status == 'Passed') {
                 $html .= view('students.certificate.pass.certificate_pass_singal')->with('student', $student)->with('qrCode', $qrCode)->render();
             } else {
@@ -596,7 +608,7 @@ class StudentController extends AppBaseController
     }
     public function forwardToDistrictAdmin_modal()
     {
-        $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation','programs.program_type')
+        $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation', 'programs.program_type')
             ->join('districts', 'students.district_id', '=', 'districts.id')
             ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
             ->join('programs', 'students.program_id', '=', 'programs.id')
@@ -604,7 +616,7 @@ class StudentController extends AppBaseController
             ->where('students.exam_status', '!=', 'Pending')
             ->where('students.status', '=', 'Waiting for the exam results from the Assessment Center')
             ->get();
-        
+
         $html = '';
         $html .= '<table class="table table-bordered table-striped table-hover" id="example1">
             <thead>
@@ -808,6 +820,7 @@ class StudentController extends AppBaseController
                     <th>Exam Status</th>
                     <th>Occupation</th>
                     <th>District</th>
+                    <th>Comment</th>
                 </tr>
             </thead>
             <tbody>';
@@ -820,6 +833,7 @@ class StudentController extends AppBaseController
                 <td><span class="badge badge-' . ($student->exam_status == 'Fail' ? 'danger' : ($student->exam_status == 'Pending' ? 'warning' : 'success')) . '">' . ($student->exam_status == 'Fail' ? 'Optainane ' : ($student->exam_status == 'Pending' ? 'Pending' : 'Promising')) . '</span></td>
                 <td style="padding: 3px;" >' . $student->occupation . '</td>
                 <td style="padding: 3px;" >' . $student->district . '</td>
+                <td style="padding: 3px;" ><input type="text" class="form-control backToDistrict_comments" name="backToDistrict_comments[]"></td></td>
             </tr>';
         }
         $html .= '</tbody>
@@ -830,14 +844,15 @@ class StudentController extends AppBaseController
     public function backToDistrict_send(Request $request)
     {
         $student_ids_forwardToChairman = $request->student_ids_backToDistrict;
+        $comments = $request->comments;
         DB::beginTransaction();
         try {
-            foreach ($student_ids_forwardToChairman as $studentId) {
+            foreach ($student_ids_forwardToChairman as $index => $studentId) {
                 $student = Student::find($studentId);
                 $student->status = 'Waiting for District Admin Approval';
                 $student->districts_admin_id = auth()->user()->id;
                 $student->districts_admin_status = "Pending";
-                $student->controller_back_comments = $request->comments;
+                $student->controller_back_comments = $comments[$index];
                 $student->save();
             }
             DB::commit();
@@ -858,7 +873,7 @@ class StudentController extends AppBaseController
 
     public function approveStudent_modal()
     {
-        
+
         $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
             ->join('districts', 'students.district_id', '=', 'districts.id')
             ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
@@ -922,14 +937,8 @@ class StudentController extends AppBaseController
             ]);
         }
     }
-
-
     public function generateCertificate_modal(Request $request)
     {
-
-        
-
-
         $certificate_type = $request->certificate_type;
         $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
             ->join('districts', 'students.district_id', '=', 'districts.id')
@@ -968,7 +977,7 @@ class StudentController extends AppBaseController
         return response()->json($html);
     }
 
-   
+
 
     public function get_competences_by_occupation(Request $request)
     {
@@ -1008,10 +1017,14 @@ class StudentController extends AppBaseController
 
     function get_upazila_id($var)
     {
+        if ($var == null || $var == '') {
+            $var = 'No Data'; // If it's already an ID, return it directly
+        }
         $upazila = Upazila::where('name_bn', $var)->first();
         if ($upazila) {
             return $upazila->id;
         } else {
+
             $new_upazila = new Upazila();
             $new_upazila->name_bn = $var;
             $new_upazila->name_en = $var;
@@ -1043,6 +1056,47 @@ class StudentController extends AppBaseController
         return $date->format('Y-m-d'); // Output: 2024-11-14 
     }
 
+    function get_assessment_center($var)
+    {
+        if ($var == null || $var == '') {
+            return null; // If it's already an ID, return it directly
+        }
+        $assessment_center = AssessmentCenter::where('center_name', $var)->first();
+        if ($assessment_center) {
+            return $assessment_center->id;
+        } else {
+            $new_assessment_center = new AssessmentCenter();
+            $new_assessment_center->center_name = $var;
+            $new_assessment_center->address = $var;
+            $new_assessment_center->registration_number = 'AC' . rand(100000, 999999);
+            $new_assessment_center->save();
+            return $new_assessment_center->id;
+        }
+
+    }
+
+
+    function get_institution_id($var)
+    {
+        if ($var == null || $var == '') {
+            return null; // If it's already an ID, return it directly
+        }
+        $institution = Insatitute::where('insatitute_name', $var)->first();
+        if ($institution) {
+            return $institution->id;
+        } else {
+            $new_institution = new Insatitute();
+            $new_institution->insatitute_name = $var;
+            $new_institution->address = $var;
+            $new_institution->district = 12;
+            $new_institution->status = 'Active';
+            $new_institution->description = $var;
+            $new_institution->save();
+            return $new_institution->id;
+        }
+
+    }
+
 
 
 
@@ -1050,49 +1104,240 @@ class StudentController extends AppBaseController
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv',
+            'file' => 'required|array',
+            'file.*' => 'mimes:xlsx,xls,csv',
         ]);
-        $import = new ExcelDataImport;
-        Excel::import($import, $request->file('file'));
 
-        $data = $import->data;
-        foreach ($data as $key => $value) {
+        foreach ($request->file('file') as $file) {
+            $import = new ExcelDataImport();
+            Excel::import($import, $file);
 
-            $upajila_id = $this->get_upazila_id($value['upajila_id']);
-            $occupation_id = $this->get_occupation_id($value['occupation_id']);
-            $date_of_birth = $this->convertBanglaDateToEnglish($value['date_of_birth']);
+            $data = $import->data;
+            foreach ($data as $key => $value) {
+                //dd($value);
+                $registration_number = trim($value['registration_number']);
+                $candidate_name_en = $value['candidate_name_en'];
+                $father_name = $value['father_name'];
+                $mother_name = $value['mother_name'];
+                $address = $value['address'];
+                $assessment_date = $value['assessment_date'];
+                $assessment_center = $value['assessment_center'];
+                $result = $value['result'];
+                $institution_name = $value['institution_name'];
+                $compitency = $value['competence'];
 
-            $training_start_date = $this->convertBanglaDateToEnglish($value['training_start_date']);
-            $training_end_date = $this->convertBanglaDateToEnglish($value['training_end_date']);
+                if($result == 'Competent'){
+                    $exam_status = 'Passed';
+                }elseif($result == 'Dropout'){
+                    $exam_status = 'Dropout';
+                }elseif($result == 'Absent'){
+                    $exam_status = 'Absent';
+                }else{
+                    $exam_status = 'Fail';
+                }
 
-            $data = [
-                'program_id' => $value['program_id'],
-                'occupation_id' => $occupation_id,
-                'registration_number' => $value['registration_number'],
-                'candidate_id' => $value['candidate_id'],
-                'candidate_name' => $value['candidate_name_bn'],
-                'candidate_name_bn' => $value['candidate_name_bn'],
-                'father_name' => $value['father_name'],
-                'mother_name' => $value['mother_name'],
-                'district_id' => 12,
-                'upajila_id' => $upajila_id,
-                'address' => $value['address'],
-                'date_of_birth' => $date_of_birth,
-                'mobile_number' => $value['mobile_number'],
-                'admitted_from' => 'From this institution',
-                'age' => $this->bntoen($value['age']),
-                'literacy_status' => $value['literacy_status'],
-                'educational_qualification' => $value['educational_qualification'],
-                'training_start_date' => $training_start_date,
-                'training_end_date' => $training_end_date,
-                'gender' => $value['gender'],
-            ];
-            // $prev_data=Student::where('registration_number',$value['registration_number'],)->get();
-            // if (!count($prev_data)>0) {
-            Student::create($data);
-            //}
+
+                $student = Student::where('registration_number', 'LIKE', '%' . trim($registration_number) . '%')
+                   ->where('institution_no_temp', 2)
+                    ->first();
+
+                // if($registration_number=='REG-LE-MPS-00166'){
+                //     dd($student);
+                // }else{
+                //     echo $registration_number.'<br>';
+                // }
+
+                if ($student) {
+                    $assessment_center = $this->get_assessment_center($assessment_center);
+                    $institution_name = $this->get_institution_id($institution_name);
+                    $student->candidate_name = $candidate_name_en;
+                    $student->father_name = $father_name;
+                    $student->mother_name = $mother_name;
+                    $student->address = $address;
+                    $student->training_end_date = date('Y-m-d', strtotime(str_replace('.', '-', $assessment_date)));
+                    $student->assessment_date = date('Y-m-d', strtotime(str_replace('.', '-', $assessment_date)));
+                    $student->assessment_center = $assessment_center;
+                    $student->institutionName = $institution_name;
+                    $student->exam_status = $exam_status;
+
+                    $student->save();
+
+
+                    if ($student->exam_status == 'Fail') {
+                        $compitency_array = explode('-', $compitency);
+                        if(count($compitency_array) == 2){
+                        $compitency_ids = range((int) $compitency_array[0], (int) $compitency_array[1]);
+                        }else{
+                            $compitency_ids = [(int) $compitency_array[0]];
+                        }
+                        StudentCompetenceModel::where('student_id', $request->studentId)->delete();
+                        $competences = Competence::where('occupation_id', $student->occupation_id)->get();
+                        $checkedCompetences = [];
+                        foreach ($competences as $key => $competence) {
+                            if (in_array($key+1, $compitency_ids)) {
+                                $checkedCompetences[] = $competence->id;
+                            }
+                        }
+
+                        foreach ($checkedCompetences as $competenceId) {
+                            $StudentCompetenceModel = new StudentCompetenceModel();
+                            $StudentCompetenceModel->student_id = $student->id;
+                            $StudentCompetenceModel->competence_id = $competenceId;
+                            $StudentCompetenceModel->save();
+                        }
+                    }
+                }
+            }
         }
         echo 'success';
+    }
+    // public function import(Request $request)
+    // {
+    //     $request->validate([
+    //         'file' => 'required|mimes:xlsx,xls,csv',
+    //     ]);
+    //     $import = new ExcelDataImport;
+    //     Excel::import($import, $request->file('file'));
+
+    //     $data = $import->data;
+    //     foreach ($data as $key => $value) {
+    //         $registration_number = $value['registration_number'];
+    //         $candidate_name_en = $value['candidate_name_en'];
+    //         $father_name = $value['father_name'];
+    //         $mother_name = $value['mother_name'];
+    //         $address = $value['address'];
+    //         $assessment_date = $value['assessment_date'];
+    //         $assessment_center = $value['assessment_center'];
+    //         $result = $value['result'];
+    //         $institution_name = $value['institution_name'];
+    //         $compitency = $value['compitency'];
+
+    //         if($result == 'Competent'){
+    //             $exam_status = 'Passed';
+    //         }elseif($result == 'Dropout'){
+    //             $exam_status = 'Dropout';
+    //         }elseif($result == 'Absent'){
+    //             $exam_status = 'Absent';
+    //         }else{
+    //             $exam_status = 'Fail';
+    //         }
+
+
+           
+
+
+    //         $student = Student::where('registration_number', $registration_number)
+    //             ->where('institution_no_temp', 1)
+    //             ->first();
+
+    //         if ($student) {
+    //             $assessment_center = $this->get_assessment_center($assessment_center);
+    //             $institution_name = $this->get_institution_id($institution_name);
+    //             $student->candidate_name = $candidate_name_en;
+    //             $student->father_name = $father_name;
+    //             $student->mother_name = $mother_name;
+    //             $student->address = $address;
+    //             $student->training_end_date = date('Y-m-d', strtotime(str_replace('.', '-', $assessment_date)));
+    //             $student->assessment_date = date('Y-m-d', strtotime(str_replace('.', '-', $assessment_date)));
+    //             $student->assessment_center = $assessment_center;
+    //             $student->institutionName = $institution_name;
+    //             $student->exam_status = $exam_status;
+
+    //             $student->save();
+
+
+    //             if ($student->exam_status == 'Fail') {
+    //                 $compitency_array = explode('-', $compitency);
+    //                 $compitency_ids = range((int) $compitency_array[0], (int) $compitency_array[1]);
+    //                 StudentCompetenceModel::where('student_id', $request->studentId)->delete();
+    //                 $competences = Competence::where('occupation_id', $student->occupation_id)->get();
+    //                 $checkedCompetences = [];
+    //                 foreach ($competences as $key => $competence) {
+    //                     if (in_array($key+1, $compitency_ids)) {
+    //                         $checkedCompetences[] = $competence->id;
+    //                     }
+    //                 }
+
+    //                 foreach ($checkedCompetences as $competenceId) {
+    //                     $StudentCompetenceModel = new StudentCompetenceModel();
+    //                     $StudentCompetenceModel->student_id = $student->id;
+    //                     $StudentCompetenceModel->competence_id = $competenceId;
+    //                     $StudentCompetenceModel->save();
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     echo 'success';
+    // }
+    // public function import(Request $request)
+    // {
+    //     $request->validate([
+    //         'file' => 'required|mimes:xlsx,xls,csv',
+    //     ]);
+    //     $import = new ExcelDataImport;
+    //     Excel::import($import, $request->file('file'));
+
+    //     $data = $import->data;
+    //     foreach ($data as $key => $value) {
+
+    //         //dd($value);
+
+
+
+    //         $upajila_id = $this->get_upazila_id($value['upajila_id']);
+    //         $occupation_id = $this->get_occupation_id($value['occupation_id']);
+    //         $date_of_birth = $this->convertBanglaDateToEnglish($value['date_of_birth']);
+
+    //         $training_start_date = $this->convertBanglaDateToEnglish($value['training_start_date']);
+    //         $training_end_date = $this->convertBanglaDateToEnglish($value['training_end_date']);
+
+    //         dd($training_end_date);
+
+    //         $data = [
+    //             'program_id' => $value['program_id'],
+    //             'occupation_id' => $occupation_id,
+    //             'registration_number' => $value['registration_number'],
+    //             'candidate_id' => $value['candidate_id'],
+    //             'candidate_name' => $value['candidate_name_bn'],
+    //             'candidate_name_bn' => $value['candidate_name_bn'],
+    //             'father_name' => $value['father_name'],
+    //             'mother_name' => $value['mother_name'],
+    //             'district_id' => 12,
+    //             'upajila_id' => $upajila_id,
+    //             'address' => $value['address'],
+    //             'date_of_birth' => $date_of_birth,
+    //             'mobile_number' => $value['mobile_number'],
+    //             'admitted_from' => $value['institution_name'],
+    //             'age' => $this->bntoen($value['age']),
+    //             'literacy_status' => $value['literacy_status'],
+    //             'educational_qualification' => $value['educational_qualification'],
+    //             'training_start_date' => $training_start_date,
+    //             'training_end_date' => $training_end_date,
+    //             'gender' => $value['gender'],
+    //             'institutionName' => $value['institution_name'],
+    //         ];
+    //         //dd($data);
+    //         $prev_data=Student::where('registration_number',$value['registration_number'])
+    //         ->where('program_id',$value['program_id'])
+    //         ->where('occupation_id',$occupation_id)
+    //         ->where('candidate_id',$value['candidate_id'])
+    //         ->where('institutionName',operator: $value['institution_name'])
+    //         ->get();
+    //         if (count($prev_data)==0) {
+    //         Student::create($data);
+    //         }
+    //     }
+    //     echo 'success';
+    // }
+
+
+    public function viewResult(Request $request)
+    {
+        $student_id = $request->student_id;
+        $student = Student::find($student_id);
+        $exam_result_sheet = $student->exam_result_sheet;
+        $html = asset($exam_result_sheet);
+        return response()->json(['html' => $html]);
     }
 
 }

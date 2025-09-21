@@ -89,6 +89,14 @@
                                             {{ Request::is('students_waiting_for_district_approval') ? 'checked' : '' }}>
                                         Waiting for District Approval
                                     </label>
+                                    <label
+                                        class="btn btn-outline-primary {{ Request::is('students_back_to_district_approval') ? 'active' : '' }}">
+                                        <input onchange="createTable()" class="form-check-input" type="radio"
+                                            name="status_filter" id="back_to_district_approval"
+                                            value="back_to_district_approval" autocomplete="off"
+                                            {{ Request::is('students_back_to_district_approval') ? 'checked' : '' }}>
+                                        Back to District
+                                    </label>
                                 @endif
 
                                 @if (can('chairman'))
@@ -275,12 +283,26 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td><span class="badge badge-${student.status === 'Pending' ? 'warning' : 'success'}">${student.status}</span></td>
+                                        <td>
+                                            <span class="badge badge-${student.status === 'Pending' ? 'warning' : 'success'}">${student.status === 'Waiting for District Admin Approval' && student.controller_back_comments!=null? 'Back to District Admin' : student.status}</span>
+                                            <br>
+                                            ${student.status === 'Waiting for District Admin Approval' && student.controller_back_comments != null ? `<p style="width: 160px;white-space: break-spaces;">Comment: ${student.controller_back_comments}</p>` : ''}
+
+                                        </td>
+
+
+
+
+
                                         <td><span class="badge badge-${student.exam_status === 'Fail' ? 'danger' : student.exam_status === 'Pending' ? 'warning' : 'success'}">${
                                             programType === 'General'
                                                 ? student.exam_status === 'Fail' ? 'Optainane ' : student.exam_status === 'Pending' ? 'Pending' : 'Promising'
                                                 : student.exam_status === 'Fail' ? 'Not Competent yet ' : student.exam_status === 'Pending' ? 'Pending' : 'Competent'
-                                        }</span></td>
+                                        }</span>
+                                        <br>
+                                        <br>
+                                        <a style="background: #ffc107;padding: 4px;color: black;border-radius: 4px;cursor: pointer;" onclick="viewResult(${student.id})">View result sheet</a>
+                                        </td>
                                         <td><span class="badge badge-${student.districts_admin_status === 'Pending' ? 'warning' : 'success'}">${student.districts_admin_status}</span></td>
                                         <td><span class="badge badge-${student.chairmen_status === 'Pending' ? 'warning' : 'success'}">${student.chairmen_status}</span></td>
                                         <td>
@@ -299,9 +321,7 @@
                                                     ${student.status === 'Waiting for the exam results from the Assessment Center' && student.candidate_id==null ? `
                                                         <a class="dropdown-item" onclick="give_candidate_id(${student.id})" href="javascript:void(0);"><i class="im im-icon-People-onCloud"></i> Give Candidate Id</a>` : ''
                                                     }
-                                                    ${student.status === 'Waiting for Chairman Approval' && can_chairman ? `
-                                                        <a class="dropdown-item" href="/students/${student.id}/chairman-approve"><i class="im im-icon-Approved-Window"></i> Approve</a>` : ''
-                                                    }
+                                                   
                                                     ${student.exam_status === 'Pending' ? `
                                                         <form method="POST" action="/students/${student.id}" onsubmit="return confirm('Are you sure?');">
                                                             <input type="hidden" name="_method" value="DELETE" />

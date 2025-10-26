@@ -148,7 +148,7 @@
                         <div class="col-md-4" style="display: flex;flex-direction: column;align-items: flex-start;font-family: sans-serif;text-align: start;padding: 0;">
                         <span>Registration No.:</span>
                         <span>{{$student->registration_number}}</span>
-                        <span>Issued on: 13-05-2025</span>
+                        <span>Issued date: 13-05-2025</span>
                     </div>
 
                 </div>

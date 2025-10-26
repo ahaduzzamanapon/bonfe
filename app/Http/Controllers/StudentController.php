@@ -1114,7 +1114,6 @@ class StudentController extends AppBaseController
 
             $data = $import->data;
             foreach ($data as $key => $value) {
-                //dd($value);
                 $registration_number = trim($value['registration_number']);
                 $candidate_name_en = $value['candidate_name_en'];
                 $father_name = $value['father_name'];
@@ -1125,6 +1124,7 @@ class StudentController extends AppBaseController
                 $result = $value['result'];
                 $institution_name = $value['institution_name'];
                 $compitency = $value['competence'];
+                $institute_no = $value['institute_no'];
 
                 if($result == 'Competent'){
                     $exam_status = 'Passed';
@@ -1138,14 +1138,11 @@ class StudentController extends AppBaseController
 
 
                 $student = Student::where('registration_number', 'LIKE', '%' . trim($registration_number) . '%')
-                   ->where('institution_no_temp', 2)
+                   ->where('institution_no_temp', $institute_no)
+                    ->where('exam_status', 'LIKE', '%' . 'Pending' . '%')
                     ->first();
 
-                // if($registration_number=='REG-LE-MPS-00166'){
-                //     dd($student);
-                // }else{
-                //     echo $registration_number.'<br>';
-                // }
+               
 
                 if ($student) {
                     $assessment_center = $this->get_assessment_center($assessment_center);

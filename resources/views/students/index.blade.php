@@ -312,7 +312,7 @@
                                                 </button>
                                                 <div class="dropdown-menu">
                                                     <a class="dropdown-item" href="/students/${student.id}"><i class="im im-icon-Eye"></i> View</a>
-                                                    ${student.status !== 'Chairman Approved' ? `
+                                                    ${student.status !== 'Chairman Approved' || student.program_id === 1 ? `
                                                         <a class="dropdown-item" href="/students/${student.id}/edit"><i class="im im-icon-Pen"></i> Edit</a>` : ''
                                                     }
                                                     ${student.status === 'Waiting for the exam results from the Assessment Center' && can_give_exam_result ? `

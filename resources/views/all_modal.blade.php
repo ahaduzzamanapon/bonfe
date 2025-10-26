@@ -1044,8 +1044,11 @@
                 'student_id': $student_id,
             },
             success: function (data) {
-                console.log();
-                
+                if(data.html == 'No File Found'){
+                    alert('No File Found');
+                    $('#viewResult_modal').modal('hide');
+                    return;
+                }
                 $('#result_sheet_body').html('');
                 var html ='<iframe src="' + data.html + '" width="100%" height="100%" frameborder="0" si></iframe>';
                 $('#result_sheet_body').html(html);

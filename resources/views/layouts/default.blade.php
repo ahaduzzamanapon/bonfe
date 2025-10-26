@@ -304,7 +304,7 @@
             style="background: #8dc641;height: 58px;border-bottom: 2px solid;">
             <a href="{{ url('/') }}" class="navbar-brand">
                 <div class="logo-main">
-                    <img src="{{ asset('assets/images/logo.png') }}" alt="logo" class="logo-default">
+                    <img src="{{ asset('assets/images/logo.png') }}" alt="logo" class="logo-default" style="height: 50px;">
                 </div>
                 <span class="logo-title"> উপানুষ্ঠানিক শিক্ষা
                     <br> বোর্ড, বাংলাদেশ</span>

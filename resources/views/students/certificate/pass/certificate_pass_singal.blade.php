@@ -138,7 +138,7 @@
                             style="display: flex;flex-direction: column;align-items: flex-start;font-family: sans-serif;text-align: start;padding: 0;">
                             <span>Registration No:</span>
                             <span>{{$student->registration_number}}</span>
-                            <span>Issued date: {{date('d-m-Y', strtotime($student->updated_at))}}</span>
+                            <span>Date of Issue: {{date('d-m-Y', strtotime($student->updated_at))}}</span>
                         </div>
                     </div>
                 </div>
@@ -162,7 +162,7 @@
                             ->first();
 
                     @endphp
-                assessed by <b>{{ $assessment_centers->center_name }}</b> on (Date of Assessment:  {{ date('d M Y', strtotime($student->training_start_date)) }} ). The
+                assessed by <b>{{ $assessment_centers->center_name }}</b> on {{ date('d M Y', strtotime($student->training_start_date)) }}. The
                     learner  demonstrated satisfactory participation and performance on all the following competencies:
                 </div>
 

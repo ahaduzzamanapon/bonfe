@@ -37,6 +37,23 @@ class StudentController extends AppBaseController
      *
      * @return Response
      */
+
+     public function getStudentsjson()
+    {
+        $students = DB::table('students')
+            ->select(
+                'id',
+                'registration_number',
+                'candidate_id',
+                'candidate_name as candidate_name_en',
+                'candidate_name_bn',
+                'father_name',
+                'mother_name'
+            )
+            ->get();
+
+        return response()->json($students);
+    }
     public function index(Request $request)
     {
         return view('students.index');
@@ -269,9 +286,7 @@ class StudentController extends AppBaseController
 
         $input = $request->all();
 
-        $student_type = $input['student_type'];
-        unset($input['student_type']);
-
+   
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $folder = 'images/student';
@@ -293,15 +308,7 @@ class StudentController extends AppBaseController
 
 
 
-        if (empty($student)) {
-            Flash::error('Student not found');
-
-            if ($student_type == 'general') {
-                return redirect(route('general_students.index'));
-            } else {
-                return redirect(route('students.index'));
-            }
-        }
+      
 
         $student->fill($input);
         $student->save();

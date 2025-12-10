@@ -138,7 +138,7 @@
                         style="display: flex;flex-direction: column;align-items: flex-start;font-family: sans-serif;text-align: start;padding: 0;">
                         <span>Registration No:</span>
                         <span>{{$student->registration_number}}</span>
-                        <span>Issued date: {{date('d-m-Y', strtotime($student->updated_at))}}</span>
+                        <span>Date of Issue: {{date('d-m-Y', strtotime($student->updated_at))}}</span>
                     </div>
                 </div>
             </div>
@@ -150,7 +150,7 @@
                 {{$student->mother_name}},
                 Father's Name: {{$student->father_name}}, Date of
                 Birth:
-                {{ \Carbon\Carbon::parse($student->date_of_birth)->format('d M Y') }}, has <strong>partially Completed 460 hours’</strong>
+                {{ \Carbon\Carbon::parse($student->date_of_birth)->format('d M Y') }}, has <strong>partially completed 460 hours’</strong>
                 Prevocational Level course in <strong>{{$student->occupation}}  </strong>
                 under the Bangladesh National Qualification Framework (BNQF)
                 assessed by
@@ -185,10 +185,9 @@
 
                     @endphp
                     {{ $assessment_centers->center_name ? $assessment_centers->center_name : '.....................' }}
-                </b> on (Date of Assessment:  {{ date('d M Y', strtotime($student->training_start_date)) }} )
-                The learner was assessed in a total of {{  $total + count($student_competence_models) }} units of competency
+                </b> on  {{ date('d M Y', strtotime($student->training_start_date)) }}. The learner was assessed in a total of {{  $total + count($student_competence_models) }} units of competency
                 and
-                has been found competent/Not yet competent in the following unit(s):
+                has been found Competent/ Not Yet Competent in the following unit(s):
             </div>
 
             <span

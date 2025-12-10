@@ -282,7 +282,7 @@ Dashboard @parent
                         <h3 id="waiting_for_assessment_center">
                             <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
                         </h3>
-                        <p>Waiting for Assessment Center Approval</p>
+                        <p>Waiting for Assessment Center Result</p>
                     </div>
                 </div>
             </a>

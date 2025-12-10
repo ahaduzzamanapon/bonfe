@@ -27,6 +27,26 @@
    
 @endphp
 
+<script>
+  // Function to allow only Bangla characters
+  function allowBanglaOnly(event) {
+    const regex = /^[\u0980-\u09FF\s]+$/; // Bangla Unicode range + space
+    const input = event.target.value;
+    if (!regex.test(input)) {
+      event.target.value = input.replace(/[^\u0980-\u09FF\s]/g, '');
+    }
+  }
+
+  // Function to allow only English letters
+  function allowEnglishOnly(event) {
+    const regex = /^[A-Za-z\s]+$/; // English letters + space
+    const input = event.target.value;
+    if (!regex.test(input)) {
+      event.target.value = input.replace(/[^A-Za-z\s]/g, '');
+    }
+  }
+</script>
+
 
 <!-- Occupation Id Field -->
 <div class="col-md-3">
@@ -71,7 +91,7 @@
     <div class="form-group">
         {!! Form::label('candidate_name_bn', 'Candidate Name (Bangla)', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('candidate_name_bn', null, ['class' => 'form-control']) !!}
+        {!! Form::text('candidate_name_bn', null, ['class' => 'form-control', 'oninput' => 'allowBanglaOnly(event)']) !!}
     </div>
 </div>
 
@@ -80,7 +100,7 @@
     <div class="form-group">
         {!! Form::label('candidate_name', 'Candidate Name (English)', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('candidate_name', null, ['class' => 'form-control']) !!}
+        {!! Form::text('candidate_name', null, ['class' => 'form-control', 'oninput' => 'allowEnglishOnly(event)']) !!}
     </div>
 </div>
 
@@ -111,7 +131,7 @@
     <div class="form-group">
         {!! Form::label('mother_name', "Mother's Name", ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('mother_name', null, ['class' => 'form-control']) !!}
+        {!! Form::text('mother_name', null, ['class' => 'form-control', 'oninput' => 'allowEnglishOnly(event)']) !!}
     </div>
 </div>
 
@@ -120,7 +140,7 @@
     <div class="form-group">
         {!! Form::label('father_name', "Father's Name", ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('father_name', null, ['class' => 'form-control']) !!}
+        {!! Form::text('father_name', null, ['class' => 'form-control', 'oninput' => 'allowEnglishOnly(event)']) !!}
     </div>
 </div>
 

@@ -33,6 +33,9 @@ Route::get('/', function () {
 
 
 
+Route::get('/getStudentsjson', [StudentController::class, 'getStudentsjson']);
+
+
 // GUI crud builder routes
 Route::group(['middleware' => 'auth'], function () {
     Route::get('builder', '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@builder')->name('io_generator_builder');

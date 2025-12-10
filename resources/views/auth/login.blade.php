@@ -59,7 +59,7 @@
 
 
         .logo-text span {
-            font-size: 27px;
+            font-size: 17px;
             font-weight: 900;
             color: black;
         }
@@ -147,7 +147,7 @@
         <div class="logo text-center">
             <img src="{{ asset('images/Picture1.jpg') }}" alt="Logo">
             <div class="logo-text">
-                <span>Board of Non-Formal Education</span>
+                <span>NON-FORMAL EDUCATION BOARD, BANGLADESH</span>
             </div>
         </div>
         <div style="justify-self: center;margin-bottom: 15px;padding: 0px 38px 0px 38px;cursor: pointer;">

@@ -38,8 +38,36 @@ class StudentController extends AppBaseController
      * @return Response
      */
 
+
+
+    public function testApi()
+    {
+        $sampleData = [
+            [
+                'id' => 1,
+                'name' => 'Item A',
+                'description' => 'This is the first item.',
+                'status' => 'active'
+            ],
+            [
+                'id' => 2,
+                'name' => 'Item B',
+                'description' => 'This is the second item.',
+                'status' => 'inactive'
+            ],
+            [
+                'id' => 3,
+                'name' => 'Item C',
+                'description' => 'This is the third item.',
+                'status' => 'pending'
+            ]
+        ];
+        return response()->json($sampleData, 200);
+    }
+
      public function getStudentsjson()
     {
+      
         $students = DB::table('students')
             ->select(
                 'id',

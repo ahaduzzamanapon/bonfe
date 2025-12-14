@@ -17,7 +17,7 @@ class ApiKeyAuthMiddleware
     public function handle(Request $request, Closure $next)
     {
         $apiKey = $request->header('X-API-KEY');
-        if ($apiKey && $apiKey === '12345678') { // Replace with your actual API key
+        if ($apiKey && $apiKey === 'woeifjW#^@%2-0,x0dk090\&Y(%&M@Y&*yoru8923ujioj2389r2389') { // Replace with your actual API key
             return $next($request);
         }
 

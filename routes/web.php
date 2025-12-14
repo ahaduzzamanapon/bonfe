@@ -34,7 +34,7 @@ Route::get('/', function () {
 
 
 Route::get('/getStudentsjson', [StudentController::class, 'getStudentsjson']);
-Route::get('/testApi', [StudentController::class, 'testApi']);
+
 
 
 // GUI crud builder routes

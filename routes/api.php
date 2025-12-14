@@ -16,4 +16,5 @@ Route::prefix('v1')->middleware('api.key')->group( function () {
     Route::get('/get_occupations', [ApiController::class, 'get_occupations']);
     Route::get('/get_training_center', [ApiController::class, 'get_training_center']);
     Route::get('/get_learner', [ApiController::class, 'get_learner']);
+    Route::get('/get_programs', [ApiController::class, 'get_programs']);
 });

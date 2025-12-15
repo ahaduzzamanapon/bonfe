@@ -1,0 +1,315 @@
+3 API Create (Occupation/Tread Course, Institute/Training Center, Learner Data)
+
+
+
+API Documentation
+================
+
+This document provides documentation for the Bonfe API.
+
+--------------------------------------------------
+
+### 1. Get Occupations
+
+**Description:**
+Returns a list of all occupations.
+
+**URL:** `{{base_url}}/api/v1/get_occupations`
+**Method:** `GET`
+**Headers:**
+- `x-api-key`: Your API Key
+
+**Example Response:**
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "id": 3,
+            "name": "General"
+        },
+        {
+            "id": 4,
+            "name": "Computer Operation and Graphics Design"
+        }
+    ]
+}
+```
+
+--------------------------------------------------
+
+### 2. Get Training Centers
+
+**Description:**
+Returns a list of all training centers.
+
+**URL:** `{{base_url}}/api/v1/get_training_center`
+**Method:** `GET`
+**Headers:**
+- `x-api-key`: Your API Key
+
+**Example Response:**
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "id": 4,
+            "insatitute_name": "Kisholoy Adorsho Shikhkha Neketon",
+            "district": {
+                "id": 12,
+                "name_bn": "কক্সবাজার",
+                "name_en": "Cox's Bazar"
+            },
+            "address": "Kisholoy Adorsho Shikhkha Neketon",
+            "status": "Active"
+        }
+    ]
+}
+```
+
+--------------------------------------------------
+
+### 3. Get Training Center by District ID
+
+**Description:**
+Returns a list of training centers for a given district_id.
+
+**URL:** `{{base_url}}/api/v1/get_training_center_by_district_id`
+**Method:** `POST`
+**Headers:**
+- `x-api-key`: Your API Key
+
+**Body:**
+```json
+{
+    "district_id": 12
+}
+```
+
+**Example Response:**
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "id": 4,
+            "insatitute_name": "Kisholoy Adorsho Shikhkha Neketon",
+            "district": {
+                "id": 12,
+                "name_bn": "কক্সবাজার",
+                "name_en": "Cox's Bazar"
+            },
+            "address": "Kisholoy Adorsho Shikhkha Neketon",
+            "status": "Active"
+        }
+    ]
+}
+```
+
+--------------------------------------------------
+
+### 4. Get Learner
+
+**Description:**
+Returns a list of learners. Supports pagination and fetching all learners at once. All learners are filtered to be on or after 2025-12-14.
+
+**URL:** `{{base_url}}/api/v1/get_learner`
+**Method:** `GET`
+**Headers:**
+- `x-api-key`: Your API Key
+
+**Query Parameters:**
+- `page` (optional): The page number for pagination.
+- `per_page` (optional): The number of items per page for pagination.
+- `all` (optional): Set to `true` to get all learners at once.
+
+**Example URL for pagination:** `{{base_url}}/api/v1/get_learner?page=1&per_page=10`
+**Example URL to get all:** `{{base_url}}/api/v1/get_learner?all=true`
+
+**Example Response (Paginated):**
+```json
+{
+    "success": true,
+    "data": {
+        "current_page": 1,
+        "data": [],
+        "first_page_url": "http://bnfe.mysoftheaven.com/api/v1/get_learner?page=1",
+        "from": null,
+        "last_page": 1,
+        "last_page_url": "http://bnfe.mysoftheaven.com/api/v1/get_learner?page=1",
+        "links": [],
+        "next_page_url": null,
+        "path": "http://bnfe.mysoftheaven.com/api/v1/get_learner",
+        "per_page": 10,
+        "prev_page_url": null,
+        "to": null,
+        "total": 0
+    }
+}
+```
+
+--------------------------------------------------
+
+### 5. Get Learner by District
+
+**Description:**
+Returns a list of learners for a given district_id. All learners are filtered to be on or after 2025-12-14.
+
+**URL:** `{{base_url}}/api/v1/get_learner_by_district`
+**Method:** `POST`
+**Headers:**
+- `x-api-key`: Your API Key
+
+**Body:**
+```json
+{
+    "district_id": 12
+}
+```
+
+**Example Response:**
+```json
+{
+    "success": true,
+    "data": []
+}
+```
+
+--------------------------------------------------
+
+### 6. Get Learner by Upazila
+
+**Description:**
+Returns a list of learners for a given upazila_id. All learners are filtered to be on or after 2025-12-14.
+
+**URL:** `{{base_url}}/api/v1/get_learner_by_upazila`
+**Method:** `POST`
+**Headers:**
+- `x-api-key`: Your API Key
+
+**Body:**
+```json
+{
+    "upazila_id": 377
+}
+```
+
+**Example Response:**
+```json
+{
+    "success": true,
+    "data": []
+}
+```
+
+--------------------------------------------------
+
+### 7. Get Programs
+
+**Description:**
+Returns a list of all programs.
+
+**URL:** `{{base_url}}/api/v1/get_programs`
+**Method:** `GET`
+**Headers:**
+- `x-api-key`: Your API Key
+
+**Example Response:**
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "id": 1,
+            "program_title": "Pre Vocational (Batch-01)",
+            "program_type": "Technical"
+        }
+    ]
+}
+```
+
+--------------------------------------------------
+
+### 8. Get Districts
+
+**Description:**
+Returns a list of all districts.
+
+**URL:** `{{base_url}}/api/v1/get_districts`
+**Method:** `GET`
+**Headers:**
+- `x-api-key`: Your API Key
+
+**Example Response:**
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "id": 1,
+            "name_en": "Bagerhat",
+            "name_bn": "বাগেরহাট"
+        }
+    ]
+}
+```
+
+--------------------------------------------------
+
+### 9. Get Upazilas
+
+**Description:**
+Returns a list of all upazilas.
+
+**URL:** `{{base_url}}/api/v1/get_upazilas`
+**Method:** `GET`
+**Headers:**
+- `x-api-key`: Your API Key
+
+**Example Response:**
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "id": 1,
+            "name_en": "Kalihati",
+            "name_bn": "কালিহাতী"
+        }
+    ]
+}
+```
+
+--------------------------------------------------
+
+### 10. Get Upazila by District
+
+**Description:**
+Returns a list of upazilas for a given district_id.
+
+**URL:** `{{base_url}}/api/v1/get_upazila_by_district`
+**Method:** `POST`
+**Headers:**
+- `x-api-key`: Your API Key
+
+**Body:**
+```json
+{
+    "district_id": 12
+}
+```
+
+**Example Response:**
+```json
+{
+    "success": true,
+    "data": [
+        {
+            "id": 377,
+            "name_en": "Maheshkhali",
+            "name_bn": "মহেশখালী"
+        }
+    ]
+}
+```

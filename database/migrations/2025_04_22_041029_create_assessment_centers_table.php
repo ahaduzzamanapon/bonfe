@@ -16,6 +16,7 @@ class CreateAssessmentCentersTable extends Migration
         Schema::create('assessment_centers', function (Blueprint $table) {
             $table->increments('id');
             $table->string('center_name');
+            $table->string('district_id');
             $table->string('registration_number');
             $table->string('address');
             $table->timestamps();

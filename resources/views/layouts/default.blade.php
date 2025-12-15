@@ -130,6 +130,11 @@
             color: #000;
             height: 40px;
         }
+        ::-webkit-scrollbar {
+    width: 0.25em;
+    height: 9px;
+    cursor: pointer;
+}
 
         .sidebar.navs-rounded-all .sidebar-body .nav-item .nav-link {
             -webkit-border-radius: 0.25rem;

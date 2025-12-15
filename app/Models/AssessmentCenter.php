@@ -23,6 +23,7 @@ class AssessmentCenter extends Model
 
     public $fillable = [
         'center_name',
+        'district_id',
         'registration_number',
         'address'
     ];
@@ -49,5 +50,5 @@ class AssessmentCenter extends Model
         'address' => 'required'
     ];
 
-    
+
 }

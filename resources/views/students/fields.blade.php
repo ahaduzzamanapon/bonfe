@@ -1,20 +1,20 @@
 @php
-    if( Request::is('general_students*')){
+    if (Request::is('general_students*')) {
         $Occupation = \App\Models\Occupation::where('title', 'General')->get()->pluck('title', 'id')->toArray();
-         $Program = \App\Models\Program::orderBy('id', 'desc')
-         ->where('program_type', 'General')
-         ->get()
-        ->pluck('program_title', 'id')
-        ->prepend('Select Program', '')
-        ->toArray();
-    }else{
+        $Program = \App\Models\Program::orderBy('id', 'desc')
+            ->where('program_type', 'General')
+            ->get()
+            ->pluck('program_title', 'id')
+            ->prepend('Select Program', '')
+            ->toArray();
+    } else {
         $Occupation = \App\Models\Occupation::where('title', '!=', 'General')->get()->pluck('title', 'id')->prepend('Select trade/course', '')->toArray();
-         $Program = \App\Models\Program::orderBy('id', 'desc')
-         ->where('program_type', 'Technical')
-         ->get()
-        ->pluck('program_title', 'id')
-        ->prepend('Select Program', '')
-        ->toArray();
+        $Program = \App\Models\Program::orderBy('id', 'desc')
+            ->where('program_type', 'Technical')
+            ->get()
+            ->pluck('program_title', 'id')
+            ->prepend('Select Program', '')
+            ->toArray();
     }
     $AssessmentVenue = \App\Models\AssessmentVenue::all()
         ->pluck('venue_name', 'id')
@@ -24,27 +24,27 @@
         ->pluck('center_name', 'id')
         ->prepend('Select Center', '')
         ->toArray();
-   
+
 @endphp
 
 <script>
-  // Function to allow only Bangla characters
-  function allowBanglaOnly(event) {
-    const regex = /^[\u0980-\u09FF\s]+$/; // Bangla Unicode range + space
-    const input = event.target.value;
-    if (!regex.test(input)) {
-      event.target.value = input.replace(/[^\u0980-\u09FF\s]/g, '');
+    // Function to allow only Bangla characters
+    function allowBanglaOnly(event) {
+        const regex = /^[\u0980-\u09FF\s]+$/; // Bangla Unicode range + space
+        const input = event.target.value;
+        if (!regex.test(input)) {
+            event.target.value = input.replace(/[^\u0980-\u09FF\s]/g, '');
+        }
     }
-  }
 
-  // Function to allow only English letters
-  function allowEnglishOnly(event) {
-    const regex = /^[A-Za-z\s]+$/; // English letters + space
-    const input = event.target.value;
-    if (!regex.test(input)) {
-      event.target.value = input.replace(/[^A-Za-z\s]/g, '');
+    // Function to allow only English letters
+    function allowEnglishOnly(event) {
+        const regex = /^[A-Za-z\s]+$/; // English letters + space
+        const input = event.target.value;
+        if (!regex.test(input)) {
+            event.target.value = input.replace(/[^A-Za-z\s]/g, '');
+        }
     }
-  }
 </script>
 
 
@@ -53,16 +53,16 @@
     <div class="form-group">
         {!! Form::label('program_id', 'Program', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::select('program_id', $Program, null, ['class' => 'form-control']) !!}
+        {!! Form::select('program_id', $Program, null, ['class' => 'form-control', 'required']) !!}
     </div>
 </div>
 
 <!-- Occupation Id Field -->
-<div class="col-md-3 @if( Request::is('general_students*')) d-none @endif">
+<div class="col-md-3 @if(Request::is('general_students*')) d-none @endif">
     <div class="form-group">
         {!! Form::label('occupation_id', 'Trade(Course) Name', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::select('occupation_id', $Occupation, null, ['class' => 'form-control']) !!}
+        {!! Form::select('occupation_id', $Occupation, null, ['class' => 'form-control', 'required']) !!}
     </div>
 </div>
 
@@ -72,7 +72,7 @@
     <div class="form-group">
         {!! Form::label('registration_number', 'Registration Number', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('registration_number', null, ['class' => 'form-control']) !!}
+        {!! Form::text('registration_number', null, ['class' => 'form-control', 'required']) !!}
     </div>
 </div>
 
@@ -91,7 +91,7 @@
     <div class="form-group">
         {!! Form::label('candidate_name_bn', 'Candidate Name (Bangla)', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('candidate_name_bn', null, ['class' => 'form-control', 'oninput' => 'allowBanglaOnly(event)']) !!}
+        {!! Form::text('candidate_name_bn', null, ['class' => 'form-control', 'oninput' => 'allowBanglaOnly(event)', 'required']) !!}
     </div>
 </div>
 
@@ -100,7 +100,7 @@
     <div class="form-group">
         {!! Form::label('candidate_name', 'Candidate Name (English)', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('candidate_name', null, ['class' => 'form-control', 'oninput' => 'allowEnglishOnly(event)']) !!}
+        {!! Form::text('candidate_name', null, ['class' => 'form-control', 'oninput' => 'allowEnglishOnly(event)', 'required']) !!}
     </div>
 </div>
 
@@ -109,7 +109,7 @@
     <div class="form-group">
         {!! Form::label('date_of_birth', 'Date Of Birth', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('date_of_birth', null, ['class' => 'form-control date', 'id' => 'date_of_birth','autocomplete' => 'off']) !!}
+        {!! Form::text('date_of_birth', null, ['class' => 'form-control date', 'id' => 'date_of_birth', 'autocomplete' => 'off']) !!}
     </div>
 </div>
 
@@ -117,7 +117,7 @@
     <div class="form-group">
         {!! Form::label('brn', 'Birth Registration Number', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('brn', null, ['class' => 'form-control']) !!}
+        {!! Form::text('brn', null, ['class' => 'form-control', 'required']) !!}
     </div>
 </div>
 
@@ -129,7 +129,7 @@
 <!-- Mother Name Field -->
 <div class="col-md-3">
     <div class="form-group">
-        {!! Form::label('mother_name', "Mother's Name", ['class' => 'control-label']) !!}
+        {!! Form::label('mother_name', "Mother's Name (English)", ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
         {!! Form::text('mother_name', null, ['class' => 'form-control', 'oninput' => 'allowEnglishOnly(event)']) !!}
     </div>
@@ -138,7 +138,7 @@
 <!-- Father Name Field -->
 <div class="col-md-3">
     <div class="form-group">
-        {!! Form::label('father_name', "Father's Name", ['class' => 'control-label']) !!}
+        {!! Form::label('father_name', "Father's Name (English)", ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
         {!! Form::text('father_name', null, ['class' => 'form-control', 'oninput' => 'allowEnglishOnly(event)']) !!}
     </div>
@@ -159,7 +159,7 @@
     <div class="form-group">
         {!! Form::label('gender', 'Gender', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::select('gender', ['' => 'Select Gender','Male' => 'Male', 'Female' => 'Female', 'Other' => 'Other'], null, ['class' => 'form-control']) !!}
+        {!! Form::select('gender', ['' => 'Select Gender', 'Male' => 'Male', 'Female' => 'Female', 'Other' => 'Other'], null, ['class' => 'form-control', 'required']) !!}
     </div>
 </div>
 
@@ -183,7 +183,7 @@
     <div class="form-group">
         {!! Form::label('district_id', 'District', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::select('district_id', $districts, null, ['class' => 'form-control select2']) !!}
+        {!! Form::select('district_id', $districts, null, ['class' => 'form-control select2', 'required']) !!}
     </div>
 </div>
 
@@ -193,7 +193,7 @@
     <div class="form-group">
         {!! Form::label('upajila_id', 'Upazila/City', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::select('upajila_id', $upazilas, null, ['class' => 'form-control select2']) !!}
+        {!! Form::select('upajila_id', $upazilas, null, ['class' => 'form-control select2', 'required']) !!}
     </div>
 </div>
 
@@ -203,7 +203,7 @@
     <div class="form-group">
         {!! Form::label('address', 'Address', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('address', null, ['class' => 'form-control']) !!}
+        {!! Form::text('address', null, ['class' => 'form-control', 'required']) !!}
     </div>
 </div>
 
@@ -222,7 +222,7 @@
             <div class="input-group-prepend">
                 <span class="input-group-text" style="padding: 2px;border: 1px solid;">+880</span>
             </div>
-            {!! Form::number('mobile_number', null, ['class' => 'form-control','style' => 'padding: 1px 1px 1px 1px;']) !!}
+            {!! Form::number('mobile_number', null, ['class' => 'form-control', 'style' => 'padding: 1px 1px 1px 1px;', 'required']) !!}
         </div>
     </div>
 </div>
@@ -243,7 +243,7 @@
     <div class="form-group">
         {!! Form::label('admitted_from', ' Admitted from', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::select('admitted_from', ['Others institution' => 'Others institution'], null, ['class' => 'form-control']) !!}
+        {!! Form::select('admitted_from', ['Others institution' => 'Others institution'], null, ['class' => 'form-control', 'required']) !!}
     </div>
 </div>
 
@@ -262,17 +262,18 @@
     <div class="form-group">
         {!! Form::label('institutionName', 'Institution Name', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::select('institutionName', $Insatitute, null, ['class' => 'form-control']) !!}
+        {!! Form::select('institutionName', $Insatitute, null, ['class' => 'form-control select2', 'required']) !!}
     </div>
 </div>
 
 @section('footer_scripts')
-    {{-- <script>
-        $(document).ready(function() {
-            toggleInstitutionName() 
-            
-            $('#admitted_from').change(function() {
-                toggleInstitutionName() 
+    {{--
+    <script>
+        $(document).ready(function () {
+            toggleInstitutionName()
+
+            $('#admitted_from').change(function () {
+                toggleInstitutionName()
             });
         });
         function toggleInstitutionName() {
@@ -280,7 +281,7 @@
             var admittedFrom = document.getElementById('admitted_from').value;
             var institutionNameDiv = document.getElementById('institutionName');
             console.log(admittedFrom);
-            
+
             if (admittedFrom === 'Others institution') {
                 institutionNameDiv.classList.remove('d-none');
             } else {
@@ -294,7 +295,7 @@
 
 
 <!-- Age Field -->
-<div class="col-md-3 d-none" >
+<div class="col-md-3 d-none">
     <div class="form-group">
         {!! Form::label('age', 'Age', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
@@ -304,41 +305,56 @@
 
 
 <!-- Literacy Status Field -->
-<div class="col-md-3  d-none" >
+<div class="col-md-3  d-none">
     <div class="form-group">
         {!! Form::label('literacy_status', 'Literacy Status', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('literacy_status',  null, ['class' => 'form-control']) !!}
+        {!! Form::text('literacy_status', null, ['class' => 'form-control']) !!}
     </div>
 </div>
 
 
 <!-- Educational Qualification Field -->
-<div class="col-md-3 @if (Request::is('general_students*')) d-none @endif" >
+<div class="col-md-3 @if (Request::is('general_students*')) d-none @endif">
     <div class="form-group">
         {!! Form::label('educational_qualification', 'Educational Qualification', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('educational_qualification', null, ['class' => 'form-control']) !!}
+        {!! Form::select(
+    'educational_qualification',
+    [
+        '0' => '0',
+        '1st' => '1st',
+        '2nd' => '2nd',
+        '3rd' => '3rd',
+        '4th' => '4th',
+        '5th' => '5th',
+        '6th' => '6th',
+        '7th' => '7th',
+    ],
+    null,
+    ['class' => 'form-control', 'required']
+) !!}
+
     </div>
 </div>
 
 
 <!-- Training Start Date Field -->
-<div class="col-md-3 @if (Request::is('general_students*')) d-none @endif" >
+<div class="col-md-3 @if (Request::is('general_students*')) d-none @endif">
     <div class="form-group">
         {!! Form::label('training_start_date', 'Training Start Date', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('training_start_date', null, ['class' => 'form-control date','autocomplete' => 'off']) !!}
+        {!! Form::text('training_start_date', null, ['class' => 'form-control date', 'autocomplete' => 'off', 'required']) !!}
     </div>
 </div>
 
 
 <!-- Training End Date Field -->
-<div class="col-md-3 d-none" >
+<div class="col-md-3 d-none">
     <div class="form-group">
         {!! Form::label('training_end_date', 'Training End Date', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('training_end_date', null, ['class' => 'form-control date','autocomplete' => 'off']) !!}
+        {!! Form::text('training_end_date', null, ['class' => 'form-control date', 'autocomplete' => 'off']) !!}
     </div>
 </div>
 
@@ -346,13 +362,13 @@
 
 
 
-{{-- 
+{{--
 age
 literacy_status
 educational_qualification
 training_start_date
 training_end_date
- --}}
+--}}
 
 
 
@@ -367,7 +383,7 @@ training_end_date
             <div class="form-group">
                 {!! Form::label('image', 'Image', ['class' => 'control-label']) !!}
                 <span style="color: red">*</span>
-                {!! Form::file('image', ['onchange' => 'previewImage(event, "imagePreview")', 'accept' => 'image/*']) !!}
+                {!! Form::file('image', ['onchange' => 'previewImage(event, "imagePreview")', 'accept' => 'image/*', 'required']) !!}
                 <img id="imagePreview" src="{{ isset($student) ? asset($student->image) : '' }}" alt="Image Preview"
                     style="{{ isset($student) && $student->image ? '' : 'display: none;' }}margin-top:10px;max-width: 45%;height:auto;" />
             </div>
@@ -376,7 +392,7 @@ training_end_date
         <div class="col-md-3">
             <div class="form-group">
                 {!! Form::label('attachment', 'Attachment', ['class' => 'control-label']) !!}
-                {!! Form::file('attachment', ['onchange' => 'previewImage(event, "attachmentPreview")', 'accept' => 'image/*']) !!}
+                {!! Form::file('attachment', ['onchange' => 'previewImage(event, "attachmentPreview")']) !!}
                 <img id="attachmentPreview" src="{{ isset($student) ? asset($student->attachment) : '' }}"
                     alt="Attachment Preview"
                     style="{{ isset($student) && $student->image ? '' : 'display: none;' }}margin-top:10px;max-width: 45%;height:auto;" />
@@ -409,8 +425,8 @@ training_end_date
         <div class="col-md-6">
             <div class="form-group">
                 {!! Form::label('assessment_center_registration_number', 'Assessment Center Registration Number', [
-                    'class' => 'control-label',
-                ]) !!}
+    'class' => 'control-label',
+]) !!}
                 {!! Form::text('assessment_center_registration_number', null, ['class' => 'form-control']) !!}
             </div>
         </div>
@@ -420,7 +436,7 @@ training_end_date
         <div class="col-md-3">
             <div class="form-group">
                 {!! Form::label('assessment_date', 'Assessment Date', ['class' => 'control-label']) !!}
-                {!! Form::text('assessment_date', null, ['class' => 'form-control date', 'id' => 'assessment_date','autocomplete' => 'off']) !!}
+                {!! Form::text('assessment_date', null, ['class' => 'form-control date', 'id' => 'assessment_date', 'autocomplete' => 'off']) !!}
             </div>
         </div>
 
@@ -434,7 +450,7 @@ training_end_date
 
         var file = event.target.files[0];
         var reader = new FileReader();
-        reader.onload = function() {
+        reader.onload = function () {
             document.getElementById(previewId).src = reader.result;
             document.getElementById(previewId).style.display = 'block';
         };
@@ -443,8 +459,8 @@ training_end_date
 </script>
 @section('footer_scripts')
     <script>
-        $(document).ready(function() {
-            $('#district_id').change(function() {
+        $(document).ready(function () {
+            $('#district_id').change(function () {
                 var districtId = $(this).val();
                 $.ajax({
                     url: "{{ route('get_upazilas') }}",
@@ -452,10 +468,10 @@ training_end_date
                     data: {
                         district_id: districtId
                     },
-                    success: function(data) {
+                    success: function (data) {
                         $('#upajila_id').empty();
                         $('#upajila_id').append('<option value="">Select Upazila</option>');
-                        $.each(data, function(index, upajila) {
+                        $.each(data, function (index, upajila) {
                             $('#upajila_id').append('<option value="' + upajila.id + '">' + upajila.name + '</option>');
                         });
                     }
@@ -463,8 +479,8 @@ training_end_date
             });
         });
 
-        $(document).ready(function() {
-            $('#program_id').change(function() {
+        $(document).ready(function () {
+            $('#program_id').change(function () {
                 var districtId = $(this).val();
                 $.ajax({
                     url: "{{ route('get_upazilas') }}",
@@ -472,10 +488,10 @@ training_end_date
                     data: {
                         district_id: districtId
                     },
-                    success: function(data) {
+                    success: function (data) {
                         $('#upajila_id').empty();
                         $('#upajila_id').append('<option value="">Select Upazila</option>');
-                        $.each(data, function(index, upajila) {
+                        $.each(data, function (index, upajila) {
                             $('#upajila_id').append('<option value="' + upajila.id + '">' + upajila.name + '</option>');
                         });
                     }

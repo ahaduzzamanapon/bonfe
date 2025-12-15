@@ -324,6 +324,7 @@
                                                    
                                                     ${student.exam_status === 'Pending' ? `
                                                         <form method="POST" action="/students/${student.id}" onsubmit="return confirm('Are you sure?');">
+                                                        @csrf
                                                             <input type="hidden" name="_method" value="DELETE" />
                                                             <button class="dropdown-item" type="submit"><i class="im im-icon-Remove"></i> Delete</button>
                                                         </form>` : ''

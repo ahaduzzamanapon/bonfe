@@ -2,24 +2,24 @@
     <table class="table" id="assessmentCenters-table">
         <thead>
             <tr>
-                <th>Id</th>
+                <th>SL</th>
         <th>Center Name</th>
+        <th>District</th>
         <th>Registration Number</th>
-        <th>Address</th>
-        <th>Created At</th>
-        <th>Updated At</th>
+        {{-- <th>Address</th> --}}
+        
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
         @foreach($assessmentCenters as $key => $assessmentCenter)
-            <tr>
-                <td>{{ $assessmentCenter->id }}</td>
+            <tr data-district-id="{{ optional($assessmentCenter->district)->id }}">
+                <td>{{ ++$key }}</td>
             <td>{{ $assessmentCenter->center_name }}</td>
+            <td>{{ optional($assessmentCenter->district)->name_en }}</td>
             <td>{{ $assessmentCenter->registration_number }}</td>
-            <td>{{ $assessmentCenter->address }}</td>
-            <td>{{ $assessmentCenter->created_at }}</td>
-            <td>{{ $assessmentCenter->updated_at }}</td>
+            {{-- <td>{{ $assessmentCenter->address }}</td> --}}
+           
                 <td>
                     {!! Form::open(['route' => ['assessmentCenters.destroy', $assessmentCenter->id], 'method' => 'delete']) !!}
                     <div class='btn-group'>

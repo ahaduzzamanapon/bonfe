@@ -17,7 +17,7 @@ class AssessmentCenter extends Model
 {
 
     public $table = 'assessment_centers';
-    
+
 
 
 
@@ -50,5 +50,8 @@ class AssessmentCenter extends Model
         'address' => 'required'
     ];
 
-
+    public function district()
+    {
+        return $this->belongsTo(District::class);
+    }
 }

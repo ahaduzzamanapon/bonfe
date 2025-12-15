@@ -9,6 +9,7 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('emp_id', 'Emp Id',['class'=>'control-label']) !!}
+        <span style="color: red">*</span>
         {!! Form::text('emp_id', null , ['class' => 'form-control','required']) !!}
     </div>
 </div>
@@ -18,6 +19,8 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('name', 'First Name',['class'=>'control-label']) !!}
+                <span style="color: red">*</span>
+
         {!! Form::text('name', null, ['class' => 'form-control','required']) !!}
     </div>
 </div>
@@ -27,6 +30,8 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('last_name', 'Last Name',['class'=>'control-label']) !!}
+                <span style="color: red">*</span>
+
         {!! Form::text('last_name', null, ['class' => 'form-control','required']) !!}
     </div>
 </div>
@@ -36,16 +41,17 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('email', 'Email',['class'=>'control-label']) !!}
+        <span style="color: red">*</span>
         {!! Form::email('email', null, ['class' => 'form-control','required']) !!}
     </div>
 </div>
 
 
 <!-- Date Of Birth Field -->
-<div class="col-md-3">
+<div class="col-md-3 d-none">
     <div class="form-group">
         {!! Form::label('date_of_birth', 'Date Of Birth',['class'=>'control-label']) !!}
-        {!! Form::date('date_of_birth', null, ['class' => 'form-control','id'=>'date_of_birth','required']) !!}
+        {!! Form::date('date_of_birth', null, ['class' => 'form-control','id'=>'date_of_birth']) !!}
     </div>
 </div>
 
@@ -64,6 +70,8 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('gender', 'Gender',['class'=>'control-label']) !!}
+                <span style="color: red">*</span>
+
         {!! Form::select('gender', ['Male' => 'Male', 'Female' => 'Female'], null, ['class' => 'form-control','required']) !!}
     </div>
 </div>
@@ -74,6 +82,8 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('designation_id', 'Designation',['class'=>'control-label']) !!}
+                <span style="color: red">*</span>
+
         {!! Form::select('designation_id',$designations, null, ['class' => 'form-control','required']) !!}
     </div>
 </div>
@@ -91,13 +101,15 @@
 <div class="col-md-3 @if(!can('chairman') && can('district_admin')) d-none @endif" >
     <div class="form-group">
         {!! Form::label('district_id', 'District',['class'=>'control-label']) !!}
+                <span style="color: red">*</span>
+
         {!! Form::select('district_id',$districts, null, ['class' => 'form-control','required']) !!}
     </div>
 </div>
 
 
 <!-- Address Field -->
-<div class="col-md-3">
+<div class="col-md-3 d-none">
     <div class="form-group">
         {!! Form::label('address', 'Address',['class'=>'control-label']) !!}
         {!! Form::text('address', null, ['class' => 'form-control']) !!}
@@ -109,6 +121,8 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('phone_number', 'Phone Number',['class'=>'control-label']) !!}
+                <span style="color: red">*</span>
+
         {!! Form::number('phone_number', null, ['class' => 'form-control','required']) !!}
     </div>
 </div>
@@ -154,7 +168,9 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('group_id', 'Roll',['class'=>'control-label']) !!}
-        {!! Form::select('group_id',$roles, null, ['class' => 'form-control']) !!}
+                <span style="color: red">*</span>
+
+        {!! Form::select('group_id',$roles, null, ['class' => 'form-control','required']) !!}
     </div>
 </div>
 
@@ -228,7 +244,7 @@
 
 
 <!-- Religion Field -->
-<div class="col-md-3">
+<div class="col-md-3  d-none">
     <div class="form-group">
         {!! Form::label('religion', 'Religion',['class'=>'control-label']) !!}
         {!! Form::select('religion', ['Islam' => 'Islam', 'Hindu' => 'Hindu'], null, ['class' => 'form-control']) !!}

@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Flash;
 use Response;
 
+use App\Models\District;
+
 class AssessmentCenterController extends AppBaseController
 {
     /**
@@ -22,10 +24,16 @@ class AssessmentCenterController extends AppBaseController
     public function index(Request $request)
     {
         /** @var AssessmentCenter $assessmentCenters */
-        $assessmentCenters = AssessmentCenter::paginate(10);
+        $assessmentCenters = AssessmentCenter::query();
+        if ($request->district_id) {
+            $assessmentCenters->where('district_id', $request->district_id);
+        }
+        $assessmentCenters = $assessmentCenters->paginate(10);
+        $districts = District::all();
 
         return view('assessment_centers.index')
-            ->with('assessmentCenters', $assessmentCenters);
+            ->with('assessmentCenters', $assessmentCenters)
+            ->with('districts', $districts);
     }
 
     /**

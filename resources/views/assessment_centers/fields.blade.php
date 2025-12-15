@@ -27,14 +27,14 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('registration_number', 'Registration Number', ['class' => 'control-label']) !!}
-        
+
         {!! Form::text('registration_number', null, ['class' => 'form-control']) !!}
     </div>
 </div>
 
 
 <!-- Address Field -->
-<div class="col-md-3">
+<div class="col-md-3 d-none">
     <div class="form-group">
         {!! Form::label('address', 'Address', ['class' => 'control-label']) !!}
         {!! Form::text('address', null, ['class' => 'form-control']) !!}

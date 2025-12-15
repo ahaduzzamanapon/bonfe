@@ -16,10 +16,10 @@
 </tr>
 
 
-<tr>
+{{-- <tr>
     <th scopre="row">{!! Form::label('address', 'Address:') !!}</th>
     <td>{{ $assessmentCenter->address }}</td>
-</tr>
+</tr> --}}
 
 
 <tr>

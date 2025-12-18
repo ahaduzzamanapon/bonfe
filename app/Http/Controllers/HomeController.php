@@ -65,6 +65,7 @@ class HomeController extends Controller
             $studentsQuery->where('occupation_id', $occupation_id);
         }
 
+        
         if (!can('get_all_student')) {
 
             if (can('filtered_by_multi_district')) {

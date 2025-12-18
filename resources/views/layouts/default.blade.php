@@ -438,10 +438,11 @@
                                     <div class="caption ms-3 d-none d-md-block">
                                         <h6 class="mb-0 caption-title" style="color: white;">
                                             {{ Auth::user()->name }} {{ Auth::user()->last_name }}
+                                           
                                         </h6>
-                                        {{-- <p class="mb-0 caption-sub-title" style="color: white;">
-                                            {{ Auth::user()->role ?? 'User' }}
-                                        </p> --}}
+                                        <p class="mb-0 caption-sub-title" style="font-size: 11px;background: white;color: black;padding: 2px 7px;display: inline;border-radius: 7px;font-weight: 500;">
+                                             {{ get_designation()}}
+                                        </p>
                                     </div>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end profile-dropdown"

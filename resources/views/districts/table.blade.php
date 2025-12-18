@@ -2,7 +2,7 @@
     <table class="table table_data" id="districts-table">
         <thead>
             <tr>
-                <th>Id</th>
+                <th>SL</th>
         <th>Name Bn</th>
         <th>Name En</th>
      

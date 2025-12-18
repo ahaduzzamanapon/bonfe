@@ -378,9 +378,9 @@ class StudentController extends AppBaseController
         $student->delete();
         Flash::success('Student deleted successfully.');
         if (request()->is('general_students*')) {
-            return redirect(route('students.index'));
-        } else {
             return redirect(route('general_students.index'));
+        } else {
+            return redirect(route('students.index'));
         }
     }
 

@@ -2,7 +2,7 @@
     <table class="table" id="roleAndPermissions-table">
         <thead>
             <tr>
-                <th>Id</th>
+                <th>SL</th>
         <th>Name</th>
         {{-- <th>Key</th> --}}
                 <th>Action</th>
@@ -11,7 +11,7 @@
         <tbody>
         @foreach($roleAndPermissions as $key => $roleAndPermission)
             <tr>
-                <td>{{ $roleAndPermission->id }}</td>
+                <td>{{ ++$key }}</td>
             <td>{{ $roleAndPermission->name }}</td>
             {{-- <td>{{ $roleAndPermission->key }}</td> --}}
                 <td>

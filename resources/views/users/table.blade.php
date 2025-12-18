@@ -11,6 +11,7 @@
                 <th>Emp Id</th>
                 <th>Name</th>
                 <th>Group</th>
+                <th>District</th>
                 <th>Email</th>
                 <th>Action</th>
             </tr>
@@ -22,6 +23,7 @@
             <td>{{ $users->emp_id }}</td>
             <td>{{ $users->name }} {{ $users->last_name }}</td>
             <td>{{ $users->role }}</td>
+            <td>{{ $users->district }}</td>
             <td>{{ $users->email }}</td>
                 <td>
                     <div class='btn-group'>

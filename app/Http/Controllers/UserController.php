@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\District;
 use Flash;
 use Response;
 use DB;
@@ -20,8 +21,10 @@ class UserController extends Controller
             $users = $users->where('users.district_id', auth()->user()->district_id);
         }
         $users = $users->get();
+        $districts = District::all();
         return view('users.index')
-            ->with('users', $users);
+            ->with('users', $users)
+            ->with('districts', $districts);
     }
 
     /**

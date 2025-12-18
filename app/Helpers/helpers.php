@@ -49,6 +49,20 @@ if (!function_exists('can')) {
         return false;
     }
 }
+if (!function_exists('get_designation')) {
+
+    function get_designation()
+    {
+        $group_id = auth()->user()->designation_id;
+        $designation = \App\Models\Designation::where('id', $group_id)
+            ->first();
+        if (!empty($designation)) {
+            return $designation->desi_name;
+        } else {
+            return '';
+        }
+    }
+}
 if (!function_exists('who')) {
     function who($key)
     {

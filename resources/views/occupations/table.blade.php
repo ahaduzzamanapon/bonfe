@@ -2,7 +2,7 @@
     <table class="table" id="occupations-table">
         <thead>
             <tr>
-                <th>Id</th>
+                <th>SL</th>
         <th>Title</th>
         <th>Description</th>
         
@@ -12,7 +12,7 @@
         <tbody>
         @foreach($occupations as $key => $occupation)
             <tr>
-                <td>{{ $occupation->id }}</td>
+                <td>{{ ++$key }}</td>
             <td>{{ $occupation->title }}</td>
             <td>{{ $occupation->description }}</td>
            

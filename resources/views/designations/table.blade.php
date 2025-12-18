@@ -2,7 +2,7 @@
     <table class="table table_data" id="designations-table">
         <thead>
             <tr>
-                <th>Id</th>
+                <th>SL</th>
         <th>Name</th>
         <th>Status</th>
 
@@ -12,7 +12,7 @@
         <tbody>
         @foreach($designations as $key => $designation)
             <tr>
-                <td>{{ $designation->id }}</td>
+                <td>{{ ++$key }}</td>
             <td>{{ $designation->desi_name }}</td>
             <td>{{ $designation->desi_status }}</td>
 

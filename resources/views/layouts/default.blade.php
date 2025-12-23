@@ -599,6 +599,7 @@
 
     @include('layouts/datatables_js')
 
+    @yield('scripts')
     @yield('footer_scripts')
 
 

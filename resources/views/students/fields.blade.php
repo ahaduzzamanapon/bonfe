@@ -446,6 +446,7 @@ training_end_date
 
 
 <script>
+
     function previewImage(event, previewId) {
 
         var file = event.target.files[0];
@@ -457,8 +458,9 @@ training_end_date
         reader.readAsDataURL(file);
     }
 </script>
-@section('footer_scripts')
+@section('scripts')
     <script>
+        
         $(document).ready(function () {
             $('#district_id').change(function () {
                 var districtId = $(this).val();
@@ -499,11 +501,6 @@ training_end_date
             });
         });
     </script>
-
-
-
-
-
 @endsection
 
 

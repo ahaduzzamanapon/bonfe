@@ -70,21 +70,21 @@
 <!-- Registration Number Field -->
 <div class="col-md-3">
     <div class="form-group">
-        {!! Form::label('registration_number', 'Registration Number', ['class' => 'control-label']) !!}
+        {!! Form::label('candidate_id', 'Candidate Id', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('registration_number', null, ['class' => 'form-control', 'required']) !!}
+        {!! Form::text('candidate_id', null, ['class' => 'form-control', 'required']) !!}
     </div>
 </div>
 
 
-<!-- Candidate Id Field -->
+{{-- <!-- Candidate Id Field -->
 <div class="col-md-3 d-none">
     <div class="form-group">
         {!! Form::label('candidate_id', 'Candidate Id', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
         {!! Form::text('candidate_id', null, ['class' => 'form-control']) !!}
     </div>
-</div>
+</div> --}}
 
 <!-- Candidate Name Field -->
 <div class="col-md-3">

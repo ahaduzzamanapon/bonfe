@@ -117,4 +117,8 @@ Route::get('/upload_exell', function () {
 
 Route::post('/import-users', [StudentController::class, 'import'])->name('import.users');
 
+Route::get('/upload_users', [UserController::class, 'upload_users_page'])->name('users.upload_page');
+Route::post('/users/import', [UserController::class, 'import_users'])->name('users.import');
+
+
 

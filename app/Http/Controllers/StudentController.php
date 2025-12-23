@@ -191,8 +191,10 @@ class StudentController extends AppBaseController
      *
      * @return Response
      */
-    public function store(CreateStudentRequest $request)
+    public function store(Request $request)
     {
+
+        // dd($request->all());
         $input = $request->all();
         if ($request->hasFile('image')) {
             $file = $request->file('image');
@@ -216,6 +218,7 @@ class StudentController extends AppBaseController
 
         $student_type = $input['student_type'];
         unset($input['student_type']);
+
 
 
 
@@ -425,16 +428,16 @@ class StudentController extends AppBaseController
 
         $student = Student::find($request->studentId);
 
-        $students = Student::where('occupation_id', $student->occupation_id)->where('candidate_id', $request->candidate_id_field)->get();
+        $students = Student::where('occupation_id', $student->occupation_id)->where('registration_number', $request->candidate_id_field)->get();
 
         if (count($students) > 0) {
             return response()->json([
                 'success' => false,
-                'message' => "Candidate ID already exists in the same occupation",
+                'message' => "Registration number already exists in the same occupation",
             ]);
         }
 
-        $student->candidate_id = $request->candidate_id_field;
+        $student->registration_number = $request->candidate_id_field;
         $student->save();
         return response()->json([
             'success' => true,

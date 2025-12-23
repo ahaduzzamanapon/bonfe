@@ -279,6 +279,7 @@
                                                 <div style="line-height: 2px;">
                                                     <p style="font-size: 10px;"><strong>Trade(Course):</strong> ${student.occupation}</p>
                                                     <p style="font-size: 10px;"><strong>Regis. No:</strong> ${student.registration_number}</p>
+                                                    <p style="font-size: 10px;"><strong>Candidate. No:</strong> ${student.candidate_id}</p>
                                                     <p style="font-size: 10px;"><strong>District:</strong> ${student.district}</p>
                                                 </div>
                                             </div>
@@ -318,8 +319,8 @@
                                                     ${student.status === 'Waiting for the exam results from the Assessment Center' && can_give_exam_result ? `
                                                         <a class="dropdown-item" onclick="give_exam_result(${student.id})" href="javascript:void(0);"><i class="im im-icon-Pencil-Ruler"></i> Give Exam Result</a>` : ''
                                                     }
-                                                    ${student.status === 'Waiting for the exam results from the Assessment Center' && student.candidate_id==null ? `
-                                                        <a class="dropdown-item" onclick="give_candidate_id(${student.id})" href="javascript:void(0);"><i class="im im-icon-People-onCloud"></i> Give Candidate Id</a>` : ''
+                                                    ${student.registration_number==null ? `
+                                                        <a class="dropdown-item" onclick="give_candidate_id(${student.id})" href="javascript:void(0);"><i class="im im-icon-People-onCloud"></i> Give Registration Number</a>` : ''
                                                     }
                                                    
                                                     ${student.exam_status === 'Pending' ? `

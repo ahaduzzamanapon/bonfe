@@ -205,4 +205,98 @@ class UserController extends Controller
         Flash::success('User deleted successfully.');
         return redirect(route('users.index'));
     }
+
+    public function upload_users_page()
+    {
+        dd('test');
+        return view('users.upload');
+    }
+
+    public function import_users(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        try {
+            $data = \Maatwebsite\Excel\Facades\Excel::toArray(new \App\Imports\ExcelDataImport, $request->file('file'));
+
+            if (!empty($data) && count($data)) {
+                $rows = $data[0]; // First sheet
+
+                foreach ($rows as $row) {
+                    // Skip empty rows
+                    if (empty($row['name']) || empty($row['e_mail'])) {
+                        continue;
+                    }
+
+                    // Check if user exists
+                    $existingUser = User::where('email', $row['e_mail'])->first();
+                    if ($existingUser) {
+                        continue; // Skip or update? "upload this user" implies creation mostly. Safest is skip or update if needed. Let's skip for now to avoid overwriting without permission.
+                        // Or maybe we update? The user didn't specify. I'll stick to creation logic but use updateOrCreate if I want to be idempotent.
+                        // Given "upload form of this xlsx for upload this user", it usually means create.
+                    }
+
+                    $designation_id = $this->get_designation_id($row['designation']);
+                    $district_id = $this->get_district_id($row['district']);
+                    
+                    User::create([
+                        'name' => $row['name'],
+                        'last_name' => $row['last_name'] ?? '',
+                        'email' => $row['e_mail'],
+                        'password' => bcrypt('password'), // Default password as requested
+                        'designation_id' => $designation_id,
+                        'district_id' => $district_id,
+                        'gender' => $row['gender'] ?? null,
+                        'phone_number' => $row['phone_number'] ?? null,
+                        'religion' => $row['religion'] ?? null,
+                        'image' => $row['image'] ?? 'no-image.png',
+                        'signature' => $row['signature'] ?? 'no-image.png',
+                    ]);
+                }
+                Flash::success('Users imported successfully.');
+            } else {
+                Flash::error('No data found in the file.');
+            }
+
+        } catch (\Exception $e) {
+            Flash::error('Error importing users: ' . $e->getMessage());
+        }
+
+        return redirect(route('users.index'));
+    }
+
+    private function get_designation_id($name)
+    {
+        if (empty($name)) return null;
+        // Try finding by name
+        $designation = \App\Models\Designation::where('desi_name', $name)->first();
+        if ($designation) {
+            return $designation->id;
+        }
+        // Create if not exists ? Or return null? 
+        // Usually better to create or fail. I'll create to match StudentController behavior logic
+        $new = new \App\Models\Designation();
+        $new->desi_name = $name;
+        $new->desi_status = 'Active'; // Default status
+        $new->save();
+        return $new->id;
+    }
+
+    private function get_district_id($name)
+    {
+        if (empty($name)) return null;
+        $district = \App\Models\District::where('name_en', 'LIKE', '%'.$name.'%')->orWhere('name_bn', 'LIKE', '%'.$name.'%')->first();
+        if ($district) {
+            return $district->id;
+        }
+        // Create? 
+        // Users might probably want existing districts. But if it's a new district name, creating it is safer than crashing.
+        $new = new \App\Models\District();
+        $new->name_en = $name;
+        $new->name_bn = $name; // Fallback
+        $new->save();
+        return $new->id;
+    }
 }

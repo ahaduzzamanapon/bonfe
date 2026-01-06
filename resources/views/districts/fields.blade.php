@@ -7,11 +7,17 @@
 </div>
 
 
-<!-- Name En Field -->
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('name_en', 'Name En',['class'=>'control-label']) !!}
         {!! Form::text('name_en', null, ['class' => 'form-control']) !!}
+    </div>
+</div>
+<!-- Code Field -->
+<div class="col-md-3">
+    <div class="form-group">
+        {!! Form::label('code', 'Code (e.g., 18)',['class'=>'control-label']) !!}
+        {!! Form::text('code', null, ['class' => 'form-control']) !!}
     </div>
 </div>
 

@@ -1,8 +1,14 @@
-<!-- Title Field -->
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('title', 'Title',['class'=>'control-label']) !!}
         {!! Form::text('title', null, ['class' => 'form-control']) !!}
+    </div>
+</div>
+<!-- Code Field -->
+<div class="col-md-3">
+    <div class="form-group">
+        {!! Form::label('code', 'Code (e.g., CGD)',['class'=>'control-label']) !!}
+        {!! Form::text('code', null, ['class' => 'form-control']) !!}
     </div>
 </div>
 

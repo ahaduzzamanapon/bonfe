@@ -1,8 +1,21 @@
-<!-- Insatitute Name Field -->
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('insatitute_name', 'Insatitute Name',['class'=>'control-label']) !!}
         {!! Form::text('insatitute_name', null, ['class' => 'form-control','required']) !!}
+    </div>
+</div>
+<!-- Type Field -->
+<div class="col-md-3">
+    <div class="form-group">
+        {!! Form::label('type', 'Type',['class'=>'control-label']) !!}
+        {!! Form::select('type', ['IBC' => 'IBC', 'OBC' => 'OBC', 'EBC' => 'EBC'], null, ['class' => 'form-control', 'placeholder' => 'Select Type']) !!}
+    </div>
+</div>
+<!-- Code Field -->
+<div class="col-md-3">
+    <div class="form-group">
+        {!! Form::label('code', 'Code (e.g., 0001)',['class'=>'control-label']) !!}
+        {!! Form::text('code', null, ['class' => 'form-control']) !!}
     </div>
 </div>
 @php

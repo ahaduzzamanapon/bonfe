@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\Upazila;
 use App\Models\Occupation;
 use App\Models\Insatitute;
+use App\Models\District;
 
 
 use App\Http\Requests\CreateStudentRequest;
@@ -191,6 +192,61 @@ class StudentController extends AppBaseController
      *
      * @return Response
      */
+    public function get_candidate_number_preview(Request $request) {
+        $instituteId = $request->institutionName;
+        $occupationId = $request->occupation_id;
+        $districtId = $request->district_id;
+
+        $type = 'empty';
+        $tradeCode = 'empty';
+        $distCode = 'empty';
+        $instCode = 'empty';
+        $serial = '0001';
+
+        if ($instituteId) {
+            $institute = Insatitute::find($instituteId);
+            if ($institute) {
+                $type = $institute->type ?? 'empty';
+                $instCode = $institute->code ?? 'empty';
+            }
+        }
+
+        if ($occupationId) {
+            $occupation = Occupation::find($occupationId);
+            if ($occupation) {
+                $tradeCode = $occupation->code ?? 'empty';
+            }
+        }
+
+        if ($districtId) {
+             $district = District::find($districtId);
+             if ($district) {
+                 $distCode = $district->code ?? 'empty';
+             }
+        }
+
+        // Count existing students with this exact combination to determine serial
+        if ($instituteId && $occupationId && $districtId) {
+            $count = Student::where('district_id', $districtId)
+                            ->where('occupation_id', $occupationId)
+                            ->where('institutionName', $instituteId)
+                            ->count();
+            
+            $serial = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+        }
+
+        $candidateId = "{$type}-{$tradeCode}-{$distCode}-{$instCode}-{$serial}";
+
+        return response()->json(['candidate_id' => $candidateId]);
+    }
+
+    /**
+     * Store a newly created Student in storage.
+     *
+     * @param CreateStudentRequest $request
+     *
+     * @return Response
+     */
     public function store(Request $request)
     {
 
@@ -213,6 +269,34 @@ class StudentController extends AppBaseController
             $input['attachment'] = uploadFile($file, $folder, $customName);
         } else {
             $input['attachment'] = 'no-image.png';
+        }
+
+        // Generate Candidate Number
+        $instituteId = $input['institutionName'] ?? null;
+        $occupationId = $input['occupation_id'] ?? null;
+        $districtId = $input['district_id'] ?? null;
+
+        if ($instituteId && $occupationId && $districtId) {
+             $institute = Insatitute::find($instituteId);
+             $occupation = Occupation::find($occupationId);
+             $district = District::find($districtId);
+             
+             if ($institute && $occupation && $district) {
+                $type = $institute->type ?? 'XXX';
+                $tradeCode = $occupation->code ?? 'XXX';
+                $distCode = $district->code ?? 'XX';
+                $instCode = $institute->code ?? 'XXXX';
+
+                $count = Student::where('district_id', $districtId)
+                                ->where('occupation_id', $occupationId)
+                                ->where('institutionName', $instituteId)
+                                ->count();
+                
+                $serial = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+                $input['candidate_id'] = "{$type}-{$tradeCode}-{$distCode}-{$instCode}-{$serial}"; // Override or Set
+                // Assuming registration_number is same or different? 
+                // User requirement said "Candidate Number". Field is candidate_id.
+             }
         }
 
 

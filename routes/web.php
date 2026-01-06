@@ -99,6 +99,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('generateCertificate_send', 'StudentController@generateCertificate_send')->name('generateCertificate_send');
     Route::get('get_competences_by_occupation', 'StudentController@get_competences_by_occupation')->name('get_competences_by_occupation');
     Route::get('viewResult', 'StudentController@viewResult')->name('viewResult');
+    Route::get('get_candidate_number_preview', 'StudentController@get_candidate_number_preview')->name('students.get_candidate_number_preview');
 
     Route::get('/dashboard-data', [HomeController::class, 'getDashboardData'])->name('dashboard.data');
 

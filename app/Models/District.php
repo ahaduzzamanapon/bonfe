@@ -22,7 +22,8 @@ class District extends Model
 
     public $fillable = [
         'name_bn',
-        'name_en'
+        'name_en',
+        'code'
     ];
 
     /**
@@ -33,7 +34,8 @@ class District extends Model
     protected $casts = [
         'id' => 'integer',
         'name_bn' => 'string',
-        'name_en' => 'string'
+        'name_en' => 'string',
+        'code' => 'string'
     ];
 
     /**

@@ -28,7 +28,9 @@ class Insatitute extends Model
         'district',
         'address',
         'status',
-        'description'
+        'description',
+        'type',
+        'code'
     ];
 
     /**
@@ -42,7 +44,9 @@ class Insatitute extends Model
         'district' => 'integer',
         'address' => 'string',
         'status' => 'string',
-        'description' => 'string'
+        'description' => 'string',
+        'type' => 'string',
+        'code' => 'string'
     ];
 
     /**

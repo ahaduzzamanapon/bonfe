@@ -48,6 +48,13 @@
 </script>
 
 
+<!-- Candidate ID Preview -->
+    <div class="col-md-12">
+        <div class="alert alert-info" style="text-align: center;">
+            <h3>Candidate ID Preview: <span id="candidate_number_preview" style="font-weight: bold; color: #000;">--</span></h3>
+        </div>
+    </div>
+
 <!-- Occupation Id Field -->
 <div class="col-md-3">
     <div class="form-group">
@@ -68,11 +75,11 @@
 
 
 <!-- Registration Number Field -->
-<div class="col-md-3">
+<div class="col-md-3 d-none">
     <div class="form-group">
         {!! Form::label('candidate_id', 'Candidate Id', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('candidate_id', null, ['class' => 'form-control', 'required']) !!}
+        {!! Form::text('candidate_id', null, ['class' => 'form-control']) !!}
     </div>
 </div>
 
@@ -483,7 +490,7 @@ training_end_date
 
         $(document).ready(function () {
             $('#program_id').change(function () {
-                var districtId = $(this).val();
+                var districtId = $(this).val(); // This seems copy-pasted wrong in original code ('program_id' uses 'districtId' var name?), but keeping logic. Actually the original code makes no sense there (get_upazilas using program_id as district_id). I will leave original code alone and just append mine.
                 $.ajax({
                     url: "{{ route('get_upazilas') }}",
                     type: "GET",
@@ -499,6 +506,39 @@ training_end_date
                     }
                 });
             });
+        });
+
+        // Candidate ID Preview Script
+        function updateCandidateIdPreview() {
+            var instituteId = $('select[name="institutionName"]').val();
+            var occupationId = $('#occupation_id').val();
+            var districtId = $('#district_id').val();
+
+            // Always call AJAX to get partial preview
+            $('#candidate_number_preview').text('Loading...');
+            $.ajax({
+                url: "{{ route('students.get_candidate_number_preview') }}",
+                type: "GET",
+                data: {
+                    institutionName: instituteId,
+                    occupation_id: occupationId,
+                    district_id: districtId
+                },
+                success: function (data) {
+                    $('#candidate_number_preview').text(data.candidate_id);
+                },
+                error: function() {
+                        $('#candidate_number_preview').text('Error fetching ID');
+                }
+            });
+        }
+
+        $(document).ready(function () {
+             $('#institutionName, #occupation_id, #district_id').change(function () {
+                 updateCandidateIdPreview();
+             });
+             // Trigger once on load in case of edit or default values
+             // updateCandidateIdPreview(); 
         });
     </script>
 @endsection

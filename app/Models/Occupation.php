@@ -22,7 +22,8 @@ class Occupation extends Model
 
     public $fillable = [
         'title',
-        'description'
+        'description',
+        'code'
     ];
 
     /**
@@ -33,7 +34,8 @@ class Occupation extends Model
     protected $casts = [
         'id' => 'integer',
         'title' => 'string',
-        'description' => 'string'
+        'description' => 'string',
+        'code' => 'string'
     ];
 
     /**

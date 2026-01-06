@@ -64,6 +64,23 @@
     </div>
 </div>
 
+<!-- Institute Type Filter -->
+<div class="col-md-3">
+    <div class="form-group">
+        {!! Form::label('filter_institute_type', 'Institute Type Filter:', ['class' => 'control-label']) !!}
+        {!! Form::select('filter_institute_type', ['IBC' => 'IBC', 'OBC' => 'OBC', 'EBC' => 'EBC'], null, ['class' => 'form-control', 'placeholder' => 'Select Type to Filter']) !!}
+    </div>
+</div>
+
+<!-- Address Field -->
+<div class="col-md-3" id="institutionName">
+    <div class="form-group">
+        {!! Form::label('institutionName', 'Institution Name', ['class' => 'control-label']) !!}
+        <span style="color: red">*</span>
+        {!! Form::select('institutionName', [], null, ['class' => 'form-control select2', 'required']) !!}
+    </div>
+</div>
+
 <!-- Occupation Id Field -->
 <div class="col-md-3 @if(Request::is('general_students*')) d-none @endif">
     <div class="form-group">
@@ -278,14 +295,6 @@
     }
 @endphp
 
-<!-- Address Field -->
-<div class="col-md-3" id="institutionName">
-    <div class="form-group">
-        {!! Form::label('institutionName', 'Institution Name', ['class' => 'control-label']) !!}
-        <span style="color: red">*</span>
-        {!! Form::select('institutionName', $Insatitute, null, ['class' => 'form-control select2', 'required']) !!}
-    </div>
-</div>
 
 @section('footer_scripts')
     {{--
@@ -527,6 +536,7 @@ training_end_date
             var instituteId = $('select[name="institutionName"]').val();
             var occupationId = $('#occupation_id').val();
             var districtId = $('#district_id').val();
+            var programId = $('#program_id').val();
 
             // Always call AJAX to get partial preview
             $('#candidate_number_preview').text('Loading...');
@@ -536,7 +546,8 @@ training_end_date
                 data: {
                     institutionName: instituteId,
                     occupation_id: occupationId,
-                    district_id: districtId
+                    district_id: districtId,
+                    program_id: programId
                 },
                 success: function (data) {
                     $('#candidate_number_preview').text(data.candidate_id);
@@ -548,11 +559,31 @@ training_end_date
         }
 
         $(document).ready(function () {
-             $('#institutionName, #occupation_id, #district_id').change(function () {
+             $('#institutionName, #occupation_id, #district_id, #program_id').change(function () {
                  updateCandidateIdPreview();
              });
              // Trigger once on load in case of edit or default values
              // updateCandidateIdPreview(); 
+            $('#filter_institute_type').change(function() {
+                var type = $(this).val();
+                if (!type) return;
+
+                $.ajax({
+                    url: "{{ route('get_institutes_by_type') }}",
+                    type: "GET",
+                    data: { type: type },
+                    success: function(data) {
+                        var $instSelect = $('select[name="institutionName"]');
+                        $instSelect.empty();
+                        $instSelect.append('<option value="">Select Institution</option>');
+                        $.each(data, function(index, item) {
+                            $instSelect.append('<option value="' + item.id + '">' + item.text + '</option>');
+                        });
+                        // Trigger change to update Select2 if used, or candidate preview
+                        $instSelect.change();
+                    }
+                });
+            });
         });
     </script>
 @endsection

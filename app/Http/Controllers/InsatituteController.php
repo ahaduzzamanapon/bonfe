@@ -160,4 +160,16 @@ class InsatituteController extends AppBaseController
 
         return redirect(route('insatitutes.index'));
     }
+    public function get_institutes_by_type(Request $request)
+    {
+        $type = $request->input('type');
+        $institutes = Insatitute::where('type', $type)->pluck('insatitute_name', 'id');
+        
+        // Return structured data for Select2 or simple loop
+        $data = [];
+        foreach ($institutes as $id => $name) {
+            $data[] = ['id' => $id, 'text' => $name];
+        }
+        return response()->json($data);
+    }
 }

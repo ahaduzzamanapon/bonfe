@@ -108,6 +108,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('students_import_preview', 'StudentController@import_students_preview')->name('students.import_preview');
     Route::post('students_import_store', 'StudentController@import_students_store')->name('students.import_store');
     Route::get('students_import_sample', 'StudentController@download_import_sample')->name('students.import_sample');
+    Route::get('get_institutes_by_type', 'InsatituteController@get_institutes_by_type')->name('get_institutes_by_type');
 
 });
 Route::get('empty_table', 'JoshController@emptyTable');

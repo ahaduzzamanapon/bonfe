@@ -227,10 +227,15 @@ class StudentController extends AppBaseController
 
         // Count existing students with this exact combination to determine serial
         if ($instituteId && $occupationId && $districtId) {
-            $count = Student::where('district_id', $districtId)
+            $query = Student::where('district_id', $districtId)
                             ->where('occupation_id', $occupationId)
-                            ->where('institutionName', $instituteId)
-                            ->count();
+                            ->where('institutionName', $instituteId);
+            
+            if ($request->has('program_id')) {
+                $query->where('program_id', $request->program_id);
+            }
+
+            $count = $query->count();
             
             $serial = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
         }
@@ -287,10 +292,15 @@ class StudentController extends AppBaseController
                 $distCode = $district->code ?? 'XX';
                 $instCode = $institute->code ?? 'XXXX';
 
-                $count = Student::where('district_id', $districtId)
+                $query = Student::where('district_id', $districtId)
                                 ->where('occupation_id', $occupationId)
-                                ->where('institutionName', $instituteId)
-                                ->count();
+                                ->where('institutionName', $instituteId);
+
+                if (isset($input['program_id'])) {
+                    $query->where('program_id', $input['program_id']);
+                }
+
+                $count = $query->count();
                 
                 $serial = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
                 $input['candidate_id'] = "{$type}-{$tradeCode}-{$distCode}-{$instCode}-{$serial}"; // Override or Set
@@ -1547,10 +1557,15 @@ class StudentController extends AppBaseController
             if ($instId && $occId && $distId) {
                 $groupKey = "{$instId}_{$occId}_{$distId}";
                 if (!isset($groupCounts[$groupKey])) {
-                    $groupCounts[$groupKey] = Student::where('district_id', $distId)
+                    $query = Student::where('district_id', $distId)
                         ->where('occupation_id', $occId)
-                        ->where('institutionName', $instId)
-                        ->count();
+                        ->where('institutionName', $instId);
+                    
+                    if ($programId) {
+                        $query->where('program_id', $programId); // Use imported program ID
+                    }
+
+                    $groupCounts[$groupKey] = $query->count();
                 }
                 $groupCounts[$groupKey]++;
                 $currentSerial = $groupCounts[$groupKey];
@@ -1624,10 +1639,15 @@ class StudentController extends AppBaseController
                    $distCode = $district->code ?? 'XX';
                    $instCode = $institute->code ?? 'XXXX';
    
-                   $existingCount = Student::where('district_id', $districtId)
+                   $query = Student::where('district_id', $districtId)
                                    ->where('occupation_id', $occupationId)
-                                   ->where('institutionName', $instituteId)
-                                   ->count();
+                                   ->where('institutionName', $instituteId);
+
+                   if (isset($data['program_id'])) {
+                        $query->where('program_id', $data['program_id']);
+                   }
+
+                   $existingCount = $query->count();
                    
                    $serial = str_pad($existingCount + 1, 4, '0', STR_PAD_LEFT);
                    $data['candidate_id'] = "{$type}-{$tradeCode}-{$distCode}-{$instCode}-{$serial}";

@@ -22,6 +22,7 @@ class Occupation extends Model
 
     public $fillable = [
         'title',
+        'category',
         'description',
         'code'
     ];

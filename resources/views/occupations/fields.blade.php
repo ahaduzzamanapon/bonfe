@@ -5,11 +5,15 @@
     </div>
 </div>
 <!-- Code Field -->
-<div class="col-md-3">
-    <div class="form-group">
-        {!! Form::label('code', 'Code (e.g., CGD)',['class'=>'control-label']) !!}
-        {!! Form::text('code', null, ['class' => 'form-control']) !!}
-    </div>
+<div class="form-group col-sm-6">
+    {!! Form::label('code', 'Code:') !!}
+    {!! Form::text('code', null, ['class' => 'form-control']) !!}
+</div>
+
+<!-- Category Field -->
+<div class="form-group col-sm-6">
+    {!! Form::label('category', 'Category:') !!}
+    {!! Form::select('category', ['ICT' => 'ICT', 'CON' => 'CON'], null, ['class' => 'form-control', 'placeholder' => 'Select Category']) !!}
 </div>
 
 

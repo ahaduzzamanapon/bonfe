@@ -1459,4 +1459,194 @@ class StudentController extends AppBaseController
         return response()->json(['html' => $html]);
     }
 
+    // Student Import Methods
+
+    public function import_students_page()
+    {
+        return view('students.import');
+    }
+
+    public function import_students_preview(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
+
+        $data = Excel::toArray(new ExcelDataImport, $request->file('file'));
+        $rows = $data[0] ?? [];
+
+        $students = [];
+        $institutes = Insatitute::pluck('insatitute_name', 'id');
+        $occupations = Occupation::pluck('title', 'id');
+        $districts = District::pluck('name_en', 'id');
+
+        // Clean lookup maps for fuzzy matching
+        $institutesMap = [];
+        foreach ($institutes as $id => $name) $institutesMap[strtolower(trim($name))] = $id;
+        
+        $occupationsMap = [];
+        foreach ($occupations as $id => $title) $occupationsMap[strtolower(trim($title))] = $id;
+
+        $districtsMap = [];
+        foreach ($districts as $id => $name) $districtsMap[strtolower(trim($name))] = $id;
+        
+        // Upazila Map - fetch all as [name => id], might be heavy but needed for fuzzy match
+        $upazilas = Upazila::pluck('name', 'id');
+        $upazilasMap = [];
+        foreach ($upazilas as $id => $name) $upazilasMap[strtolower(trim($name))] = $id;
+
+
+        // Calculate serials preview
+        // Note: Real serial calculation happens on save. Here we just show a preview based on CURRENT DB state.
+        // We will increment locally to show "0001, 0002" etc. within the preview list if they share the same group
+        $groupCounts = []; // key: instId_occId_distId => count
+
+        foreach ($rows as $index => $row) {
+            // Map columns - try to guess keys based on common names or just use what we have if specific keys expected
+            // Assuming 'name', 'father_name', 'institute', etc. based on sample text in view
+            
+            // Helper to get value loosely
+            $getVal = function($keys) use ($row) {
+                foreach ($keys as $k) {
+                    if (isset($row[$k])) return $row[$k];
+                }
+                return null;
+            };
+
+            $name = $getVal(['name', 'candidate_name', 'student_name', 'candidate_name_english']);
+            $name_bn = $getVal(['name_bn', 'candidate_name_bn', 'candidate_name_bangla']);
+            $father = $getVal(['father_name', 'father', 'fathers_name_english']);
+            $mother = $getVal(['mother_name', 'mother', 'mothers_name_english']);
+            $nid = $getVal(['nid', 'national_id']);
+            $brn = $getVal(['brn', 'birth_registration_number']);
+            $mobile = $getVal(['mobile', 'mobile_number', 'phone']);
+            $dob = $getVal(['dob', 'date_of_birth']);
+            $gender = $getVal(['gender']);
+            $email = $getVal(['email']);
+            $address = $getVal(['address']);
+            $eduQual = $getVal(['qualification', 'educational_qualification']);
+            $trainingStart = $getVal(['training_start_date', 'training_start']);
+            $programId = $getVal(['program_id', 'program']);
+
+            $instNameInput = $getVal(['institute', 'institute_name']);
+            $occNameInput = $getVal(['trade', 'occupation', 'course', 'trade_course_name']);
+            $distNameInput = $getVal(['district', 'district_name']);
+            $upazilaInput = $getVal(['upazila', 'upazila_city']);
+            $studentType = $getVal(['type', 'student_type']) ?? 'REG';
+
+            // Resolve IDs
+            $instId = $institutesMap[strtolower(trim($instNameInput))] ?? null;
+            $occId = $occupationsMap[strtolower(trim($occNameInput))] ?? null;
+            $distId = $districtsMap[strtolower(trim($distNameInput))] ?? null;
+            $upazilaId = $upazilasMap[strtolower(trim($upazilaInput))] ?? null; // Try map
+            
+            // If upazila input is just an ID (numeric), use it directly if map failed? No, let's stick to name match or provide ID in excel. Sample has name.
+
+            // Generate Preview ID
+            $previewId = 'Wait for Save';
+            if ($instId && $occId && $distId) {
+                $groupKey = "{$instId}_{$occId}_{$distId}";
+                if (!isset($groupCounts[$groupKey])) {
+                    $groupCounts[$groupKey] = Student::where('district_id', $distId)
+                        ->where('occupation_id', $occId)
+                        ->where('institutionName', $instId)
+                        ->count();
+                }
+                $groupCounts[$groupKey]++;
+                $currentSerial = $groupCounts[$groupKey];
+
+                $instObj = Insatitute::find($instId);
+                $occObj = Occupation::find($occId);
+                $distObj = District::find($distId);
+                
+                if ($instObj && $occObj && $distObj) {
+                    $t = $instObj->type ?? 'XXX';
+                    $tc = $occObj->code ?? 'XXX';
+                    $dc = $distObj->code ?? 'XX';
+                    $ic = $instObj->code ?? 'XXXX';
+                    $s = str_pad($currentSerial, 4, '0', STR_PAD_LEFT);
+                    
+                    $previewId = "{$t}-{$tc}-{$dc}-{$ic}-{$s}";
+                }
+            }
+
+            $students[] = [
+                'candidate_name' => $name,
+                'candidate_name_bn' => $name_bn,
+                'father_name' => $father,
+                'mother_name' => $mother,
+                'nid' => $nid,
+                'brn' => $brn,
+                'mobile_number' => $mobile,
+                'date_of_birth' => $dob,
+                'gender' => $gender,
+                'email' => $email,
+                'address' => $address,
+                'educational_qualification' => $eduQual,
+                'training_start_date' => $trainingStart,
+                'institutionName' => $instId,
+                'occupation_id' => $occId,
+                'district_id' => $distId,
+                'upajila_id' => $upazilaId,
+                'program_id' => $programId,
+                'student_type' => $studentType,
+                'preview_id' => $previewId
+            ];
+        }
+
+        return view('students.import_preview', compact('students', 'institutes', 'occupations', 'districts', 'upazilas'));
+    }
+
+    public function import_students_store(Request $request)
+    {
+        $importedData = $request->input('students');
+        
+        if (!$importedData || !is_array($importedData)) {
+            Flash::error('No data to save.');
+            return redirect(route('students.import_page'));
+        }
+
+        $count = 0;
+        foreach ($importedData as $data) {
+            // Generate Real Candidate ID
+            $instituteId = $data['institutionName'] ?? null;
+            $occupationId = $data['occupation_id'] ?? null;
+            $districtId = $data['district_id'] ?? null;
+
+            if ($instituteId && $occupationId && $districtId) {
+                $institute = Insatitute::find($instituteId);
+                $occupation = Occupation::find($occupationId);
+                $district = District::find($districtId);
+                
+                if ($institute && $occupation && $district) {
+                   $type = $institute->type ?? 'XXX';
+                   $tradeCode = $occupation->code ?? 'XXX';
+                   $distCode = $district->code ?? 'XX';
+                   $instCode = $institute->code ?? 'XXXX';
+   
+                   $existingCount = Student::where('district_id', $districtId)
+                                   ->where('occupation_id', $occupationId)
+                                   ->where('institutionName', $instituteId)
+                                   ->count();
+                   
+                   $serial = str_pad($existingCount + 1, 4, '0', STR_PAD_LEFT);
+                   $data['candidate_id'] = "{$type}-{$tradeCode}-{$distCode}-{$instCode}-{$serial}";
+                }
+           }
+
+           // Cleanup
+           if (isset($data['preview_id'])) unset($data['preview_id']);
+
+           Student::create($data);
+           $count++;
+        }
+
+        Flash::success($count . ' students imported successfully.');
+        return redirect(route('students.index'));
+    }
+
+    public function download_import_sample()
+    {
+        return Excel::download(new \App\Exports\SampleStudentExport, 'sample_students.xlsx');
+    }
 }

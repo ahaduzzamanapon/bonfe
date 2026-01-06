@@ -195,6 +195,20 @@
 </div>
 
 
+<!-- Student Type Field -->
+<div class="col-md-3">
+    <div class="form-group">
+        {!! Form::label('student_type', 'Student Type:', ['class' => 'control-label']) !!}
+        <br>
+        <label class="radio-inline">
+            {!! Form::radio('student_type', 'REG', true) !!} REG
+        </label>
+        <label class="radio-inline">
+            {!! Form::radio('student_type', 'RPL', false) !!} RPL
+        </label>
+    </div>
+</div>
+
 <!-- Upajila Id Field -->
 <div class="col-md-3">
     <div class="form-group">

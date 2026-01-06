@@ -103,6 +103,12 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/dashboard-data', [HomeController::class, 'getDashboardData'])->name('dashboard.data');
 
+    // Student Import Routes
+    Route::get('students_import', 'StudentController@import_students_page')->name('students.import_page');
+    Route::post('students_import_preview', 'StudentController@import_students_preview')->name('students.import_preview');
+    Route::post('students_import_store', 'StudentController@import_students_store')->name('students.import_store');
+    Route::get('students_import_sample', 'StudentController@download_import_sample')->name('students.import_sample');
+
 });
 Route::get('empty_table', 'JoshController@emptyTable');
 Route::get('remove_all_files', 'JoshController@remove_all_files');

@@ -39,6 +39,7 @@ class Student extends Model
 
     public $fillable = [
         'program_id',
+        'student_type',
         'occupation_id',
         'institutionName',
         'registration_number',

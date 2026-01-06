@@ -2,7 +2,7 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('insatitute_name', 'Insatitute Name',['class'=>'control-label']) !!}
-        {!! Form::text('insatitute_name', null, ['class' => 'form-control']) !!}
+        {!! Form::text('insatitute_name', null, ['class' => 'form-control','required']) !!}
     </div>
 </div>
 @php
@@ -19,7 +19,7 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('district', 'District',['class'=>'control-label']) !!}
-        {!! Form::select('district',$districts , null, ['class' => 'form-control']) !!}
+        {!! Form::select('district',$districts , null, ['class' => 'form-control','required']) !!}
     </div>
 </div>
 
@@ -28,7 +28,7 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('address', 'Address',['class'=>'control-label']) !!}
-        {!! Form::text('address', null, ['class' => 'form-control']) !!}
+        {!! Form::text('address', null, ['class' => 'form-control','required']) !!}
     </div>
 </div>
 
@@ -43,10 +43,10 @@
 
 
 <!-- Description Field -->
-<div class="col-md-12">
+<div class="col-md-12 d-none">
     <div class="form-group ">
         {!! Form::label('description', 'Description',['class'=>'control-label']) !!}
-        {!! Form::textarea('description', null, ['class' => 'form-control']) !!}
+        {!! Form::textarea('description', 'none', ['class' => 'form-control']) !!}
     </div>
 </div>
 

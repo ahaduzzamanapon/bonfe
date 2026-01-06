@@ -7,7 +7,6 @@
         <th>District</th>
         <th>Address</th>
         <th>Status</th>
-        <th>Description</th>
       
                 <th>Action</th>
             </tr>
@@ -17,10 +16,9 @@
             <tr>
                 <td>{{ $key+1 }}</td>
             <td>{{ $insatitute->insatitute_name }}</td>
-            <td>{{ $insatitute->district }}</td>
+            <td>{{ $insatitute->district_name }}</td>
             <td>{{ $insatitute->address }}</td>
             <td>{{ $insatitute->status }}</td>
-            <td>{{ $insatitute->description }}</td>
                 <td>
                     {!! Form::open(['route' => ['insatitutes.destroy', $insatitute->id], 'method' => 'delete']) !!}
                     <div class='btn-group'>

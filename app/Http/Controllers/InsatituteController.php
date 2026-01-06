@@ -22,8 +22,16 @@ class InsatituteController extends AppBaseController
     public function index(Request $request)
     {
         /** @var Insatitute $insatitutes */
-        $insatitutes = Insatitute::paginate(10);
-
+        if (!can('chairman') && can('district_admin')) {
+            $insatitutes = Insatitute::select('insatitutes.*', 'districts.name_en as district_name')
+                ->join('districts', 'insatitutes.district', '=', 'districts.id')
+                ->where('districts.id', auth()->user()->district_id)
+                ->paginate(10);
+        } else {
+            $insatitutes = Insatitute::select('insatitutes.*', 'districts.name_en as district_name')
+                ->join('districts', 'insatitutes.district', '=', 'districts.id')
+                ->paginate(10);
+        }
         return view('insatitutes.index')
             ->with('insatitutes', $insatitutes);
     }

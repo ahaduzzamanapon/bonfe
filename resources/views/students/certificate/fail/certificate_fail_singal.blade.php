@@ -196,14 +196,14 @@
 
             <div class="skills">
                 @php
-                  
+                    $total = count($student_competence_models);
                     if ($total == 0) {
                         echo '<p>No Competency Found</p>';
                     }
                     $hulft = ceil($total / 2);
                 @endphp
                 <ul>
-                    @foreach ($notYetCompetentCompetences as $key => $student_competence_model)
+                    @foreach ($student_competence_models as $key => $student_competence_model)
                         @if ($key == $hulft)
                             </ul>
                             <ul>
@@ -225,27 +225,14 @@
 
             <div class="skills">
                 @php
-                    //dd($student);
-                    $student_competence_models = DB::table('student_competence_models')
-                        ->selectRaw('MIN(student_competence_models.id) as id, student_competence_models.competence_id, competences.title')
-                        ->join('competences', 'student_competence_models.competence_id', '=', 'competences.id')
-                        ->where('student_id', $student->id)
-                        ->groupBy('student_competence_models.competence_id', 'competences.title')
-                        ->get();
-
-                    $cimpitent_id = [];
-                    foreach ($student_competence_models as $key => $student_competence_model) {
-                        $cimpitent_id[] = $student_competence_model->competence_id;
-                    }
-                    $total = count($student_competence_models);
+                    $total = count($notYetCompetentCompetences);
                     if ($total == 0) {
                         echo '<p>No Competency Found</p>';
                     }
                     $hulft = ceil($total / 2);
-                    //dd($student_competence_models);
                 @endphp
                 <ul>
-                    @foreach ($student_competence_models as $key => $student_competence_model)
+                    @foreach ($notYetCompetentCompetences as $key => $student_competence_model)
                         @if ($key == $hulft)
                             </ul>
                             <ul>

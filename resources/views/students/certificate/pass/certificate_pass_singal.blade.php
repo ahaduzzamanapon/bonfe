@@ -162,7 +162,7 @@
                             ->first();
 
                     @endphp
-                assessed by <b>{{ $assessment_centers->center_name }}</b> on {{ date('d M Y', strtotime($student->training_start_date)) }}. The
+                assessed by <b>{{ $assessment_centers->center_name }}</b> on {{ date('d M Y', strtotime($student->assessment_date)) }}. The
                     learner  demonstrated satisfactory participation and performance on all the following competencies:
                 </div>
 

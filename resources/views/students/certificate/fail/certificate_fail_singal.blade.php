@@ -185,7 +185,7 @@
 
                     @endphp
                     {{ $assessment_centers->center_name ? $assessment_centers->center_name : '.....................' }}
-                </b> on  {{ date('d M Y', strtotime($student->training_start_date)) }}. The learner was assessed in a total of {{  $total + count($student_competence_models) }} units of competency
+                </b> on  {{ date('d M Y', strtotime($student->assessment_date)) }}. The learner was assessed in a total of {{  $total + count($student_competence_models) }} units of competency
                 and
                 has been found Competent/ Not Yet Competent in the following unit(s):
             </div>

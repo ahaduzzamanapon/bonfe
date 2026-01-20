@@ -12,8 +12,8 @@
 
 <!-- Category Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('category', 'Category:') !!}
-    {!! Form::select('category', ['ICT' => 'ICT', 'CON' => 'CON'], null, ['class' => 'form-control', 'placeholder' => 'Select Category']) !!}
+    {!! Form::label('category', 'Sector:') !!}
+    {!! Form::select('category', ['ICT' => 'ICT', 'CON' => 'CON', 'INF' => 'INF', 'LE' => 'LE', 'T&H' => 'T&H'], null, ['class' => 'form-control', 'placeholder' => 'Select Sector']) !!}
 </div>
 
 

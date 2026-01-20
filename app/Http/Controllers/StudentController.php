@@ -66,9 +66,9 @@ class StudentController extends AppBaseController
         return response()->json($sampleData, 200);
     }
 
-     public function getStudentsjson()
+    public function getStudentsjson()
     {
-      
+
         $students = DB::table('students')
             ->select(
                 'id',
@@ -192,7 +192,8 @@ class StudentController extends AppBaseController
      *
      * @return Response
      */
-    public function get_candidate_number_preview(Request $request) {
+    public function get_candidate_number_preview(Request $request)
+    {
         $instituteId = $request->institutionName;
         $occupationId = $request->occupation_id;
         $districtId = $request->district_id;
@@ -219,24 +220,24 @@ class StudentController extends AppBaseController
         }
 
         if ($districtId) {
-             $district = District::find($districtId);
-             if ($district) {
-                 $distCode = $district->code ?? 'empty';
-             }
+            $district = District::find($districtId);
+            if ($district) {
+                $distCode = $district->code ?? 'empty';
+            }
         }
 
         // Count existing students with this exact combination to determine serial
         if ($instituteId && $occupationId && $districtId) {
             $query = Student::where('district_id', $districtId)
-                            ->where('occupation_id', $occupationId)
-                            ->where('institutionName', $instituteId);
-            
+                ->where('occupation_id', $occupationId)
+                ->where('institutionName', $instituteId);
+
             if ($request->has('program_id')) {
                 $query->where('program_id', $request->program_id);
             }
 
             $count = $query->count();
-            
+
             $serial = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
         }
 
@@ -282,31 +283,31 @@ class StudentController extends AppBaseController
         $districtId = $input['district_id'] ?? null;
 
         if ($instituteId && $occupationId && $districtId) {
-             $institute = Insatitute::find($instituteId);
-             $occupation = Occupation::find($occupationId);
-             $district = District::find($districtId);
-             
-             if ($institute && $occupation && $district) {
+            $institute = Insatitute::find($instituteId);
+            $occupation = Occupation::find($occupationId);
+            $district = District::find($districtId);
+
+            if ($institute && $occupation && $district) {
                 $type = $institute->type ?? 'XXX';
                 $tradeCode = $occupation->code ?? 'XXX';
                 $distCode = $district->code ?? 'XX';
                 $instCode = $institute->code ?? 'XXXX';
 
                 $query = Student::where('district_id', $districtId)
-                                ->where('occupation_id', $occupationId)
-                                ->where('institutionName', $instituteId);
+                    ->where('occupation_id', $occupationId)
+                    ->where('institutionName', $instituteId);
 
                 if (isset($input['program_id'])) {
                     $query->where('program_id', $input['program_id']);
                 }
 
                 $count = $query->count();
-                
+
                 $serial = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
                 $input['candidate_id'] = "{$type}-{$tradeCode}-{$distCode}-{$instCode}-{$serial}"; // Override or Set
                 // Assuming registration_number is same or different? 
                 // User requirement said "Candidate Number". Field is candidate_id.
-             }
+            }
         }
 
 
@@ -411,7 +412,7 @@ class StudentController extends AppBaseController
 
         $input = $request->all();
 
-   
+
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $folder = 'images/student';
@@ -433,7 +434,7 @@ class StudentController extends AppBaseController
 
 
 
-      
+
 
         $student->fill($input);
         $student->save();
@@ -1258,23 +1259,23 @@ class StudentController extends AppBaseController
                 $compitency = $value['competence'];
                 $institute_no = $value['institute_no'];
 
-                if($result == 'Competent'){
+                if ($result == 'Competent') {
                     $exam_status = 'Passed';
-                }elseif($result == 'Dropout'){
+                } elseif ($result == 'Dropout') {
                     $exam_status = 'Dropout';
-                }elseif($result == 'Absent'){
+                } elseif ($result == 'Absent') {
                     $exam_status = 'Absent';
-                }else{
+                } else {
                     $exam_status = 'Fail';
                 }
 
 
                 $student = Student::where('registration_number', 'LIKE', '%' . trim($registration_number) . '%')
-                   ->where('institution_no_temp', $institute_no)
+                    ->where('institution_no_temp', $institute_no)
                     ->where('exam_status', 'LIKE', '%' . 'Pending' . '%')
                     ->first();
 
-               
+
 
                 if ($student) {
                     $assessment_center = $this->get_assessment_center($assessment_center);
@@ -1294,16 +1295,16 @@ class StudentController extends AppBaseController
 
                     if ($student->exam_status == 'Fail') {
                         $compitency_array = explode('-', $compitency);
-                        if(count($compitency_array) == 2){
-                        $compitency_ids = range((int) $compitency_array[0], (int) $compitency_array[1]);
-                        }else{
+                        if (count($compitency_array) == 2) {
+                            $compitency_ids = range((int) $compitency_array[0], (int) $compitency_array[1]);
+                        } else {
                             $compitency_ids = [(int) $compitency_array[0]];
                         }
                         StudentCompetenceModel::where('student_id', $request->studentId)->delete();
                         $competences = Competence::where('occupation_id', $student->occupation_id)->get();
                         $checkedCompetences = [];
                         foreach ($competences as $key => $competence) {
-                            if (in_array($key+1, $compitency_ids)) {
+                            if (in_array($key + 1, $compitency_ids)) {
                                 $checkedCompetences[] = $competence->id;
                             }
                         }
@@ -1352,7 +1353,7 @@ class StudentController extends AppBaseController
     //         }
 
 
-           
+
 
 
     //         $student = Student::where('registration_number', $registration_number)
@@ -1478,6 +1479,9 @@ class StudentController extends AppBaseController
 
     public function import_students_preview(Request $request)
     {
+        ini_set('memory_limit', '-1');
+        ini_set('max_execution_time', 300);
+
         $request->validate([
             'file' => 'required|mimes:xlsx,xls'
         ]);
@@ -1492,18 +1496,32 @@ class StudentController extends AppBaseController
 
         // Clean lookup maps for fuzzy matching
         $institutesMap = [];
-        foreach ($institutes as $id => $name) $institutesMap[strtolower(trim($name))] = $id;
-        
+        foreach ($institutes as $id => $name)
+            $institutesMap[strtolower(trim($name))] = $id;
+
         $occupationsMap = [];
-        foreach ($occupations as $id => $title) $occupationsMap[strtolower(trim($title))] = $id;
+        foreach ($occupations as $id => $title)
+            $occupationsMap[strtolower(trim($title))] = $id;
 
         $districtsMap = [];
-        foreach ($districts as $id => $name) $districtsMap[strtolower(trim($name))] = $id;
-        
+        foreach ($districts as $id => $name)
+            $districtsMap[strtolower(trim($name))] = $id;
+
         // Upazila Map - fetch all as [name => id], might be heavy but needed for fuzzy match
-        $upazilas = Upazila::pluck('name', 'id');
+        $upazilas = Upazila::pluck('name_en', 'id');
         $upazilasMap = [];
-        foreach ($upazilas as $id => $name) $upazilasMap[strtolower(trim($name))] = $id;
+        foreach ($upazilas as $id => $name)
+            $upazilasMap[strtolower(trim($name))] = $id;
+
+        // Assessment Centers Map
+        $assessmentCenters = \App\Models\AssessmentCenter::pluck('center_name', 'id');
+        $assessmentCentersMap = [];
+        foreach ($assessmentCenters as $id => $name) {
+            $assessmentCentersMap[strtolower(trim($name))] = $id;
+        }
+
+        // Default Upazila if none found
+        $defaultUpazilaId = Upazila::first()->id ?? null;
 
 
         // Calculate serials preview
@@ -1514,53 +1532,176 @@ class StudentController extends AppBaseController
         foreach ($rows as $index => $row) {
             // Map columns - try to guess keys based on common names or just use what we have if specific keys expected
             // Assuming 'name', 'father_name', 'institute', etc. based on sample text in view
-            
+
             // Helper to get value loosely
-            $getVal = function($keys) use ($row) {
+            $getVal = function ($keys) use ($row) {
                 foreach ($keys as $k) {
-                    if (isset($row[$k])) return $row[$k];
+                    if (isset($row[$k]))
+                        return $row[$k];
                 }
                 return null;
             };
 
-            $name = $getVal(['name', 'candidate_name', 'student_name', 'candidate_name_english']);
-            $name_bn = $getVal(['name_bn', 'candidate_name_bn', 'candidate_name_bangla']);
-            $father = $getVal(['father_name', 'father', 'fathers_name_english']);
-            $mother = $getVal(['mother_name', 'mother', 'mothers_name_english']);
-            $nid = $getVal(['nid', 'national_id']);
+            $name = $getVal(['learners_name', 'name', 'candidate_name', 'student_name', 'candidate_name_english']);
+            $name_bn = $getVal(['name_bn', 'candidate_name_bn', 'candidate_name_bangla']) ?? $name;
+            $father = $getVal(['fathars_name', 'father_name', 'father', 'fathers_name_english']);
+            $mother = $getVal(['mothers_name', 'mother_name', 'mother', 'mothers_name_english']);
+            $nid = $getVal(['nid_if_any', 'nid', 'national_id']);
             $brn = $getVal(['brn', 'birth_registration_number']);
-            $mobile = $getVal(['mobile', 'mobile_number', 'phone']);
-            $dob = $getVal(['dob', 'date_of_birth']);
-            $gender = $getVal(['gender']);
-            $email = $getVal(['email']);
-            $address = $getVal(['address']);
-            $eduQual = $getVal(['qualification', 'educational_qualification']);
-            $trainingStart = $getVal(['training_start_date', 'training_start']);
-            $programId = $getVal(['program_id', 'program']);
+            $mobile = $getVal(['mobile_number', 'mobile', 'phone']);
 
-            $instNameInput = $getVal(['institute', 'institute_name']);
+            // Date Parsing
+            if ($index === 0) {
+                \Log::info('Import Row 1 Keys: ' . implode(', ', array_keys($row)));
+            }
+
+            $dobRaw = $getVal(['date_of_birth_dd_mm_yyyy', 'dob', 'date_of_birth']);
+            $dob = null;
+            if ($dobRaw) {
+                try {
+                    $dob = \Carbon\Carbon::createFromFormat('d.m.Y', $dobRaw)->format('Y-m-d');
+                } catch (\Exception $e) {
+                    try {
+                        $dob = \Carbon\Carbon::parse($dobRaw)->format('Y-m-d');
+                    } catch (\Exception $e2) {
+                        $dob = null;
+                    }
+                }
+            }
+
+            $gender = $getVal(['gender']);
+            $email = $getVal(['email_address', 'email']);
+            $address = $getVal(['address']);
+            $eduQual = $getVal(['educational_qualification', 'qualification']);
+
+            // Assessment Date
+            $assessmentDateRaw = $getVal(['assessment_date', 'date_of_assessment', 'exam_date', 'training_start_date', 'training_start']);
+            $assessmentDate = null;
+            if ($assessmentDateRaw) {
+                try {
+                    $assessmentDate = \Carbon\Carbon::createFromFormat('d.m.Y', $assessmentDateRaw)->format('Y-m-d');
+                } catch (\Exception $e) {
+                    try {
+                        $assessmentDate = \Carbon\Carbon::parse($assessmentDateRaw)->format('Y-m-d');
+                    } catch (\Exception $e2) {
+                        $assessmentDate = null;
+                    }
+                }
+            }
+
+            $programId = $getVal(['program_id']) ?? 1;
+            $registrationNo = $getVal(['registration_no', 'registration_number', 'reg_no']);
+
+            $instNameInput = $getVal(['institute', 'institute_name', 'assessment_venue', 'assessment_center']);
             $occNameInput = $getVal(['trade', 'occupation', 'course', 'trade_course_name']);
             $distNameInput = $getVal(['district', 'district_name']);
             $upazilaInput = $getVal(['upazila', 'upazila_city']);
             $studentType = $getVal(['type', 'student_type']) ?? 'REG';
+            $assessmentResult = $getVal(['assessment_result', 'result']);
+            $remarks = $getVal(['remarks', 'remark']);
+
+            // Map Exam Status
+            $examStatus = null;
+            $competencyResult = null; // Internal status for dropdown/logic
+
+            if ($assessmentResult) {
+                $rawResult = strtolower(trim($assessmentResult));
+                if ($rawResult == 'competent' || $rawResult == 'competency') {
+                    $examStatus = 'Passed';
+                    $competencyResult = 'Competent';
+                } elseif ($rawResult == 'not yet competent' || $rawResult == 'nyc') {
+                    $examStatus = 'Fail';
+                    $competencyResult = 'Not Yet Competent';
+                } elseif ($rawResult == 'absent') {
+                    $examStatus = 'Absent';
+                    $competencyResult = 'Not Yet Competent';
+                } elseif ($rawResult == 'drop_out' || $rawResult == 'drop out') {
+                    $examStatus = 'Drop Out';
+                    $competencyResult = 'Not Yet Competent';
+                } else {
+                    $examStatus = $assessmentResult; // Fallback to raw if not matched
+                    $competencyResult = $assessmentResult;
+                }
+            }
 
             // Resolve IDs
-            $instId = $institutesMap[strtolower(trim($instNameInput))] ?? null;
+            $instKey = strtolower(trim($instNameInput));
+            $instId = $institutesMap[$instKey] ?? null;
+
+            $instTypeInput = $getVal(['institute_type', 'venue_type', 'center_type']);
+
+            $assessmentCenterInput = $getVal(['assessment_center', 'center_name']);
+
+            // Determine the name to use for Assessment Center (Specific input or fallback to Institute Name)
+            $targetAcName = $assessmentCenterInput ?: $instNameInput;
+            $acId = null;
+
+            if ($targetAcName) {
+                $acKey = strtolower(trim($targetAcName));
+                $acId = $assessmentCentersMap[$acKey] ?? null;
+
+                if (!$acId) {
+                    try {
+                        $newAc = \App\Models\AssessmentCenter::create([
+                            'center_name' => $targetAcName,
+                            'district_id' => 1, // Default
+                            'registration_number' => '',
+                            'address' => 'Imported via Excel'
+                        ]);
+                        $acId = $newAc->id;
+                        $assessmentCentersMap[$acKey] = $acId;
+                    } catch (\Exception $e) {
+                        \Log::error("Failed to create Assessment Center: " . $e->getMessage());
+                    }
+                }
+            }
+
+            // Dynamic Institute Creation
+            if (!$instId && $instNameInput) {
+                // Determine Code
+                $maxCode = Insatitute::max('code');
+                $nextCode = str_pad(($maxCode ? $maxCode + 1 : 1), 4, '0', STR_PAD_LEFT);
+
+                try {
+                    $newInst = Insatitute::create([
+                        'insatitute_name' => $instNameInput,
+                        'type' => $instTypeInput ?? 'IBC', // Use valid type or default
+                        'code' => $nextCode,
+                        'district' => 1, // Default dummy district
+                        'address' => 'Imported',
+                        'description' => 'Imported via Excel',
+                        'status' => 'Active'
+                    ]);
+
+                    $instId = $newInst->id;
+                    $institutesMap[$instKey] = $instId; // Update key map
+                } catch (\Exception $e) {
+                    \Log::error("Failed to create institute: " . $e->getMessage());
+                }
+            } else {
+                if ($instNameInput && !$instId) {
+                    \Log::info("Institute not found and creation skipped or failed logic: '$instNameInput'");
+                }
+            }
+
             $occId = $occupationsMap[strtolower(trim($occNameInput))] ?? null;
             $distId = $districtsMap[strtolower(trim($distNameInput))] ?? null;
-            $upazilaId = $upazilasMap[strtolower(trim($upazilaInput))] ?? null; // Try map
-            
+            $upazilaId = $upazilasMap[strtolower(trim($upazilaInput))] ?? ($defaultUpazilaId ?? null);
+
             // If upazila input is just an ID (numeric), use it directly if map failed? No, let's stick to name match or provide ID in excel. Sample has name.
 
             // Generate Preview ID
-            $previewId = 'Wait for Save';
-            if ($instId && $occId && $distId) {
+            $importedCandidateId = $getVal(['candidate_id', 'id']); // Check if provided
+
+            $previewId = $importedCandidateId ?? 'Wait for Save';
+
+            if (!$importedCandidateId && $instId && $occId && $distId) {
                 $groupKey = "{$instId}_{$occId}_{$distId}";
                 if (!isset($groupCounts[$groupKey])) {
                     $query = Student::where('district_id', $distId)
                         ->where('occupation_id', $occId)
                         ->where('institutionName', $instId);
-                    
+
                     if ($programId) {
                         $query->where('program_id', $programId); // Use imported program ID
                     }
@@ -1573,14 +1714,14 @@ class StudentController extends AppBaseController
                 $instObj = Insatitute::find($instId);
                 $occObj = Occupation::find($occId);
                 $distObj = District::find($distId);
-                
+
                 if ($instObj && $occObj && $distObj) {
                     $t = $instObj->type ?? 'XXX';
                     $tc = $occObj->code ?? 'XXX';
                     $dc = $distObj->code ?? 'XX';
                     $ic = $instObj->code ?? 'XXXX';
                     $s = str_pad($currentSerial, 4, '0', STR_PAD_LEFT);
-                    
+
                     $previewId = "{$t}-{$tc}-{$dc}-{$ic}-{$s}";
                 }
             }
@@ -1592,30 +1733,42 @@ class StudentController extends AppBaseController
                 'mother_name' => $mother,
                 'nid' => $nid,
                 'brn' => $brn,
+                'registration_number' => $registrationNo,
                 'mobile_number' => $mobile,
                 'date_of_birth' => $dob,
                 'gender' => $gender,
                 'email' => $email,
                 'address' => $address,
                 'educational_qualification' => $eduQual,
-                'training_start_date' => $trainingStart,
+                'assessment_date' => $assessmentDate,
                 'institutionName' => $instId,
+                'assessment_center' => $acId, // Use Resolved ID
+                'assessment_venue' => $targetAcName,   // Use Name for Venue text if needed, or keep empty if user prefers. Let's use name.
                 'occupation_id' => $occId,
                 'district_id' => $distId,
                 'upajila_id' => $upazilaId,
                 'program_id' => $programId,
                 'student_type' => $studentType,
+                'competency_status' => $competencyResult, // Use mapped status for dropdown/logic
+                'exam_status' => $examStatus,             // Save to exam_status column
+                'competency_remarks' => $remarks,
                 'preview_id' => $previewId
             ];
         }
+
+        // Re-fetch institutes to include any newly created ones
+        $institutes = Insatitute::pluck('insatitute_name', 'id');
 
         return view('students.import_preview', compact('students', 'institutes', 'occupations', 'districts', 'upazilas'));
     }
 
     public function import_students_store(Request $request)
     {
+        ini_set('memory_limit', '-1');
+        ini_set('max_execution_time', 300);
+
         $importedData = $request->input('students');
-        
+
         if (!$importedData || !is_array($importedData)) {
             Flash::error('No data to save.');
             return redirect(route('students.import_page'));
@@ -1623,42 +1776,100 @@ class StudentController extends AppBaseController
 
         $count = 0;
         foreach ($importedData as $data) {
-            // Generate Real Candidate ID
             $instituteId = $data['institutionName'] ?? null;
             $occupationId = $data['occupation_id'] ?? null;
             $districtId = $data['district_id'] ?? null;
 
-            if ($instituteId && $occupationId && $districtId) {
+            // Generate Real Candidate ID or Use Provided
+            $candidateId = isset($data['candidate_id']) && $data['candidate_id'] !== 'Wait for Save' ? $data['candidate_id'] : null;
+
+            if (!$candidateId && $instituteId && $occupationId && $districtId) {
+                // Generation Logic
                 $institute = Insatitute::find($instituteId);
                 $occupation = Occupation::find($occupationId);
                 $district = District::find($districtId);
-                
+
                 if ($institute && $occupation && $district) {
-                   $type = $institute->type ?? 'XXX';
-                   $tradeCode = $occupation->code ?? 'XXX';
-                   $distCode = $district->code ?? 'XX';
-                   $instCode = $institute->code ?? 'XXXX';
-   
-                   $query = Student::where('district_id', $districtId)
-                                   ->where('occupation_id', $occupationId)
-                                   ->where('institutionName', $instituteId);
+                    $type = $institute->type ?? 'XXX';
+                    $tradeCode = $occupation->code ?? 'XXX';
+                    $distCode = $district->code ?? 'XX';
+                    $instCode = $institute->code ?? 'XXXX';
 
-                   if (isset($data['program_id'])) {
+                    $query = Student::where('district_id', $districtId)
+                        ->where('occupation_id', $occupationId)
+                        ->where('institutionName', $instituteId);
+
+                    if (isset($data['program_id'])) {
                         $query->where('program_id', $data['program_id']);
-                   }
+                    }
 
-                   $existingCount = $query->count();
-                   
-                   $serial = str_pad($existingCount + 1, 4, '0', STR_PAD_LEFT);
-                   $data['candidate_id'] = "{$type}-{$tradeCode}-{$distCode}-{$instCode}-{$serial}";
+                    $existingCount = $query->count();
+                    $serial = str_pad($existingCount + 1, 4, '0', STR_PAD_LEFT);
+                    $candidateId = "{$type}-{$tradeCode}-{$distCode}-{$instCode}-{$serial}";
                 }
-           }
+            }
 
-           // Cleanup
-           if (isset($data['preview_id'])) unset($data['preview_id']);
+            $data['candidate_id'] = $candidateId;
 
-           Student::create($data);
-           $count++;
+            // Set Default Statuses
+            $data['chairmen_status'] = 'Approved';
+            $data['districts_admin_status'] = 'Approved';
+            $data['status'] = 'Chairman Approved';
+
+            // Set Static IDs
+            $data['chairmen_id'] = 1;
+            $data['controller_id'] = 1; // Assuming Controller ID is 1 as per request
+
+            // Set District Admin ID (Find a user for this district)
+            $districtUser = \App\Models\User::where('district_id', $districtId)->first();
+            $data['districts_admin_id'] = $districtUser ? $districtUser->id : null;
+
+            // Cleanup
+            $compStatus = $data['competency_status'] ?? null;
+            $compRemarks = $data['competency_remarks'] ?? null;
+
+            if (isset($data['preview_id']))
+                unset($data['preview_id']);
+            if (isset($data['competency_status']))
+                unset($data['competency_status']);
+            if (isset($data['competency_remarks']))
+                unset($data['competency_remarks']);
+
+            $student = Student::create($data);
+
+            // Competency Logic
+            if ($occupationId && $compStatus) {
+                // Fetch competencies for this occupation
+                $competencies = Competence::where('occupation_id', $occupationId)->orderBy('id')->get();
+                $status = strtolower(trim($compStatus));
+
+                if ($status === 'competent') {
+                    // Pass ALL
+                    foreach ($competencies as $comp) {
+                        StudentCompetenceModel::create(['student_id' => $student->id, 'competence_id' => $comp->id]);
+                    }
+                } elseif ($status === 'not yet competent' || $status === 'nyc') {
+                    // Pass ALL except remarks
+                    $failedIndices = [];
+                    if ($compRemarks) {
+                        $parts = explode(',', $compRemarks);
+                        foreach ($parts as $p) {
+                            $val = (int) trim($p);
+                            if ($val > 0)
+                                $failedIndices[] = $val;
+                        }
+                    }
+
+                    $index = 1;
+                    foreach ($competencies as $comp) {
+                        if (!in_array($index, $failedIndices)) {
+                            StudentCompetenceModel::create(['student_id' => $student->id, 'competence_id' => $comp->id]);
+                        }
+                        $index++;
+                    }
+                }
+            }
+            $count++;
         }
 
         Flash::success($count . ' students imported successfully.');

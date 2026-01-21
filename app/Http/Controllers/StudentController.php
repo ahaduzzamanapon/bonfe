@@ -1543,6 +1543,11 @@ class StudentController extends AppBaseController
             };
 
             $name = $getVal(['learners_name', 'name', 'candidate_name', 'student_name', 'candidate_name_english']);
+
+            if (empty($name) || trim($name) === '') {
+                continue;
+            }
+
             $name_bn = $getVal(['name_bn', 'candidate_name_bn', 'candidate_name_bangla']) ?? $name;
             $father = $getVal(['fathars_name', 'father_name', 'father', 'fathers_name_english']);
             $mother = $getVal(['mothers_name', 'mother_name', 'mother', 'mothers_name_english']);
@@ -1628,7 +1633,29 @@ class StudentController extends AppBaseController
             $instKey = strtolower(trim($instNameInput));
             $instId = $institutesMap[$instKey] ?? null;
 
-            $instTypeInput = $getVal(['institute_type', 'venue_type', 'center_type']);
+            // Fuzzy Institute Match if not found
+            if (!$instId && $instNameInput) {
+                $bestMatchInst = null;
+                $shortestDistInst = -1;
+                foreach ($institutesMap as $mapKey => $mapId) {
+                    $lev = levenshtein($instKey, $mapKey);
+                    if ($lev == 0) {
+                        $bestMatchInst = $mapId;
+                        break;
+                    }
+                    if ($lev <= 3 || ($lev <= 6 && strlen($instKey) > 10)) { // Allow some tolerance
+                        if ($shortestDistInst == -1 || $lev < $shortestDistInst) {
+                            $shortestDistInst = $lev;
+                            $bestMatchInst = $mapId;
+                        }
+                    }
+                }
+                if ($bestMatchInst) {
+                    $instId = $bestMatchInst;
+                }
+            }
+
+            $instTypeInput = $getVal(['institute_type', 'venue_type', 'center_type', 'type_of_institute']);
 
             $assessmentCenterInput = $getVal(['assessment_center', 'center_name']);
 
@@ -1684,7 +1711,52 @@ class StudentController extends AppBaseController
                 }
             }
 
-            $occId = $occupationsMap[strtolower(trim($occNameInput))] ?? null;
+            // Exact match
+            $occKey = strtolower(trim($occNameInput));
+            $occId = $occupationsMap[$occKey] ?? null;
+
+            // Fuzzy Occupation Match
+            if (!$occId && $occNameInput) {
+                $bestMatchOcc = null;
+                $shortestDistOcc = -1;
+                $inputLen = strlen($occKey);
+                // Dynamic threshold: strict for short strings
+                $threshold = ($inputLen < 5) ? 1 : (($inputLen < 9) ? 2 : 3);
+
+                foreach ($occupationsMap as $mapKey => $mapId) {
+                    $lev = levenshtein($occKey, $mapKey);
+                    if ($lev <= $threshold) {
+                        if ($shortestDistOcc == -1 || $lev < $shortestDistOcc) {
+                            $shortestDistOcc = $lev;
+                            $bestMatchOcc = $mapId;
+                        }
+                    }
+                }
+                if ($bestMatchOcc) {
+                    $occId = $bestMatchOcc;
+                }
+            }
+            // Dynamic Occupation Creation
+            if (!$occId && $occNameInput) {
+                try {
+                    $maxOccCode = Occupation::max('code');
+                    // Ensure maxCode is treated as integer for incrementing if it's numeric, otherwise fallback
+                    $nextOccCode = (is_numeric($maxOccCode) ? $maxOccCode + 1 : rand(1000, 9999));
+                    $nextOccCode = str_pad($nextOccCode, 4, '0', STR_PAD_LEFT);
+
+                    $newOcc = Occupation::create([
+                        'title' => $occNameInput,
+                        'code' => $nextOccCode,
+                        'description' => 'Imported via Excel'
+                    ]);
+
+                    $occId = $newOcc->id;
+                    $occupationsMap[$occKey] = $occId; // Update map to avoid duplicates in loop
+                } catch (\Exception $e) {
+                    \Log::error("Failed to create occupation: " . $e->getMessage());
+                }
+            }
+
             $distId = $districtsMap[strtolower(trim($distNameInput))] ?? null;
             $upazilaId = $upazilasMap[strtolower(trim($upazilaInput))] ?? ($defaultUpazilaId ?? null);
 
@@ -1752,7 +1824,9 @@ class StudentController extends AppBaseController
                 'competency_status' => $competencyResult, // Use mapped status for dropdown/logic
                 'exam_status' => $examStatus,             // Save to exam_status column
                 'competency_remarks' => $remarks,
-                'preview_id' => $previewId
+                'competency_remarks' => $remarks,
+                'preview_id' => $previewId,
+                'institute_type' => $instTypeInput // Pass extracted type
             ];
         }
 
@@ -1788,6 +1862,16 @@ class StudentController extends AppBaseController
                 $institute = Insatitute::find($instituteId);
                 $occupation = Occupation::find($occupationId);
                 $district = District::find($districtId);
+
+                if ($institute) {
+                    // Update Institute Type if provided and different
+                    if (isset($data['institute_type']) && !empty($data['institute_type'])) {
+                        if ($institute->type != $data['institute_type']) {
+                            $institute->type = $data['institute_type'];
+                            $institute->save();
+                        }
+                    }
+                }
 
                 if ($institute && $occupation && $district) {
                     $type = $institute->type ?? 'XXX';

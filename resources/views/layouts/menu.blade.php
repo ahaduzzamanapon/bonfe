@@ -26,12 +26,12 @@
     </a>
 </li>
 
-<li class="{!! (Request::is('assessmentVenues*') ? 'active' : '' ) !!}">
+{{-- <li class="{!! (Request::is('assessmentVenues*') ? 'active' : '' ) !!}">
     <a href="{{ route('assessmentVenues.index') }}">
         <span class="mm-text ">Assessment Venues</span>
         <span class="menu-icon"><i class="im im-icon-Structure"></i></span>
     </a>
-</li>
+</li> --}}
 
 <li class="{!! (Request::is('assessmentCenters*') ? 'active' : '' ) !!}">
     <a href="{{ route('assessmentCenters.index') }}">
@@ -63,7 +63,7 @@
 
 <li class="{!! (Request::is('insatitutes*') ? 'active' : '' ) !!}">
     <a href="{{ route('insatitutes.index') }}">
-        <span class="mm-text ">Insatitutes</span>
+        <span class="mm-text ">Institute</span>
         <span class="menu-icon"><i class="im im-icon-Structure"></i></span>
     </a>
 </li>

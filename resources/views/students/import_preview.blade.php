@@ -49,6 +49,7 @@
                     <table class="table table-bordered table-striped" style="min-width: 1500px;">
                         <thead>
                             <tr>
+                                <th>SL</th>
                                 <th>Name</th>
                                 <th>Name BN</th>
                                 <th>Institute</th>
@@ -67,7 +68,7 @@
                                 <th>Gender</th>
                                 <th>Address</th>
                                 <th>Qual.</th>
-                                <th>Training Start</th>
+                                <th>Assessment Date</th>
                                 <th>Type</th>
                                 <th>Result</th>
                                 <th>Remarks</th>
@@ -77,6 +78,7 @@
                         <tbody>
                             @foreach($students as $index => $student)
                                 <tr>
+                                    <td>{{ $index + 1 }}</td>
                                     <td>
                                         <input type="text" name="students[{{ $index }}][candidate_name]"
                                             value="{{ $student['candidate_name'] }}" class="form-control" required>
@@ -174,6 +176,7 @@
                                         <input type="hidden" name="students[{{ $index }}][assessment_center]" value="{{ $student['assessment_center'] ?? '' }}">
                                         <input type="hidden" name="students[{{ $index }}][assessment_venue]" value="{{ $student['assessment_venue'] ?? '' }}">
                                         <input type="hidden" name="students[{{ $index }}][exam_status]" value="{{ $student['exam_status'] ?? '' }}">
+                                        <input type="hidden" name="students[{{ $index }}][institute_type]" value="{{ $student['institute_type'] ?? '' }}">
                                     <td>
                                         <input type="date" name="students[{{ $index }}][assessment_date]"
                                             value="{{ $student['assessment_date'] ?? '' }}" class="form-control">

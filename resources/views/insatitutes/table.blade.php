@@ -3,7 +3,7 @@
         <thead>
             <tr>
                 <th>SL</th>
-        <th>Insatitute Name</th>
+        <th>Institute Name</th>
         <th>District</th>
         <th>Address</th>
         <th>Status</th>

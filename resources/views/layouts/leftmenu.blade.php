@@ -300,7 +300,7 @@ $occupation = \App\Models\Occupation::find($occupation_id);
                     </a>
                 </li>
             @endif
-            @if (can('assessmentVenues'))
+            {{-- @if (can('assessmentVenues'))
                 <li class="nav-item">
                     <a class="nav-link {!! Request::is('assessmentVenues*') ? 'active' : '' !!}" href="{{ route('assessmentVenues.index') }}">
                         <i class="icon im im-icon-Structure"></i>
@@ -308,7 +308,7 @@ $occupation = \App\Models\Occupation::find($occupation_id);
                         <span class="item-name">Assessment Venues</span>
                     </a>
                 </li>
-            @endif
+            @endif --}}
             @if (can('assessmentCenters'))
                 <li class="nav-item">
                     <a class="nav-link {!! Request::is('assessmentCenters*') ? 'active' : '' !!}" href="{{ route('assessmentCenters.index') }}">
@@ -332,7 +332,7 @@ $occupation = \App\Models\Occupation::find($occupation_id);
                     <a class="nav-link {!! Request::is('insatitutes*') ? 'active' : '' !!}" href="{{ route('insatitutes.index') }}">
                         <i class="icon im im-icon-Structure"></i>
                         <i class="sidenav-mini-icon"> I </i>
-                        <span class="item-name">Insatitutes</span>
+                        <span class="item-name">Institute</span>
                     </a>
                 </li>
             @endif

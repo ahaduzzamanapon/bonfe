@@ -20,6 +20,10 @@ if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php'))
     require $maintenance;
 }
 
+ini_set('post_max_size', '-1');
+        ini_set('memory_limit', '-1');
+        ini_set('max_execution_time', 300);
+
 /*
 |--------------------------------------------------------------------------
 | Register The Auto Loader

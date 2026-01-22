@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Support\Str;
 
 return [
@@ -31,8 +30,7 @@ return [
     |
     */
 
-    'lifetime' => env('SESSION_LIFETIME', 120),
-
+'lifetime' => 525600, // Change from ~120 to much longer (in minutes)
     'expire_on_close' => false,
 
     /*

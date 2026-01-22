@@ -9,8 +9,6 @@ use App\Models\Upazila;
 use App\Models\Occupation;
 use App\Models\Insatitute;
 use App\Models\District;
-
-
 use App\Http\Requests\CreateStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use App\Http\Controllers\AppBaseController;
@@ -1489,6 +1487,7 @@ class StudentController extends AppBaseController
         $data = Excel::toArray(new ExcelDataImport, $request->file('file'));
         $rows = $data[0] ?? [];
 
+
         $students = [];
         $institutes = Insatitute::pluck('insatitute_name', 'id');
         $occupations = Occupation::pluck('title', 'id');
@@ -1560,7 +1559,7 @@ class StudentController extends AppBaseController
                 \Log::info('Import Row 1 Keys: ' . implode(', ', array_keys($row)));
             }
 
-            $dobRaw = $getVal(['date_of_birth_dd_mm_yyyy', 'dob', 'date_of_birth']);
+            $dobRaw = $getVal(['date_of_birth_dd_mm_yyyy', 'dob', 'date_of_birth','birth_date_dd_mm_yy']);
             $dob = null;
             if ($dobRaw) {
                 try {
@@ -1598,7 +1597,7 @@ class StudentController extends AppBaseController
             $registrationNo = $getVal(['registration_no', 'registration_number', 'reg_no']);
 
             $instNameInput = $getVal(['institute', 'institute_name', 'assessment_venue', 'assessment_center']);
-            $occNameInput = $getVal(['trade', 'occupation', 'course', 'trade_course_name']);
+            $occNameInput = $getVal(['trade', 'occupation', 'course', 'trade_course_name','tradecourse_name']);
             $distNameInput = $getVal(['district', 'district_name']);
             $upazilaInput = $getVal(['upazila', 'upazila_city']);
             $studentType = $getVal(['type', 'student_type']) ?? 'REG';
@@ -1736,6 +1735,8 @@ class StudentController extends AppBaseController
                     $occId = $bestMatchOcc;
                 }
             }
+
+           // dd($occId,$occNameInput);
             // Dynamic Occupation Creation
             if (!$occId && $occNameInput) {
                 try {
@@ -1838,126 +1839,205 @@ class StudentController extends AppBaseController
 
     public function import_students_store(Request $request)
     {
-        ini_set('memory_limit', '-1');
-        ini_set('max_execution_time', 300);
-
-        $importedData = $request->input('students');
-
-        if (!$importedData || !is_array($importedData)) {
-            Flash::error('No data to save.');
-            return redirect(route('students.import_page'));
+        // Clear any previous output
+        if (ob_get_contents()) {
+            ob_end_clean();
         }
+        
+        try {
+            ini_set('memory_limit', '-1');
+            ini_set('max_execution_time', 300);
+            
+            // Set headers to ensure JSON response
+            header('Content-Type: application/json');
 
-        $count = 0;
-        foreach ($importedData as $data) {
-            $instituteId = $data['institutionName'] ?? null;
-            $occupationId = $data['occupation_id'] ?? null;
-            $districtId = $data['district_id'] ?? null;
+            $importedData = $request->input('students');
 
-            // Generate Real Candidate ID or Use Provided
-            $candidateId = isset($data['candidate_id']) && $data['candidate_id'] !== 'Wait for Save' ? $data['candidate_id'] : null;
+            // DEBUG: Log the incoming data
+            \Log::info('IMPORT CHUNK: Records received: ' . (is_array($importedData) ? count($importedData) : 'not an array'));
 
-            if (!$candidateId && $instituteId && $occupationId && $districtId) {
-                // Generation Logic
-                $institute = Insatitute::find($instituteId);
-                $occupation = Occupation::find($occupationId);
-                $district = District::find($districtId);
+            if (!$importedData || !is_array($importedData)) {
+                \Log::error('Import chunk failed: No valid data received');
+                return response()->json(['success' => false, 'message' => 'No data to save.'], 400);
+            }
 
-                if ($institute) {
-                    // Update Institute Type if provided and different
-                    if (isset($data['institute_type']) && !empty($data['institute_type'])) {
-                        if ($institute->type != $data['institute_type']) {
-                            $institute->type = $data['institute_type'];
-                            $institute->save();
+            $count = 0;
+            $errorCount = 0;
+            $errors = [];
+
+            foreach ($importedData as $index => $data) {
+                try {
+                    // Validate required fields exist
+                    if (empty($data['candidate_name']) || !isset($data['occupation_id'])) {
+                        $errorCount++;
+                        $errors[] = "Row " . ($index + 1) . ": Missing required fields (name or occupation)";
+                        \Log::warning('Row ' . ($index + 1) . ' skipped: Missing required fields');
+                        \Log::warning($data);
+                        continue;
+                    }
+
+                    $instituteId = $data['institutionName'] ?? null;
+                    $occupationId = $data['occupation_id'] ?? null;
+                    $districtId = $data['district_id'] ?? null;
+
+                    // Generate Real Candidate ID or Use Provided
+                    $candidateId = isset($data['candidate_id']) && $data['candidate_id'] !== 'Wait for Save' ? $data['candidate_id'] : null;
+
+                    if (!$candidateId && $instituteId && $occupationId && $districtId) {
+                        // Generation Logic
+                        $institute = Insatitute::find($instituteId);
+                        $occupation = Occupation::find($occupationId);
+                        $district = District::find($districtId);
+
+                        if ($institute) {
+                            // Update Institute Type if provided and different
+                            if (isset($data['institute_type']) && !empty($data['institute_type'])) {
+                                if ($institute->type != $data['institute_type']) {
+                                    $institute->type = $data['institute_type'];
+                                    $institute->save();
+                                }
+                            }
+                        }
+
+                        if ($institute && $occupation && $district) {
+                            $type = $institute->type ?? 'XXX';
+                            $tradeCode = $occupation->code ?? 'XXX';
+                            $distCode = $district->code ?? 'XX';
+                            $instCode = $institute->code ?? 'XXXX';
+
+                            $query = Student::where('district_id', $districtId)
+                                ->where('occupation_id', $occupationId)
+                                ->where('institutionName', $instituteId);
+
+                            if (isset($data['program_id'])) {
+                                $query->where('program_id', $data['program_id']);
+                            }
+
+                            $existingCount = $query->count();
+                            $serial = str_pad($existingCount + 1, 4, '0', STR_PAD_LEFT);
+                            $candidateId = "{$type}-{$tradeCode}-{$distCode}-{$instCode}-{$serial}";
                         }
                     }
-                }
 
-                if ($institute && $occupation && $district) {
-                    $type = $institute->type ?? 'XXX';
-                    $tradeCode = $occupation->code ?? 'XXX';
-                    $distCode = $district->code ?? 'XX';
-                    $instCode = $institute->code ?? 'XXXX';
+                    $data['candidate_id'] = $candidateId;
 
-                    $query = Student::where('district_id', $districtId)
-                        ->where('occupation_id', $occupationId)
-                        ->where('institutionName', $instituteId);
+                    // Set Default Statuses
+                    $data['chairmen_status'] = 'Approved';
+                    $data['districts_admin_status'] = 'Approved';
+                    $data['status'] = 'Chairman Approved';
 
-                    if (isset($data['program_id'])) {
-                        $query->where('program_id', $data['program_id']);
+                    // Set Static IDs
+                    $data['chairmen_id'] = 1;
+                    $data['controller_id'] = 1;
+
+                    // Set District Admin ID (Find a user for this district)
+                    $districtUser = \App\Models\User::where('district_id', $districtId)->first();
+                    $data['districts_admin_id'] = $districtUser ? $districtUser->id : null;
+
+                    // Extract and remove fields that shouldn't be in Student table
+                    $compStatus = $data['competency_status'] ?? null;
+                    $compRemarks = $data['competency_remarks'] ?? null;
+
+                    // Remove non-fillable fields
+                    unset($data['preview_id']);
+                    unset($data['competency_status']);
+                    unset($data['competency_remarks']);
+                    unset($data['assessment_venue']);
+                    unset($data['institute_type']);
+
+                    // Ensure program_id is set
+                    $data['program_id'] = $data['program_id'] ?? 1;
+
+                    // Validate and clean data
+                    $dataToCreate = [];
+                    foreach ($data as $key => $value) {
+                        // Skip empty or null values for certain fields
+                        if ($key === 'registration_number' && empty($value)) {
+                            continue;
+                        }
+                        $dataToCreate[$key] = $value;
                     }
 
-                    $existingCount = $query->count();
-                    $serial = str_pad($existingCount + 1, 4, '0', STR_PAD_LEFT);
-                    $candidateId = "{$type}-{$tradeCode}-{$distCode}-{$instCode}-{$serial}";
+                    // Create student record
+                    $student = Student::create($dataToCreate);
+                    $count++;
+
+                    // Handle Competency Logic
+                    if ($occupationId && $compStatus) {
+                        $competencies = Competence::where('occupation_id', $occupationId)->orderBy('id')->get();
+                        $status = strtolower(trim($compStatus));
+
+                        if ($status === 'competent') {
+                            // Mark ALL competencies as passed
+                            foreach ($competencies as $comp) {
+                                StudentCompetenceModel::create([
+                                    'student_id' => $student->id,
+                                    'competence_id' => $comp->id
+                                ]);
+                            }
+                        } elseif ($status === 'not yet competent' || $status === 'nyc') {
+                            // Mark specific competencies as failed
+                            $failedIndices = [];
+                            if ($compRemarks) {
+                                $parts = explode(',', $compRemarks);
+                                foreach ($parts as $p) {
+                                    $val = (int) trim($p);
+                                    if ($val > 0) {
+                                        $failedIndices[] = $val;
+                                    }
+                                }
+                            }
+
+                            $compIndex = 1;
+                            foreach ($competencies as $comp) {
+                                if (!in_array($compIndex, $failedIndices)) {
+                                    StudentCompetenceModel::create([
+                                        'student_id' => $student->id,
+                                        'competence_id' => $comp->id
+                                    ]);
+                                }
+                                $compIndex++;
+                            }
+                        }
+                    }
+
+                } catch (\Exception $rowError) {
+                    $errorCount++;
+                    $errors[] = "Row " . ($index + 1) . ": " . $rowError->getMessage();
+                    \Log::error('Row ' . ($index + 1) . ' failed: ' . $rowError->getMessage() . ' | Stack: ' . $rowError->getTraceAsString());
                 }
             }
 
-            $data['candidate_id'] = $candidateId;
+            \Log::info('IMPORT CHUNK COMPLETE', [
+                'chunk_records_received' => count($importedData),
+                'successfully_saved' => $count,
+                'failed' => $errorCount
+            ]);
 
-            // Set Default Statuses
-            $data['chairmen_status'] = 'Approved';
-            $data['districts_admin_status'] = 'Approved';
-            $data['status'] = 'Chairman Approved';
+            return response()->json([
+                'success' => true,
+                'message' => "$count students imported in this chunk",
+                'saved' => $count,
+                'failed' => $errorCount,
+                'errors' => $errors
+            ], 200);
 
-            // Set Static IDs
-            $data['chairmen_id'] = 1;
-            $data['controller_id'] = 1; // Assuming Controller ID is 1 as per request
-
-            // Set District Admin ID (Find a user for this district)
-            $districtUser = \App\Models\User::where('district_id', $districtId)->first();
-            $data['districts_admin_id'] = $districtUser ? $districtUser->id : null;
-
-            // Cleanup
-            $compStatus = $data['competency_status'] ?? null;
-            $compRemarks = $data['competency_remarks'] ?? null;
-
-            if (isset($data['preview_id']))
-                unset($data['preview_id']);
-            if (isset($data['competency_status']))
-                unset($data['competency_status']);
-            if (isset($data['competency_remarks']))
-                unset($data['competency_remarks']);
-
-            $student = Student::create($data);
-
-            // Competency Logic
-            if ($occupationId && $compStatus) {
-                // Fetch competencies for this occupation
-                $competencies = Competence::where('occupation_id', $occupationId)->orderBy('id')->get();
-                $status = strtolower(trim($compStatus));
-
-                if ($status === 'competent') {
-                    // Pass ALL
-                    foreach ($competencies as $comp) {
-                        StudentCompetenceModel::create(['student_id' => $student->id, 'competence_id' => $comp->id]);
-                    }
-                } elseif ($status === 'not yet competent' || $status === 'nyc') {
-                    // Pass ALL except remarks
-                    $failedIndices = [];
-                    if ($compRemarks) {
-                        $parts = explode(',', $compRemarks);
-                        foreach ($parts as $p) {
-                            $val = (int) trim($p);
-                            if ($val > 0)
-                                $failedIndices[] = $val;
-                        }
-                    }
-
-                    $index = 1;
-                    foreach ($competencies as $comp) {
-                        if (!in_array($index, $failedIndices)) {
-                            StudentCompetenceModel::create(['student_id' => $student->id, 'competence_id' => $comp->id]);
-                        }
-                        $index++;
-                    }
-                }
+        } catch (\Throwable $e) {
+            // Clear any buffered output to ensure clean JSON response
+            while (ob_get_level() > 0) {
+                ob_end_clean();
             }
-            $count++;
+            
+            \Log::error('Import chunk processing failed: ' . $e->getMessage() . ' | File: ' . $e->getFile() . ' | Line: ' . $e->getLine() . ' | Stack: ' . $e->getTraceAsString());
+            
+            // Ensure we return JSON even on fatal error
+            return response()->json([
+                'success' => false,
+                'message' => 'Import failed: ' . $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ], 500);
         }
-
-        Flash::success($count . ' students imported successfully.');
-        return redirect(route('students.index'));
     }
 
     public function download_import_sample()

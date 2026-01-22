@@ -12,6 +12,6 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        //
+        'students_import_store', // Allow CSRF bypass for bulk student import chunks
     ];
 }

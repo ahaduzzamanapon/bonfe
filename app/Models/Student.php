@@ -121,13 +121,29 @@ class Student extends Model
     // Auto-detect and convert date fields when setting attributes
     public function setAttribute($key, $value)
     {
-        if ($this->isDateColumn($key) && !empty($value)) {
+        if ($this->isDateColumn($key) && !empty($value) && is_string($value)) {
             try {
-                // Try parsing with expected format
-                $value = Carbon::createFromFormat('d-m-Y', trim($value))->format('Y-m-d');
+                // Try multiple date formats
+                $formats = ['Y-m-d', 'd-m-Y', 'Y-m-d H:i:s', 'd-m-Y H:i:s'];
+                $parsed = false;
+                
+                foreach ($formats as $format) {
+                    try {
+                        $value = Carbon::createFromFormat($format, trim($value))->format('Y-m-d H:i:s');
+                        $parsed = true;
+                        break;
+                    } catch (\Exception $e) {
+                        continue;
+                    }
+                }
+                
+                if (!$parsed) {
+                    // If all formats fail, try Carbon's flexible parsing
+                    $value = Carbon::parse($value)->format('Y-m-d H:i:s');
+                }
             } catch (\Exception $e) {
-                // Log the error for debugging
-                \Log::error("Invalid date format for {$key}: {$value}");
+                // Log for debugging but don't fail - use value as-is
+                \Log::warning("Date parsing warning for {$key}: {$value} - " . $e->getMessage());
             }
         }
 

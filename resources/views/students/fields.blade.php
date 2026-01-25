@@ -488,10 +488,10 @@ training_end_date
         reader.readAsDataURL(file);
     }
 </script>
-@section('scripts')
+@section('footer_scripts')
     <script>
-        
         $(document).ready(function () {
+            alart('hi');
             $('#district_id').change(function () {
                 var districtId = $(this).val();
                 $.ajax({

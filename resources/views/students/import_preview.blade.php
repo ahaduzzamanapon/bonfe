@@ -235,6 +235,7 @@
         // Handle form submission with chunked data
         $('form').on('submit', function(e) {
             e.preventDefault();
+            console.log('Form submitted - starting import process');
             
             const form = this;
             const formData = new FormData(form);
@@ -243,6 +244,8 @@
             const studentsData = [];
             const studentInputs = $('input[name^="students"]');
             const totalRows = $('table tbody tr').length;
+            
+            console.log('Total rows found:', totalRows);
             
             // Parse form data into structured array - IMPROVED
             for (let i = 0; i < totalRows; i++) {
@@ -292,44 +295,55 @@
                 return false;
             }
             
-            // Show progress UI
+            // Show progress UI FIRST
+            console.log('Showing progress UI...');
             showProgressUI(studentsData.length);
             
-            // Submit in chunks of 50
-            const chunkSize = 10;
-            submitInChunks(studentsData, chunkSize);
+            // Wait a moment then submit chunks
+            setTimeout(() => {
+                console.log('Starting chunk submission...');
+                // Submit in chunks of 15
+                const chunkSize = 15;
+                submitInChunks(studentsData, chunkSize);
+            }, 500);
             
             return false;
         });
 
         function showProgressUI(totalStudents) {
             const html = `
-                <div id="import-progress" style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 5px;">
-                    <h5>Importing Students...</h5>
-                    <div class="progress" style="height: 25px;">
-                        <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;">
+                <div id="import-progress" style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 5px; display: block !important;">
+                    <h5 style="margin-top: 0;">📊 Importing Students...</h5>
+                    <h5 id="importing-students">0</h5>
+                    <div class="progress" style="height: 30px; margin-bottom: 15px;">
+                        <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%; line-height: 30px; font-weight: bold; color: white;">
                             <span id="progress-text">0%</span>
                         </div>
                     </div>
-                    <p style="margin-top: 10px;">
-                        <span id="imported-count">0</span> / <span id="total-count">${totalStudents}</span> students imported
-                    </p>
-                    <p id="chunk-status" style="color: #666; font-size: 0.9em;"></p>
+                    <div style="font-size: 16px; margin-bottom: 10px;">
+                        <span id="imported-count" style="font-weight: bold; color: #28a745;">0</span> / <span id="total-count" style="font-weight: bold;">${totalStudents}</span> students imported
+                    </div>
+                    <p id="chunk-status" style="color: #666; font-size: 0.95em; margin: 0; padding: 10px; background: #fff; border-left: 3px solid #007bff; border-radius: 3px;">Ready to start...</p>
                 </div>
             `;
             
+            console.log('Creating progress UI for', totalStudents, 'students');
             $('form').after(html);
             $('form').hide();
             $('.card-footer').hide();
+            console.log('Progress UI created and form hidden');
         }
 
         function updateProgress(importedCount, totalCount, chunkNum, totalChunks) {
             const percentage = Math.round((importedCount / totalCount) * 100);
+            console.log(`Updating progress: ${importedCount}/${totalCount} (${percentage}%) - Chunk ${chunkNum}/${totalChunks}`);
+            
             $('#progress-bar').css('width', percentage + '%');
+            $('#importing-students').html(percentage + '%');
             $('#progress-text').text(percentage + '%');
             $('#imported-count').text(importedCount);
             $('#total-count').text(totalCount);
-            $('#chunk-status').text(`Chunk ${chunkNum} of ${totalChunks} processed...`);
+            $('#chunk-status').text(`✓ Chunk ${chunkNum} of ${totalChunks} processed | ${importedCount} students saved`);
         }
 
         function submitInChunks(data, chunkSize) {

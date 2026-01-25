@@ -567,6 +567,7 @@
         });
     </script>
 @yield('footer_scripts')
+@stack('footer_scripts')
 
 @yield('scripts')
     @include('layouts/datatables_js')

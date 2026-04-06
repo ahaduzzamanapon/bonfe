@@ -163,7 +163,16 @@ class InsatituteController extends AppBaseController
     public function get_institutes_by_type(Request $request)
     {
         $type = $request->input('type');
-        $institutes = Insatitute::where('type', $type)->pluck('insatitute_name', 'id');
+        $district_id = $request->input('district_id');
+        
+        $query = Insatitute::where('type', $type);
+        
+        // Filter by district_id if provided
+        if ($district_id) {
+            $query->where('district', $district_id);
+        }
+        
+        $institutes = $query->pluck('insatitute_name', 'id');
         
         // Return structured data for Select2 or simple loop
         $data = [];

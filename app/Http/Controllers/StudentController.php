@@ -145,7 +145,8 @@ class StudentController extends AppBaseController
             $students = $students->where(function ($query) use ($request) {
                 $query->where('students.candidate_name', 'like', '%' . $request->search_term . '%')
                     ->orWhere('students.registration_number', 'like', '%' . $request->search_term . '%')
-                    ->orWhere('students.candidate_name_bn', 'like', '%' . $request->search_term . '%');
+                    ->orWhere('students.candidate_name_bn', 'like', '%' . $request->search_term . '%')
+                    ->orWhere('students.certificate_number', 'like', '%' . $request->search_term . '%');
             });
         }
 
@@ -531,6 +532,28 @@ class StudentController extends AppBaseController
         }
 
         $student->registration_number = $request->candidate_id_field;
+        $student->save();
+        return response()->json([
+            'success' => true,
+            'message' => "Result submitted successfully",
+            'data' => $student
+        ]);
+    }
+    public function give_certificate_number_submit(Request $request)
+    {
+
+
+        $student = Student::find($request->studentId);
+        $students = Student::where('certificate_number', $request->certificate_number)->get();
+
+        if (count($students) > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => "Certificate number already exists",
+            ]);
+        }
+
+        $student->certificate_number = $request->certificate_number;
         $student->save();
         return response()->json([
             'success' => true,
@@ -1070,6 +1093,8 @@ class StudentController extends AppBaseController
     }
     public function generateCertificate_modal(Request $request)
     {
+        $filter_program = $request->filter_program;
+        $filter_occupation = $request->filter_occupation;
         $certificate_type = $request->certificate_type;
         $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
             ->join('districts', 'students.district_id', '=', 'districts.id')
@@ -1077,6 +1102,12 @@ class StudentController extends AppBaseController
             ->orderBy('id', 'desc')
             ->where('students.status', '=', 'Chairman Approved')
             ->where('students.exam_status', '=', $certificate_type)
+            ->when($filter_program, function ($query) use ($filter_program) {
+                return $query->where('students.program_id', $filter_program);
+            })
+            ->when($filter_occupation, function ($query) use ($filter_occupation) {
+                return $query->where('students.occupation_id', $filter_occupation);
+            })
             ->get();
         $html = '';
         $html .= '<table class="table table-bordered table-striped table-hover" id="example1">

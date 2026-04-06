@@ -43,6 +43,7 @@ class Student extends Model
         'occupation_id',
         'institutionName',
         'registration_number',
+        'certificate_number',
         'candidate_id',
         'candidate_name',
         'candidate_name_bn',

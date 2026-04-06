@@ -131,7 +131,7 @@
 <!-- Date Of Birth Field -->
 <div class="col-md-3">
     <div class="form-group">
-        {!! Form::label('date_of_birth', 'Date Of Birth', ['class' => 'control-label']) !!}
+        {!! Form::label('date_of_birth', 'Date Of Birth (D-M-Y)', ['class' => 'control-label', 'style' => 'font-size: 14px']) !!}
         <span style="color: red">*</span>
         {!! Form::text('date_of_birth', null, ['class' => 'form-control date', 'id' => 'date_of_birth', 'autocomplete' => 'off']) !!}
     </div>
@@ -372,7 +372,7 @@
 <!-- Training Start Date Field -->
 <div class="col-md-3 @if (Request::is('general_students*')) d-none @endif">
     <div class="form-group">
-        {!! Form::label('training_start_date', 'Training Start Date', ['class' => 'control-label']) !!}
+        {!! Form::label('training_start_date', 'Training Start Date (D-M-Y)', ['class' => 'control-label', 'style' => 'font-size: 14px']) !!}
         <span style="color: red">*</span>
         {!! Form::text('training_start_date', null, ['class' => 'form-control date', 'autocomplete' => 'off', 'required']) !!}
     </div>
@@ -510,25 +510,7 @@ training_end_date
             });
         });
 
-        $(document).ready(function () {
-            $('#program_id').change(function () {
-                var districtId = $(this).val(); // This seems copy-pasted wrong in original code ('program_id' uses 'districtId' var name?), but keeping logic. Actually the original code makes no sense there (get_upazilas using program_id as district_id). I will leave original code alone and just append mine.
-                $.ajax({
-                    url: "{{ route('get_upazilas') }}",
-                    type: "GET",
-                    data: {
-                        district_id: districtId
-                    },
-                    success: function (data) {
-                        $('#upajila_id').empty();
-                        $('#upajila_id').append('<option value="">Select Upazila</option>');
-                        $.each(data, function (index, upajila) {
-                            $('#upajila_id').append('<option value="' + upajila.id + '">' + upajila.name + '</option>');
-                        });
-                    }
-                });
-            });
-        });
+        
 
         // Candidate ID Preview Script
         function updateCandidateIdPreview() {
@@ -565,12 +547,35 @@ training_end_date
              // updateCandidateIdPreview(); 
             $('#filter_institute_type').change(function() {
                 var type = $(this).val();
+                var district_id = $('#district_id').val();
                 if (!type) return;
 
                 $.ajax({
                     url: "{{ route('get_institutes_by_type') }}",
                     type: "GET",
-                    data: { type: type },
+                    data: { type: type, district_id: district_id },
+                    success: function(data) {
+                        var $instSelect = $('select[name="institutionName"]');
+                        $instSelect.empty();
+                        $instSelect.append('<option value="">Select Institution</option>');
+                        $.each(data, function(index, item) {
+                            $instSelect.append('<option value="' + item.id + '">' + item.text + '</option>');
+                        });
+                        // Trigger change to update Select2 if used, or candidate preview
+                        $instSelect.change();
+                    }
+                });
+            });
+
+            $('#district_id').change(function() {
+                var district_id = $(this).val();
+                var type = $('#filter_institute_type').val();
+                if (!district_id || !type) return;
+
+                $.ajax({
+                    url: "{{ route('get_institutes_by_type') }}",
+                    type: "GET",
+                    data: { type: type, district_id: district_id },
                     success: function(data) {
                         var $instSelect = $('select[name="institutionName"]');
                         $instSelect.empty();

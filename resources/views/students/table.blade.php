@@ -23,6 +23,7 @@
                             <p style="font-size: 10px;"><strong>Regis. No:</strong> {{ $student->registration_number }}
                             </p>
                             <p style="font-size: 10px;"><strong>District:</strong> {{ $student->district }}</p>
+                            <p style="font-size: 10px;"><strong>Certificate No:</strong> {{ $student->certificate_number }}</p>
                         </div>
                     </div>
                 </td>

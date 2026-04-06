@@ -582,23 +582,23 @@
     </script>
 
     <script>
-        // function date_fixer(id) {
+        function date_fixer(id) {
 
-        //     const dateField = document.getElementById(id);
-        //     var dateValue = dateField.value;
-        //     console.log('dateValue', dateValue);
+            const dateField = document.getElementById(id);
+            var dateValue = dateField.value;
+            console.log('dateValue', dateValue);
 
-        //     // if(dateValue == ''){
-        //     //     dateValue = '{{ date('Y-m-d') }}';
-        //     // }
-        //     date_ayy = dateValue.split('-');
-        //     daValue = date_ayy[2] + '-' + date_ayy[1] + '-' + date_ayy[0];
-        //     flatpickr(`#${id}`, {
-        //         dateFormat: "d-m-Y",
-        //         allowInput: true,
-        //         defaultDate: daValue
-        //     });
-        // }
+            // if(dateValue == ''){
+            //     dateValue = '{{ date('Y-m-d') }}';
+            // }
+            date_ayy = dateValue.split('-');
+            daValue = date_ayy[2] + '-' + date_ayy[1] + '-' + date_ayy[0];
+            flatpickr(`#${id}`, {
+                dateFormat: "d-m-Y",
+                allowInput: true,
+                defaultDate: daValue
+            });
+        }
     </script>
 
 

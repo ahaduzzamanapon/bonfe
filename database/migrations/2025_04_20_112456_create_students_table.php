@@ -17,6 +17,7 @@ class CreateStudentsTable extends Migration
             $table->increments('id');
             $table->string('occupation_id');
             $table->string('registration_number');
+            $table->string('certificate_number');
             $table->string('candidate_id');
             $table->string('candidate_name');
             $table->string('father_name');

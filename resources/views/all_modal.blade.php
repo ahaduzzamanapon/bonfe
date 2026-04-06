@@ -128,11 +128,9 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
-
                         <label for="candidate_id_field">Registration number</label>
                         <input type="text" class="form-control" id="candidate_id_field">
                     </div>
-
                 </div>
             </div>
             <div class="modal-footer">
@@ -146,6 +144,7 @@
 <script>
     function give_candidate_id_submit() {
         candidate_id_field = $('#candidate_id_field').val();
+        $('#candidate_id_field').val('');
         const studentId = localStorage.getItem('give_candidate_id');
 
         if (!studentId && candidate_id_field === '') {
@@ -169,6 +168,71 @@
             success: function () {
                 alert('Result submitted successfully');
                 $('#give_candidate_id_modal').modal('hide');
+                createTable();
+            },
+            error: function () {
+                alert('Failed to submit exam result');
+            }
+        });
+    }
+</script>
+{{-- give_candidate_id_modal --}}
+
+{{--give_certificate_number_modal --}}
+<!-- Modal -->
+<div class="modal fade" id="give_certificate_number_modal" tabindex="-1" role="dialog"
+    aria-labelledby="give_certificate_number_modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Give Certificate Number</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    onclick="$('#give_certificate_number_modal').modal('hide')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="certificate_number">Certificate number</label>
+                        <input type="text" class="form-control" id="certificate_number">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="$('#give_certificate_number_modal').modal('hide')"
+                    data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="give_certificate_number_submit()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function give_certificate_number_submit() {
+        certificate_number = $('#certificate_number').val();
+        const studentId = localStorage.getItem('give_certificate_number');
+
+        if (!studentId && certificate_number === '') {
+            alert('Please select a result and ensure a student ID is set');
+            return false;
+        }
+
+
+
+        const formData = new FormData();
+        formData.append('_token', '{{ csrf_token() }}');
+        formData.append('certificate_number', certificate_number);
+        formData.append('studentId', studentId);
+
+        $.ajax({
+            url: '{{ route('give_certificate_number_submit') }}',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function () {
+                alert('Result submitted successfully');
+                $('#give_certificate_number_modal').modal('hide');
                 createTable();
             },
             error: function () {
@@ -942,6 +1006,8 @@
             type: 'GET',
             data: {
                 _token: '{{ csrf_token() }}',
+                'filter_program': $('#filter_program').val(),
+                'filter_occupation': $('#filter_occupation').val(),
                 'certificate_type': $('#certificate_type').val(),
             },
             success: function (data) {

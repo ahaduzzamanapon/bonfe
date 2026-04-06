@@ -281,6 +281,7 @@
                                                     <p style="font-size: 10px;"><strong>Regis. No:</strong> ${student.registration_number}</p>
                                                     <p style="font-size: 10px;"><strong>Candidate. No:</strong> ${student.candidate_id}</p>
                                                     <p style="font-size: 10px;"><strong>District:</strong> ${student.district}</p>
+                                                    <p style="font-size: 10px;"><strong>Certificate No:</strong> ${student.certificate_number}</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -321,6 +322,9 @@
                                                     }
                                                     ${student.registration_number==null ? `
                                                         <a class="dropdown-item" onclick="give_candidate_id(${student.id})" href="javascript:void(0);"><i class="im im-icon-People-onCloud"></i> Give Registration Number</a>` : ''
+                                                    }
+                                                    ${student.status == 'Chairman Approved' && student.certificate_number==null ? `
+                                                        <a class="dropdown-item" onclick="give_certificate_number(${student.id})" href="javascript:void(0);"><i class="im im-icon-People-onCloud"></i> Give Certificate Number</a>` : ''
                                                     }
                                                    
                                                     ${student.exam_status === 'Pending' ? `
@@ -433,6 +437,10 @@
                     function give_candidate_id(id) {
                         $('#give_candidate_id_modal').modal('show');
                         localStorage.setItem('give_candidate_id', id);
+                    }
+                    function give_certificate_number(id) {
+                        $('#give_certificate_number_modal').modal('show');
+                        localStorage.setItem('give_certificate_number', id);
                     }
                 </script>
 

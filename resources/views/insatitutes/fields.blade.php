@@ -18,6 +18,13 @@
         {!! Form::text('code', null, ['class' => 'form-control']) !!}
     </div>
 </div>
+<!-- Center Registration Number Field -->
+<div class="col-md-3">
+    <div class="form-group">
+        {!! Form::label('center_reg_num', 'Center Registration Number',['class'=>'control-label']) !!}
+        {!! Form::text('center_reg_num', null, ['class' => 'form-control']) !!}
+    </div>
+</div>
 @php
     if (!can('chairman') && can('district_admin')) {
         $districts = \App\Models\District::where('id', auth()->user()->district_id)

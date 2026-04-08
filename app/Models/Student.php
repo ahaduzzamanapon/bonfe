@@ -79,6 +79,8 @@ class Student extends Model
         'training_end_date',
         'gender',
         'controller_back_comments',
+        'assistant_registrar_id',
+        'assistant_registrar_status',
     ];
 
     /**

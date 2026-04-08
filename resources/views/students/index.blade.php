@@ -28,24 +28,42 @@
         <div class="clearfix"></div>
         <div class="card" width="88vw;">
             <section class="card-header">
-                <h5 class="card-title d-inline">learner</h5>
+                <h5 class="card-title d-inline">Learner</h5>
                 <span class="float-right">
-                    @if (can('assessment_centers_controller'))
-                        <a class="btn btn-primary pull-right" onclick="forwardToDistrictAdmin_modal()">Forward to District Admin</a>
-                    @endif
-                    @if (can('district_admin'))
-                        <a class="btn btn-primary pull-right" onclick="forwardToAssessmentCenter_modal()">Forward to Assessment Center</a>
-                        <a class="btn btn-primary pull-right" onclick="forwardToAssessmentController_modal()">Forward to Assessment Controller</a>
-                    @endif
 
-                    @if (can('assessment_controller'))
-                        <a class="btn btn-primary pull-right" onclick="forwardToChairman_modal()">Approve / Forward to Chairman</a>
-                        <a class="btn btn-primary pull-right" onclick="backTodistrict_modal()">Back to District</a>
-                    @endif
-                    @if (can('chairman'))
-                        <a class="btn btn-primary pull-right" onclick="approveStudent_modal()">Approve</a>
-                    @endif
-                    <a class="btn btn-primary pull-right" onclick="generateCertificate_modal()">Generate Certificate</a>
+                    {{-- ── Quick Links Box ── --}}
+                    <span class="border rounded px-2 py-1 mr-2" style="display:inline-flex;align-items:center;gap:6px;background:#f8f9fa;">
+                        <small class="text-muted font-weight-bold mr-1">Quick Links:</small>
+
+                        @if (can('district_admin') || can('chairman'))
+                            <a class="btn btn-warning btn-sm" onclick="setAssessmentStatus_modal()" title="Set Ready/Dropout/Absent">Set Status</a>
+                            <a class="btn btn-info btn-sm" onclick="forwardToAssistantRegistrar_modal()" title="Forward Ready students to Registrar">→ Registrar</a>
+                        @endif
+                        @if (can('assistant_registrar'))
+                        <a class="btn btn-success btn-sm" onclick="giveRegistrationNumber_modal()">Give Reg. No.</a>
+                        @endif
+
+                        @if (can('assessment_centers_controller'))
+                            <a class="btn btn-primary btn-sm" onclick="forwardToDistrictAdmin_modal()">→ District Admin</a>
+                        @endif
+
+                        @if (can('district_admin') || can('chairman'))
+                            <a class="btn btn-primary btn-sm" onclick="forwardToAssessmentCenter_modal()">→ Assessment Center</a>
+                            <a class="btn btn-primary btn-sm" onclick="forwardToAssessmentController_modal()">→ Assessment Controller</a>
+                        @endif
+
+                        @if (can('assessment_controller'))
+                            <a class="btn btn-primary btn-sm" onclick="forwardToChairman_modal()">→ Chairman</a>
+                            <a class="btn btn-danger btn-sm" onclick="backTodistrict_modal()">← Back to District</a>
+                        @endif
+
+                        @if (can('chairman'))
+                            <a class="btn btn-success btn-sm" onclick="approveStudent_modal()">Approve</a>
+                        @endif
+
+                        <a class="btn btn-secondary btn-sm" onclick="generateCertificate_modal()">Certificate</a>
+                    </span>
+
                     @if (can('student_add'))
                         @if( Request::is('general_students*'))
                             <a class="btn btn-primary pull-right" href="{{ route('general_students.create') }}">Add New</a>
@@ -107,6 +125,15 @@
                                             value="waiting_for_chairman_approval" autocomplete="off"
                                             {{ Request::is('students_waiting_for_chairman_approval') ? 'checked' : '' }}>
                                         Waiting for Chairman Approval
+                                    </label>
+                                @endif
+
+                                @if (can('assistant_registrar') || can('district_admin') || can('chairman'))
+                                    <label class="btn btn-outline-success">
+                                        <input onchange="createTable()" class="form-check-input" type="radio"
+                                            name="status_filter" id="waiting_for_registration"
+                                            value="waiting_for_registration" autocomplete="off">
+                                        Waiting for Registration
                                     </label>
                                 @endif
                             </div>
@@ -320,9 +347,7 @@
                                                     ${student.status === 'Waiting for the exam results from the Assessment Center' && can_give_exam_result ? `
                                                         <a class="dropdown-item" onclick="give_exam_result(${student.id})" href="javascript:void(0);"><i class="im im-icon-Pencil-Ruler"></i> Give Exam Result</a>` : ''
                                                     }
-                                                    ${student.registration_number==null ? `
-                                                        <a class="dropdown-item" onclick="give_candidate_id(${student.id})" href="javascript:void(0);"><i class="im im-icon-People-onCloud"></i> Give Registration Number</a>` : ''
-                                                    }
+                                                   
                                                     ${student.status == 'Chairman Approved' && student.certificate_number==null ? `
                                                         <a class="dropdown-item" onclick="give_certificate_number(${student.id})" href="javascript:void(0);"><i class="im im-icon-People-onCloud"></i> Give Certificate Number</a>` : ''
                                                     }
@@ -336,6 +361,9 @@
                                                     }
                                                     ${student.status === 'Chairman Approved' ? `
                                                         <a class="dropdown-item" target="_blank" href="/students/${student.id}/generate-certificate"><i class="im im-icon-People-onCloud"></i> Generate Certificate</a>` : ''
+                                                    }
+                                                    ${student.registration_number ? `
+                                                        <a class="dropdown-item" target="_blank" href="/students/${student.id}/registration-card"><i class="im im-icon-ID-Card"></i> Registration Card</a>` : ''
                                                     }
                                                 </div>
                                             </div>

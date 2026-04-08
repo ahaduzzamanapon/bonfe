@@ -21,6 +21,11 @@
     <td>{{ $insatitute->address }}</td>
 </tr>
 
+<tr>
+    <th scopre="row">{!! Form::label('center_reg_num', 'Center Registration Number:') !!}</th>
+    <td>{{ $insatitute->center_reg_num }}</td>
+</tr>
+
 
 <tr>
     <th scopre="row">{!! Form::label('status', 'Status:') !!}</th>

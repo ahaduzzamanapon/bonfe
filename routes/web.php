@@ -5,6 +5,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AttendenceController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\UserController;
 
 
 include 'demo.php';
@@ -110,6 +111,21 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('students_import_store', 'StudentController@import_students_store')->name('students.import_store');
     Route::get('students_import_sample', 'StudentController@download_import_sample')->name('students.import_sample');
     Route::get('get_institutes_by_type', 'InsatituteController@get_institutes_by_type')->name('get_institutes_by_type');
+
+    // District Admin: Set Assessment Status (Ready for Assessment / Dropout / Absent)
+    Route::get('setAssessmentStatus_modal', 'StudentController@setAssessmentStatus_modal')->name('setAssessmentStatus_modal');
+    Route::post('setAssessmentStatus_send', 'StudentController@setAssessmentStatus_send')->name('setAssessmentStatus_send');
+
+    // District Admin: Forward to Assistant Registrar
+    Route::get('forwardToAssistantRegistrar_modal', 'StudentController@forwardToAssistantRegistrar_modal')->name('forwardToAssistantRegistrar_modal');
+    Route::post('forwardToAssistantRegistrar_send', 'StudentController@forwardToAssistantRegistrar_send')->name('forwardToAssistantRegistrar_send');
+
+    // Assistant Registrar: Give Registration Number
+    Route::get('giveRegistrationNumber_modal', 'StudentController@giveRegistrationNumber_modal')->name('giveRegistrationNumber_modal');
+    Route::post('giveRegistrationNumber_approve', 'StudentController@giveRegistrationNumber_approve')->name('giveRegistrationNumber_approve');
+
+    // Registration Card
+    Route::get('students/{id}/registration-card', 'StudentController@registrationCard')->name('students.registration_card');
 
 });
 Route::get('empty_table', 'JoshController@emptyTable');

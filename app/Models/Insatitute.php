@@ -30,7 +30,8 @@ class Insatitute extends Model
         'status',
         'description',
         'type',
-        'code'
+        'code',
+        'center_reg_num'
     ];
 
     /**
@@ -46,7 +47,8 @@ class Insatitute extends Model
         'status' => 'string',
         'description' => 'string',
         'type' => 'string',
-        'code' => 'string'
+        'code' => 'string',
+        'center_reg_num' => 'string'
     ];
 
     /**

@@ -25,6 +25,29 @@
         ->prepend('Select Center', '')
         ->toArray();
 
+    // Pre-load institute type and institutes for edit mode
+    $currentInstituteType = null;
+    $currentInstitutes    = [];
+    if (isset($student) && $student->institutionName) {
+        $currentInstitute = DB::table('insatitutes')->where('id', $student->institutionName)->first();
+        if ($currentInstitute) {
+            $currentInstituteType = $currentInstitute->type;
+
+            // Always include the current institute so Select2 can display it
+            $currentInstitutes = [(int)$currentInstitute->id => $currentInstitute->insatitute_name];
+
+            // Try to also load all institutes of same type in this district
+            $byDistrict = DB::table('insatitutes')
+                ->where('type', $currentInstituteType)
+                ->where('district', $student->district_id)
+                ->pluck('insatitute_name', 'id')
+                ->toArray();
+
+            if (!empty($byDistrict)) {
+                $currentInstitutes = $byDistrict; // district list has everything
+            }
+        }
+    }
 @endphp
 
 <script>
@@ -48,12 +71,14 @@
 </script>
 
 
-<!-- Candidate ID Preview -->
+<!-- Candidate ID Preview: only show on create, not edit -->
+@if(!isset($student) || !$student->exists)
     <div class="col-md-12">
         <div class="alert alert-info" style="text-align: center;">
             <h3>Candidate ID Preview: <span id="candidate_number_preview" style="font-weight: bold; color: #000;">--</span></h3>
         </div>
     </div>
+@endif
 
 <!-- Occupation Id Field -->
 <div class="col-md-3">
@@ -68,16 +93,16 @@
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('filter_institute_type', 'Institute Type Filter:', ['class' => 'control-label']) !!}
-        {!! Form::select('filter_institute_type', ['IBC' => 'IBC', 'OBC' => 'OBC', 'EBC' => 'EBC'], null, ['class' => 'form-control', 'placeholder' => 'Select Type to Filter']) !!}
+        {!! Form::select('filter_institute_type', ['' => 'Select Type', 'IBC' => 'IBC', 'OBC' => 'OBC', 'EBC' => 'EBC'], $currentInstituteType, ['class' => 'form-control', 'id' => 'filter_institute_type']) !!}
     </div>
 </div>
 
-<!-- Address Field -->
+<!-- Institution Name -->
 <div class="col-md-3" id="institutionName">
     <div class="form-group">
         {!! Form::label('institutionName', 'Institution Name', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::select('institutionName', [], null, ['class' => 'form-control select2', 'required']) !!}
+        {!! Form::select('institutionName', $currentInstitutes, isset($student) ? $student->institutionName : null, ['class' => 'form-control select2', 'required', 'id' => 'institutionName_select']) !!}
     </div>
 </div>
 
@@ -590,6 +615,21 @@ training_end_date
             });
         });
     </script>
+
+    @if(isset($student) && $student->institutionName)
+    <script>
+        // Re-trigger Select2 to display the pre-selected institution on edit
+        $(document).ready(function() {
+            setTimeout(function() {
+                var $instSelect = $('select[name="institutionName"]');
+                $instSelect.val('{{ $student->institutionName }}');
+                if ($instSelect.data('select2')) {
+                    $instSelect.trigger('change.select2');
+                }
+            }, 200);
+        });
+    </script>
+    @endif
 @endpush
 
 

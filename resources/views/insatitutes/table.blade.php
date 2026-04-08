@@ -6,6 +6,7 @@
         <th>Institute Name</th>
         <th>District</th>
         <th>Address</th>
+        <th>Center Registration Number</th>
         <th>Status</th>
       
                 <th>Action</th>
@@ -18,6 +19,7 @@
             <td>{{ $insatitute->insatitute_name }}</td>
             <td>{{ $insatitute->district_name }}</td>
             <td>{{ $insatitute->address }}</td>
+            <td>{{ $insatitute->center_reg_num }}</td>
             <td>{{ $insatitute->status }}</td>
                 <td>
                     {!! Form::open(['route' => ['insatitutes.destroy', $insatitute->id], 'method' => 'delete']) !!}

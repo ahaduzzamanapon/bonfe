@@ -124,6 +124,8 @@ class StudentController extends AppBaseController
             } elseif ($request->status_filter == 'back_to_district_approval') {
                 $students = $students->where('students.status', 'Waiting for District Admin Approval');
                 $students = $students->whereNotNull('students.controller_back_comments');
+            } elseif ($request->status_filter == 'waiting_for_registration') {
+                $students = $students->where('students.status', 'Waiting for Registration');
             }
 
         }
@@ -656,8 +658,10 @@ class StudentController extends AppBaseController
         $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
             ->join('districts', 'students.district_id', '=', 'districts.id')
             ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
-            ->orderBy('id', 'desc')
-            ->where('students.assessment_center', null);
+            ->orderBy('students.id', 'desc')
+            ->where('students.assessment_center', null)
+            ->whereNotNull('students.registration_number'); // must have registration number first
+
         if (!can('chairman') && can('district_admin')) {
             $students = $students->where('students.district_id', auth()->user()->district_id);
         }
@@ -1024,6 +1028,294 @@ class StudentController extends AppBaseController
         }
     }
 
+    // ─── District Admin: Set Assessment Status (Ready / Dropout / Absent) ───────
+
+    public function setAssessmentStatus_modal(Request $request)
+    {
+        $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
+            ->join('districts', 'students.district_id', '=', 'districts.id')
+            ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
+            ->orderBy('students.id', 'desc')
+            ->whereIn('students.status', ['Pending', 'Waiting for District Admin Approval'])
+            ->where('students.exam_status', 'Pending')   // only show unset students
+            ->whereNull('students.registration_number');
+
+        if (!can('chairman') && can('district_admin')) {
+            $students = $students->where('students.district_id', auth()->user()->district_id);
+        }
+
+        $students = $students->get();
+
+
+
+        $html = '<table class="table table-bordered table-striped table-hover" id="example1">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>SL</th>
+                    <th>Name</th>
+                    <th>Candidate ID</th>
+                    <th>Occupation</th>
+                    <th>District</th>
+                    <th>Set Status</th>
+                </tr>
+            </thead>
+            <tbody>';
+        foreach ($students as $key => $student) {
+            $currentStatus = $student->exam_status ?? 'Pending';
+            $html .= '<tr>
+                <td style="font-size:20px;padding:3px;text-align:-webkit-center;">
+                    <input onclick="setAssessmentStatus_select()" type="checkbox" class="student_ids_setAssessmentStatus" value="' . $student->id . '" style="width:20px;height:20px;">
+                </td>
+                <td style="font-size:16px;padding:3px;text-align:-webkit-center;">' . ++$key . '</td>
+                <td style="padding:3px;">' . $student->candidate_name . '</td>
+                <td style="padding:3px;">' . $student->candidate_id . '</td>
+                <td style="padding:3px;">' . $student->occupation . '</td>
+                <td style="padding:3px;">' . $student->district . '</td>
+                <td style="padding:3px;">
+                    <select class="form-control assessment_status_select" data-id="' . $student->id . '">
+                        <option value="Ready for Assessment"' . ($currentStatus == 'Ready for Assessment' ? ' selected' : '') . '>Ready for Assessment</option>
+                        <option value="Dropout"' . ($currentStatus == 'Dropout' ? ' selected' : '') . '>Dropout</option>
+                        <option value="Absent"' . ($currentStatus == 'Absent' ? ' selected' : '') . '>Absent</option>
+                    </select>
+                </td>
+            </tr>';
+        }
+        $html .= '</tbody></table>';
+        return response()->json($html);
+    }
+
+    public function setAssessmentStatus_send(Request $request)
+    {
+        $updates = $request->updates; // array of {id, status}
+        DB::beginTransaction();
+        try {
+            foreach ($updates as $item) {
+                Student::where('id', $item['id'])->update(['exam_status' => $item['status']]);
+            }
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Status updated successfully']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Operation failed']);
+        }
+    }
+
+    // ─── District Admin: Forward to Assistant Registrar ─────────────────────────
+
+    public function forwardToAssistantRegistrar_modal(Request $request)
+    {
+        $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
+            ->join('districts', 'students.district_id', '=', 'districts.id')
+            ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
+            ->orderBy('students.id', 'desc')
+            ->whereIn('students.status', ['Pending', 'Waiting for District Admin Approval'])
+            ->where('students.exam_status', 'Ready for Assessment')
+            ->whereNull('students.registration_number');
+
+        if (!can('chairman') && can('district_admin')) {
+            $students = $students->where('students.district_id', auth()->user()->district_id);
+        }
+
+        $students = $students->get();
+
+
+        $html = '<table class="table table-bordered table-striped table-hover" id="example1">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>SL</th>
+                    <th>Name</th>
+                    <th>Candidate ID</th>
+                    <th>Type</th>
+                    <th>Occupation</th>
+                    <th>District</th>
+                </tr>
+            </thead>
+            <tbody>';
+        foreach ($students as $key => $student) {
+            $html .= '<tr>
+                <td style="font-size:20px;padding:3px;text-align:-webkit-center;">
+                    <input onclick="forwardToAssistantRegistrar_select()" type="checkbox" class="student_ids_forwardToAssistantRegistrar" value="' . $student->id . '" style="width:20px;height:20px;">
+                </td>
+                <td style="font-size:16px;padding:3px;text-align:-webkit-center;">' . ++$key . '</td>
+                <td style="padding:3px;">' . $student->candidate_name . '</td>
+                <td style="padding:3px;">' . $student->candidate_id . '</td>
+                <td style="padding:3px;"><span class="badge badge-info">' . ($student->student_type ?? 'REG') . '</span></td>
+                <td style="padding:3px;">' . $student->occupation . '</td>
+                <td style="padding:3px;">' . $student->district . '</td>
+            </tr>';
+        }
+        $html .= '</tbody></table>';
+        return response()->json($html);
+    }
+
+    public function forwardToAssistantRegistrar_send(Request $request)
+    {
+        $student_ids = $request->student_ids_forwardToAssistantRegistrar;
+        DB::beginTransaction();
+        try {
+            foreach ($student_ids as $studentId) {
+                $student = Student::find($studentId);
+                $student->status = 'Waiting for Registration';
+                $student->save();
+            }
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Learner forwarded to Assistant Registrar successfully']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Operation failed']);
+        }
+    }
+
+    // ─── Assistant Registrar: Give Registration Number ──────────────────────────
+
+    public function giveRegistrationNumber_modal(Request $request)
+    {
+        $students = Student::select(
+            'students.*',
+            'districts.name_en as district',
+            'districts.code as district_code',
+            'occupations.title as occupation',
+            'occupations.code as occupation_code',
+            'occupations.category as occupation_category'
+        )
+            ->join('districts', 'students.district_id', '=', 'districts.id')
+            ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
+            ->orderBy('id', 'desc')
+            ->where('students.status', 'Waiting for Registration')
+            ->get();
+
+        $html = '<table class="table table-bordered table-striped table-hover" id="example1">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>SL</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Occupation</th>
+                    <th>District</th>
+                    <th>Preview Registration No.</th>
+                </tr>
+            </thead>
+            <tbody>';
+
+        // Pre-compute serials per group within this modal load
+        $groupCounters = [];
+
+        foreach ($students as $key => $student) {
+            $type = $student->student_type ?? 'REG';
+            $sector = $student->occupation_category ?? 'GEN';
+            $occCode = $student->occupation_code ?? '0000';
+            $distCode = $student->district_code ?? 'XX';
+            $groupKey = "{$type}-{$sector}-{$occCode}-{$distCode}";
+
+            // Count already saved in DB
+            if (!isset($groupCounters[$groupKey])) {
+                $groupCounters[$groupKey] = Student::where('student_type', $type)
+                    ->where('occupation_id', $student->occupation_id)
+                    ->where('district_id', $student->district_id)
+                    ->whereNotNull('registration_number')
+                    ->count();
+            }
+            $groupCounters[$groupKey]++;
+            $serial = str_pad($groupCounters[$groupKey], 4, '0', STR_PAD_LEFT);
+            $regNo = "{$type}-{$sector}-{$occCode}-{$distCode}-{$serial}";
+
+            $html .= '<tr>
+                <td style="font-size:20px;padding:3px;text-align:-webkit-center;">
+                    <input onclick="giveRegistrationNumber_select()" type="checkbox" class="student_ids_giveRegistrationNumber" value="' . $student->id . '" style="width:20px;height:20px;">
+                </td>
+                <td style="font-size:16px;padding:3px;text-align:-webkit-center;">' . ++$key . '</td>
+                <td style="padding:3px;">' . $student->candidate_name . '</td>
+                <td style="padding:3px;"><span class="badge badge-info">' . $type . '</span></td>
+                <td style="padding:3px;">' . $student->occupation . '</td>
+                <td style="padding:3px;">' . $student->district . '</td>
+                <td style="padding:3px;"><input type="text" class="form-control reg_no_input" data-student-id="' . $student->id . '" value="' . $regNo . '" style="min-width:210px;font-weight:bold;color:#007bff;" placeholder="Registration No."></td>
+            </tr>';
+        }
+        $html .= '</tbody></table>';
+        return response()->json($html);
+    }
+
+    public function giveRegistrationNumber_approve(Request $request)
+    {
+        $student_ids = $request->student_ids_giveRegistrationNumber;
+        DB::beginTransaction();
+        try {
+            foreach ($student_ids as $studentId) {
+                $student = Student::select(
+                    'students.*',
+                    'districts.code as district_code',
+                    'occupations.code as occupation_code',
+                    'occupations.category as occupation_category'
+                )
+                    ->join('districts', 'students.district_id', '=', 'districts.id')
+                    ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
+                    ->where('students.id', $studentId)
+                    ->first();
+
+                if (!$student)
+                    continue;
+
+                $type = $student->student_type ?? 'REG';
+                $sector = $student->occupation_category ?? 'GEN';
+                $occCode = $student->occupation_code ?? '0000';
+                $distCode = $student->district_code ?? 'XX';
+
+                // Count saved registrations for this group to get the next serial
+                $count = Student::where('student_type', $type)
+                    ->where('occupation_id', $student->occupation_id)
+                    ->where('district_id', $student->district_id)
+                    ->whereNotNull('registration_number')
+                    ->count();
+
+                // Use custom reg number if provided by user, else auto-generate
+                $customNumbers = $request->input('custom_reg_numbers', []);
+                if (!empty($customNumbers[$studentId])) {
+                    $regNo = $customNumbers[$studentId];
+                } else {
+                    $serial = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+                    $regNo = "{$type}-{$sector}-{$occCode}-{$distCode}-{$serial}";
+                }
+
+                Student::where('id', $studentId)->update([
+                    'registration_number' => $regNo,
+                    'assistant_registrar_id' => auth()->id(),
+                    'assistant_registrar_status' => 'Approved',
+                    'status' => 'Waiting for District Admin Approval',
+                ]);
+            }
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Registration numbers assigned and returned to District Admin successfully']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('giveRegistrationNumber_approve error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Operation failed: ' . $e->getMessage()]);
+        }
+    }
+
+    // ─── Registration Card ────────────────────────────────────────────────────────
+
+    public function registrationCard($id)
+    {
+        $student = Student::select(
+            'students.*',
+            'occupations.title as occupation',
+            'districts.name_en as district_name',
+            'insatitutes.insatitute_name as assessment_center_name',
+            'insatitutes.center_reg_num as assessment_center_registration_number'
+        )
+            ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
+            ->join('districts', 'students.district_id', '=', 'districts.id')
+            ->leftJoin('insatitutes', 'students.institutionName', '=', 'insatitutes.id')
+            ->where('students.id', $id)
+            ->firstOrFail();
+
+        return view('students.registration_card', compact('student'));
+    }
+
+    // ────────────────────────────────────────────────────────────────────────────
 
     public function approveStudent_modal()
     {
@@ -1590,7 +1882,7 @@ class StudentController extends AppBaseController
                 \Log::info('Import Row 1 Keys: ' . implode(', ', array_keys($row)));
             }
 
-            $dobRaw = $getVal(['date_of_birth_dd_mm_yyyy', 'dob', 'date_of_birth','birth_date_dd_mm_yy']);
+            $dobRaw = $getVal(['date_of_birth_dd_mm_yyyy', 'dob', 'date_of_birth', 'birth_date_dd_mm_yy']);
             $dob = null;
             if ($dobRaw) {
                 try {
@@ -1628,7 +1920,7 @@ class StudentController extends AppBaseController
             $registrationNo = $getVal(['registration_no', 'registration_number', 'reg_no']);
 
             $instNameInput = $getVal(['institute', 'institute_name', 'assessment_venue', 'assessment_center']);
-            $occNameInput = $getVal(['trade', 'occupation', 'course', 'trade_course_name','tradecourse_name']);
+            $occNameInput = $getVal(['trade', 'occupation', 'course', 'trade_course_name', 'tradecourse_name']);
             $distNameInput = $getVal(['district', 'district_name']);
             $upazilaInput = $getVal(['upazila', 'upazila_city']);
             $studentType = $getVal(['type', 'student_type']) ?? 'REG';
@@ -1767,7 +2059,7 @@ class StudentController extends AppBaseController
                 }
             }
 
-           // dd($occId,$occNameInput);
+            // dd($occId,$occNameInput);
             // Dynamic Occupation Creation
             if (!$occId && $occNameInput) {
                 try {
@@ -1874,11 +2166,11 @@ class StudentController extends AppBaseController
         if (ob_get_contents()) {
             ob_end_clean();
         }
-        
+
         try {
             ini_set('memory_limit', '-1');
             ini_set('max_execution_time', 300);
-            
+
             // Set headers to ensure JSON response
             header('Content-Type: application/json');
 
@@ -2058,9 +2350,9 @@ class StudentController extends AppBaseController
             while (ob_get_level() > 0) {
                 ob_end_clean();
             }
-            
+
             \Log::error('Import chunk processing failed: ' . $e->getMessage() . ' | File: ' . $e->getFile() . ' | Line: ' . $e->getLine() . ' | Stack: ' . $e->getTraceAsString());
-            
+
             // Ensure we return JSON even on fatal error
             return response()->json([
                 'success' => false,

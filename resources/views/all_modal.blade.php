@@ -1141,3 +1141,225 @@
         }
     }
 </script>
+
+{{-- ═══════════════════════════════════════════════════════════════════════ --}}
+{{-- setAssessmentStatus_modal (District Admin) --}}
+<div class="modal fade" id="setAssessmentStatus_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header ">
+                <h5 class="modal-title"><i class="fa fa-tasks"></i> Set Assessment Status</h5>
+                <button type="button" class="close" onclick="$('#setAssessmentStatus_modal').modal('hide')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">Select students and set their status: <strong>Ready for Assessment</strong>, <strong>Dropout</strong>, or <strong>Absent</strong>. Only <span class="badge badge-success">Ready for Assessment</span> students can be forwarded to the Registrar.</p>
+                <a class="btn btn-secondary btn-sm mb-2" href="javascript:void(0)" onclick="setAssessmentStatus_selectAll()">Select All</a>
+                <div id="setAssessmentStatus_modal_body" style="overflow-y:scroll;height:50vh;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="$('#setAssessmentStatus_modal').modal('hide')">Close</button>
+                <button type="button" class="btn btn-warning" id="setAssessmentStatus_modal_button" onclick="setAssessmentStatus_submit()" disabled>Save Status</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function setAssessmentStatus_modal() {
+        $('#setAssessmentStatus_modal').modal('show');
+        $('#setAssessmentStatus_modal_body').html('<div class="text-center"><div class="spinner-border text-warning" role="status"><span class="sr-only">Loading...</span></div></div>');
+        $.ajax({
+            url: '{{ route('setAssessmentStatus_modal') }}',
+            type: 'GET',
+            success: function (data) {
+                $('#setAssessmentStatus_modal_body').html(data);
+            }
+        });
+    }
+    function setAssessmentStatus_selectAll() {
+        $('.student_ids_setAssessmentStatus').prop('checked', true);
+        setAssessmentStatus_select();
+    }
+    function setAssessmentStatus_select() {
+        var checked = $('.student_ids_setAssessmentStatus:checked').length;
+        $('#setAssessmentStatus_modal_button').prop('disabled', checked === 0);
+    }
+    function setAssessmentStatus_submit() {
+        var updates = [];
+        $('.student_ids_setAssessmentStatus:checked').each(function () {
+            var id = $(this).val();
+            var status = $('.assessment_status_select[data-id="' + id + '"]').val();
+            updates.push({ id: id, status: status });
+        });
+        if (updates.length === 0) {
+            alert('Please select at least one student.');
+            return;
+        }
+        $.ajax({
+            url: '{{ route('setAssessmentStatus_send') }}',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ _token: '{{ csrf_token() }}', updates: updates }),
+            success: function (data) {
+                if (data.success) {
+                    alert(data.message);
+                    $('#setAssessmentStatus_modal').modal('hide');
+                    createTable();
+                } else {
+                    alert(data.message);
+                }
+            },
+            error: function () { alert('Failed to update status.'); }
+        });
+    }
+</script>
+{{-- end setAssessmentStatus_modal --}}
+
+{{-- ═══════════════════════════════════════════════════════════════════════ --}}
+{{-- forwardToAssistantRegistrar_modal (District Admin) --}}
+<div class="modal fade" id="forwardToAssistantRegistrar_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title"><i class="fa fa-paper-plane"></i> Forward to Assistant Registrar</h5>
+                <button type="button" class="close text-white" onclick="$('#forwardToAssistantRegistrar_modal').modal('hide')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">Only students with status <span class="badge badge-success">Ready for Assessment</span> and no registration number are shown.</p>
+                <a class="btn btn-secondary btn-sm mb-2" href="javascript:void(0)" onclick="forwardToAssistantRegistrar_selectAll()">Select All</a>
+                <div id="forwardToAssistantRegistrar_modal_body" style="overflow-y:scroll;height:50vh;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="$('#forwardToAssistantRegistrar_modal').modal('hide')">Close</button>
+                <button type="button" class="btn btn-info" id="forwardToAssistantRegistrar_modal_button" onclick="forwardToAssistantRegistrar_submit()" disabled>Forward to Registrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function forwardToAssistantRegistrar_modal() {
+        $('#forwardToAssistantRegistrar_modal').modal('show');
+        $('#forwardToAssistantRegistrar_modal_button').prop('disabled', true);
+        $('#forwardToAssistantRegistrar_modal_body').html('<div class="text-center"><div class="spinner-border text-info" role="status"><span class="sr-only">Loading...</span></div></div>');
+        $.ajax({
+            url: '{{ route('forwardToAssistantRegistrar_modal') }}',
+            type: 'GET',
+            success: function (data) {
+                $('#forwardToAssistantRegistrar_modal_body').html(data);
+            }
+        });
+    }
+    function forwardToAssistantRegistrar_selectAll() {
+        $('.student_ids_forwardToAssistantRegistrar').prop('checked', true);
+        forwardToAssistantRegistrar_select();
+    }
+    function forwardToAssistantRegistrar_select() {
+        var checked = $('.student_ids_forwardToAssistantRegistrar:checked').length;
+        $('#forwardToAssistantRegistrar_modal_button').prop('disabled', checked === 0);
+    }
+    function forwardToAssistantRegistrar_submit() {
+        var selected_ids = $('.student_ids_forwardToAssistantRegistrar:checked').map(function(){ return this.value; }).get();
+        if (selected_ids.length === 0) { alert('Please select at least one student.'); return; }
+        $.ajax({
+            url: '{{ route('forwardToAssistantRegistrar_send') }}',
+            type: 'POST',
+            data: { _token: '{{ csrf_token() }}', student_ids_forwardToAssistantRegistrar: selected_ids },
+            success: function (data) {
+                if (data.success) {
+                    alert(data.message);
+                    $('#forwardToAssistantRegistrar_modal').modal('hide');
+                    createTable();
+                } else { alert(data.message); }
+            },
+            error: function () { alert('Failed to forward to Registrar.'); }
+        });
+    }
+</script>
+{{-- end forwardToAssistantRegistrar_modal --}}
+
+{{-- ═══════════════════════════════════════════════════════════════════════ --}}
+{{-- giveRegistrationNumber_modal (Assistant Registrar) --}}
+<div class="modal fade" id="giveRegistrationNumber_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="fa fa-id-card"></i> Give Registration Number</h5>
+                <button type="button" class="close text-white" onclick="$('#giveRegistrationNumber_modal').modal('hide')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">Review the auto-generated registration numbers. Select students and click <strong>Approve & Save</strong> to assign them and return to District Admin.</p>
+                <a class="btn btn-secondary btn-sm mb-2" href="javascript:void(0)" onclick="giveRegistrationNumber_selectAll()">Select All</a>
+                <div id="giveRegistrationNumber_modal_body" style="overflow-y:scroll;height:55vh;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="$('#giveRegistrationNumber_modal').modal('hide')">Close</button>
+                <button type="button" class="btn btn-success" id="giveRegistrationNumber_modal_button" onclick="giveRegistrationNumber_submit()" disabled>
+                    <i class="fa fa-check"></i> Approve &amp; Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function giveRegistrationNumber_modal() {
+        $('#giveRegistrationNumber_modal').modal('show');
+        $('#giveRegistrationNumber_modal_button').prop('disabled', true);
+        $('#giveRegistrationNumber_modal_body').html('<div class="text-center"><div class="spinner-border text-success" role="status"><span class="sr-only">Loading...</span></div></div>');
+        $.ajax({
+            url: '{{ route('giveRegistrationNumber_modal') }}',
+            type: 'GET',
+            success: function (data) {
+                $('#giveRegistrationNumber_modal_body').html(data);
+            }
+        });
+    }
+    function giveRegistrationNumber_selectAll() {
+        $('.student_ids_giveRegistrationNumber').prop('checked', true);
+        giveRegistrationNumber_select();
+    }
+    function giveRegistrationNumber_select() {
+        var checked = $('.student_ids_giveRegistrationNumber:checked').length;
+        $('#giveRegistrationNumber_modal_button').prop('disabled', checked === 0);
+    }
+    function giveRegistrationNumber_submit() {
+        var selected_ids = $('.student_ids_giveRegistrationNumber:checked').map(function(){ return this.value; }).get();
+        if (selected_ids.length === 0) { alert('Please select at least one student.'); return; }
+        if (!confirm('Approve and assign registration numbers to ' + selected_ids.length + ' student(s)?')) return;
+
+        // Collect custom (editable) reg numbers keyed by student ID
+        var custom_reg_numbers = {};
+        selected_ids.forEach(function(id) {
+            var val = $('.reg_no_input[data-student-id="' + id + '"]').val();
+            if (val) custom_reg_numbers[id] = val.trim();
+        });
+
+        $('#giveRegistrationNumber_modal_button').prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+        $.ajax({
+            url: '{{ route('giveRegistrationNumber_approve') }}',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                student_ids_giveRegistrationNumber: selected_ids,
+                custom_reg_numbers: custom_reg_numbers
+            },
+            success: function (data) {
+                if (data.success) {
+                    alert(data.message);
+                    $('#giveRegistrationNumber_modal').modal('hide');
+                    createTable();
+                } else { alert(data.message); }
+                $('#giveRegistrationNumber_modal_button').prop('disabled', false).html('<i class="fa fa-check"></i> Approve &amp; Save');
+            },
+            error: function () {
+                alert('Failed to approve registration numbers.');
+                $('#giveRegistrationNumber_modal_button').prop('disabled', false).html('<i class="fa fa-check"></i> Approve &amp; Save');
+            }
+        });
+    }
+</script>
+{{-- end giveRegistrationNumber_modal --}}

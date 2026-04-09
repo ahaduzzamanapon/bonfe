@@ -1076,7 +1076,6 @@ class StudentController extends AppBaseController
                     <select class="form-control assessment_status_select" data-id="' . $student->id . '">
                         <option value="Ready for Assessment"' . ($currentStatus == 'Ready for Assessment' ? ' selected' : '') . '>Ready for Assessment</option>
                         <option value="Dropout"' . ($currentStatus == 'Dropout' ? ' selected' : '') . '>Dropout</option>
-                        <option value="Absent"' . ($currentStatus == 'Absent' ? ' selected' : '') . '>Absent</option>
                     </select>
                 </td>
             </tr>';

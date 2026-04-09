@@ -285,8 +285,9 @@
                             ->where('id', $student->assistant_registrar_id)
                             ->first();
                     @endphp
-            <div class="sig-line"> <img src="{{ asset($reg->signature) }}" alt=""
-                            style="width: 150px;object-fit: contain;"></div>
+                    <img src="{{ asset($reg->signature) }}" alt=""
+                            style="width: 150px;object-fit: contain;">
+            <div class="sig-line"> </div>
             <div class="sig-label">Assistant Registrar <br> (Registration)</div>
         </div>
     </div>

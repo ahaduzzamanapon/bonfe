@@ -158,7 +158,7 @@
     <div class="form-group">
         {!! Form::label('date_of_birth', 'Date Of Birth (D-M-Y)', ['class' => 'control-label', 'style' => 'font-size: 14px']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('date_of_birth', null, ['class' => 'form-control date', 'id' => 'date_of_birth', 'autocomplete' => 'off']) !!}
+        {!! Form::text('date_of_birth', isset($student) && $student->getRawOriginal('date_of_birth') ? \Carbon\Carbon::parse($student->getRawOriginal('date_of_birth'))->format('d-m-Y') : null, ['class' => 'form-control date', 'id' => 'date_of_birth', 'autocomplete' => 'off']) !!}
     </div>
 </div>
 
@@ -399,7 +399,7 @@
     <div class="form-group">
         {!! Form::label('training_start_date', 'Training Start Date (D-M-Y)', ['class' => 'control-label', 'style' => 'font-size: 14px']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('training_start_date', null, ['class' => 'form-control date', 'autocomplete' => 'off', 'required']) !!}
+        {!! Form::text('training_start_date', isset($student) && $student->getRawOriginal('training_start_date') ? \Carbon\Carbon::parse($student->getRawOriginal('training_start_date'))->format('d-m-Y') : null, ['class' => 'form-control date', 'autocomplete' => 'off', 'required']) !!}
     </div>
 </div>
 
@@ -409,7 +409,7 @@
     <div class="form-group">
         {!! Form::label('training_end_date', 'Training End Date', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('training_end_date', null, ['class' => 'form-control date', 'autocomplete' => 'off']) !!}
+        {!! Form::text('training_end_date', isset($student) && $student->getRawOriginal('training_end_date') ? \Carbon\Carbon::parse($student->getRawOriginal('training_end_date'))->format('d-m-Y') : null, ['class' => 'form-control date', 'autocomplete' => 'off']) !!}
     </div>
 </div>
 
@@ -438,7 +438,7 @@ training_end_date
             <div class="form-group">
                 {!! Form::label('image', 'Image', ['class' => 'control-label']) !!}
                 <span style="color: red">*</span>
-                {!! Form::file('image', ['onchange' => 'previewImage(event, "imagePreview")', 'accept' => 'image/*', 'required']) !!}
+                {!! Form::file('image', ['onchange' => 'previewImage(event, "imagePreview")', 'accept' => 'image/*']) !!}
                 <img id="imagePreview" src="{{ isset($student) ? asset($student->image) : '' }}" alt="Image Preview"
                     style="{{ isset($student) && $student->image ? '' : 'display: none;' }}margin-top:10px;max-width: 45%;height:auto;" />
             </div>
@@ -491,7 +491,7 @@ training_end_date
         <div class="col-md-3">
             <div class="form-group">
                 {!! Form::label('assessment_date', 'Assessment Date', ['class' => 'control-label']) !!}
-                {!! Form::text('assessment_date', null, ['class' => 'form-control date', 'id' => 'assessment_date', 'autocomplete' => 'off']) !!}
+                {!! Form::text('assessment_date', isset($student) && $student->getRawOriginal('assessment_date') ? \Carbon\Carbon::parse($student->getRawOriginal('assessment_date'))->format('d-m-Y') : null, ['class' => 'form-control date', 'id' => 'assessment_date', 'autocomplete' => 'off']) !!}
             </div>
         </div>
 

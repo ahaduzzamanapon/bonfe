@@ -412,7 +412,7 @@
                                                         </h6>
                                                         <div class="d-flex justify-content-between align-items-center">
                                                             <small
-                                                                class="float-end font-size-12">{{ $notification->updated_at->diffForHumans() }}</small>
+                                                                class="float-end font-size-12">{{ \Carbon\Carbon::parse($notification->updated_at)->diffForHumans() }}</small>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -583,20 +583,21 @@
 
     <script>
         function date_fixer(id) {
-
             const dateField = document.getElementById(id);
             var dateValue = dateField.value;
-            console.log('dateValue', dateValue);
+            
+            // Check if the date is already in Y-m-d format (starts with 4 digits for year)
+            // If so, flip to d-m-Y so flatpickr can parse it with dateFormat "d-m-Y"
+            if (dateValue && dateValue.match(/^\d{4}-\d{2}-\d{2}/)) {
+                let parts = dateValue.split('-');
+                let timePart = parts[2].split(' '); // in case there's time
+                dateValue = timePart[0] + '-' + parts[1] + '-' + parts[0];
+                dateField.value = dateValue; // Set the input value to correct format
+            }
 
-            // if(dateValue == ''){
-            //     dateValue = '{{ date('Y-m-d') }}';
-            // }
-            date_ayy = dateValue.split('-');
-            daValue = date_ayy[2] + '-' + date_ayy[1] + '-' + date_ayy[0];
             flatpickr(`#${id}`, {
                 dateFormat: "d-m-Y",
-                allowInput: true,
-                defaultDate: daValue
+                allowInput: true
             });
         }
     </script>

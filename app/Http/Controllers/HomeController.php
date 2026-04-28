@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Item;
 use App\Models\Upazila;
+use App\Models\MultipleDistrict;
 use Illuminate\Support\Facades\DB;
 use App\Models\District;
 
@@ -32,10 +32,8 @@ class HomeController extends Controller
         return view('home');
     }
     public function items_dashboard(){
-        $items=Item::all();
-
-        
-        return view('items.item_dashboard',compact('items'));
+        // Item model removed; this route is unused
+        return redirect('/')->with('error', 'Not available.');
     }
 
     public function get_upazilas(Request $request){

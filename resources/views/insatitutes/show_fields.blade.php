@@ -1,53 +1,40 @@
 <tr>
-    <th scopre="row">{!! Form::label('id', 'Id:') !!}</th>
+    <th scope="row"><strong>ID:</strong></th>
     <td>{{ $insatitute->id }}</td>
 </tr>
-
-
 <tr>
-    <th scopre="row">{!! Form::label('insatitute_name', 'Insatitute Name:') !!}</th>
+    <th scope="row"><strong>Institute Name:</strong></th>
     <td>{{ $insatitute->insatitute_name }}</td>
 </tr>
-
-
 <tr>
-    <th scopre="row">{!! Form::label('district', 'District:') !!}</th>
+    <th scope="row"><strong>District:</strong></th>
     <td>{{ $insatitute->district }}</td>
 </tr>
-
-
 <tr>
-    <th scopre="row">{!! Form::label('address', 'Address:') !!}</th>
+    <th scope="row"><strong>Address:</strong></th>
     <td>{{ $insatitute->address }}</td>
 </tr>
-
 <tr>
-    <th scopre="row">{!! Form::label('center_reg_num', 'Center Registration Number:') !!}</th>
+    <th scope="row"><strong>Center Reg. No:</strong></th>
     <td>{{ $insatitute->center_reg_num }}</td>
 </tr>
-
-
 <tr>
-    <th scopre="row">{!! Form::label('status', 'Status:') !!}</th>
-    <td>{{ $insatitute->status }}</td>
+    <th scope="row"><strong>Status:</strong></th>
+    <td>
+        <span class="badge {{ $insatitute->status === 'Active' ? 'bg-success' : 'bg-secondary' }}">
+            {{ $insatitute->status }}
+        </span>
+    </td>
 </tr>
-
-
 <tr>
-    <th scopre="row">{!! Form::label('description', 'Description:') !!}</th>
+    <th scope="row"><strong>Description:</strong></th>
     <td>{{ $insatitute->description }}</td>
 </tr>
-
-
 <tr>
-    <th scopre="row">{!! Form::label('created_at', 'Created At:') !!}</th>
-    <td>{{ $insatitute->created_at }}</td>
+    <th scope="row"><strong>Created At:</strong></th>
+    <td>{{ $insatitute->created_at ? $insatitute->created_at->format('d M Y, h:i A') : '—' }}</td>
 </tr>
-
-
 <tr>
-    <th scopre="row">{!! Form::label('updated_at', 'Updated At:') !!}</th>
-    <td>{{ $insatitute->updated_at }}</td>
+    <th scope="row"><strong>Updated At:</strong></th>
+    <td>{{ $insatitute->updated_at ? $insatitute->updated_at->format('d M Y, h:i A') : '—' }}</td>
 </tr>
-
-

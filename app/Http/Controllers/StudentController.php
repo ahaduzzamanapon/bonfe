@@ -352,14 +352,9 @@ class StudentController extends AppBaseController
         if (empty($student)) {
             Flash::error('Student not found');
             if (request()->is('general_students*')) {
-                if (request()->is('general_students*')) {
-                    return redirect(route('students.index'));
-                } else {
-                    return redirect(route('general_students.index'));
-                }
-            } else {
                 return redirect(route('general_students.index'));
             }
+            return redirect(route('students.index'));
         }
 
         return view('students.show')->with('student', $student);
@@ -380,16 +375,10 @@ class StudentController extends AppBaseController
 
         if (empty($student)) {
             Flash::error('Student not found');
-
             if (request()->is('general_students*')) {
-                if (request()->is('general_students*')) {
-                    return redirect(route('students.index'));
-                } else {
-                    return redirect(route('general_students.index'));
-                }
-            } else {
                 return redirect(route('general_students.index'));
             }
+            return redirect(route('students.index'));
         }
         // dd($student);
 
@@ -443,14 +432,9 @@ class StudentController extends AppBaseController
         Flash::success('Student updated successfully.');
 
         if (request()->is('general_students*')) {
-            if (request()->is('general_students*')) {
-                return redirect(route('students.index'));
-            } else {
-                return redirect(route('general_students.index'));
-            }
-        } else {
             return redirect(route('general_students.index'));
         }
+        return redirect(route('students.index'));
     }
 
     /**
@@ -469,10 +453,9 @@ class StudentController extends AppBaseController
         if (empty($student)) {
             Flash::error('Student not found');
             if (request()->is('general_students*')) {
-                return redirect(route('students.index'));
-            } else {
                 return redirect(route('general_students.index'));
             }
+            return redirect(route('students.index'));
         }
         $student->delete();
         Flash::success('Student deleted successfully.');

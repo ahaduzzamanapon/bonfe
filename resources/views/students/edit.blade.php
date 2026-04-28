@@ -1,29 +1,28 @@
 @extends('layouts.default')
 
-{{-- Page title --}}
-@section('title')
-Student @parent
-@stop
+@section('title') Edit Learner @parent @stop
 
 @section('content')
-   <section class="content-header">
-    {{--<div aria-label="breadcrumb" class="card-breadcrumb">
-        <h1>{{ __('Edit') }} Student</h1>
+<div class="content">
+    @include('adminlte-templates::common.errors')
+    <div class="card">
+        <section class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="mb-0">Edit Learner — {{ $student->candidate_name_bn }}</h5>
+            <a href="{{ Request::is('general_students*') ? route('general_students.index') : route('students.index') }}"
+               class="btn btn-danger btn-sm">← Back</a>
+        </section>
+        <div class="card-body">
+            {!! Form::model($student, [
+                'route'  => ['students.update', $student->id],
+                'files'  => true,
+                'method' => 'patch',
+                'class'  => 'form-horizontal',
+            ]) !!}
+            <div class="row">
+                @include('students.fields')
+            </div>
+            {!! Form::close() !!}
+        </div>
     </div>
-    <div class="separator-breadcrumb border-top"></div>--}}
-    </section>
-   <div class="content">
-       @include('adminlte-templates::common.errors')
-       <div class="card">
-           <div class="card-body">
-                <div class="row">
-                    {!! Form::model($student, ['route' => ['students.update', $student->id], 'files' => true,  'method' => 'patch','class' => 'form-horizontal col-md-12']) !!}
-                        <div class="row">
-                            @include('students.fields')
-                        </div>
-                    {!! Form::close() !!}
-                </div>
-           </div>
-       </div>
-   </div>
+</div>
 @endsection

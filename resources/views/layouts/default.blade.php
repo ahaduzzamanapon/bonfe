@@ -55,215 +55,57 @@
 
 
     <style>
-        /* Chrome, Safari, Edge, Opera */
+        /* ─── Base ───────────────────────────────────────────────── */
+        * { padding: 0; margin: 0; box-sizing: border-box; }
+        body { background: #d6e1ea; font-size: 13px; }
+
+        /* ─── Scrollbar ──────────────────────────────────────────── */
+        ::-webkit-scrollbar { width: 4px; height: 5px; cursor: pointer; }
+        ::-webkit-scrollbar-thumb { background: #8dc641; border-radius: 1px; }
+        ::-webkit-scrollbar-track { background: #f0f0f0; }
+
+        /* ─── Number inputs ──────────────────────────────────────── */
         input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        /* Firefox */
-        input[type="number"] {
-            -moz-appearance: textfield;
-            appearance: textfield;
-            /* optional: for broader support */
-        }
-
-        /* Microsoft Edge (Legacy and Chromium-based) */
+        input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
         input[type="number"]::-ms-clear,
-        input[type="number"]::-ms-reveal {
-            display: none;
+        input[type="number"]::-ms-reveal { display: none; }
+
+        /* ─── Sidebar ────────────────────────────────────────────── */
+        .sidebar.sidebar-default .nav-link:not(.static-item).active,
+        .sidebar.sidebar-default .nav-link:not(.static-item)[aria-expanded="true"] {
+            background: #c9e6a1;
+            border-left: 4px solid #56d53b;
+            box-shadow: none;
+            color: #000;
+            height: 34px;
         }
-
-
-
-        .btn:hover {
-            color: #ffffff !important;
-            background-color: #1f9303 !important;
-            border-color: #1f9303 !important;
+        .sidebar.sidebar-default .nav-link:not(.static-item):hover:not(.active):not([aria-expanded="true"]) {
+            background: #c9e6a1;
+            color: #000;
+            box-shadow: unset;
         }
+        .sidebar.navs-rounded-all .sidebar-body .nav-item .nav-link {
+            border-radius: 0.2rem;
+            height: 34px;
+            font-size: 12.5px;
+            padding: 0 0.6rem;
+        }
+        .sidebar .sidebar-body { padding-right: 0; overflow: hidden; }
+        .sidebar-base .nav-item:not(.static-item) { padding-left: 0.6rem; }
+        .nav-item { margin-top: 3px !important; }
+        #sidebar-menu { height: calc(100vh - 115px); overflow-y: auto; padding-bottom: 8px; }
 
-        .btn-check:focus+.btn,
-        .btn:focus {
+        /* ─── Buttons ────────────────────────────────────────────── */
+        .btn { padding: 2px 8px !important; font-size: 12.5px; }
+        .btn:hover { color: #fff !important; background-color: #1f9303 !important; border-color: #1f9303 !important; }
+        .btn-check:focus + .btn, .btn:focus {
             color: var(--bs-btn-hover-color);
             background-color: #05534c;
             border-color: var(--bs-btn-hover-border-color);
             outline: 0;
-            -webkit-box-shadow: var(--bs-btn-focus-box-shadow);
             box-shadow: var(--bs-btn-focus-box-shadow);
         }
-
-        .select2-container .select2-selection--single {
-            box-sizing: border-box;
-            cursor: pointer;
-            display: block;
-            height: 38px;
-            user-select: none;
-            -webkit-user-select: none;
-            padding: 4px;
-        }
-
-        .nav-item {
-            margin-top: 7px !important;
-        }
-
-        * {
-            padding: 0;
-            margin: 0;
-        }
-
-        .border {
-            border: var(--bs-border-width) var(--bs-border-style) #4e4e4e !important;
-        }
-
-        .btn {
-            padding: 2px 7px !important;
-
-        }
-
-        .sidebar.sidebar-default .nav-link:not(.static-item).active,
-        .sidebar.sidebar-default .nav-link:not(.static-item)[aria-expanded="true"] {
-            background: white;
-            border-left: 5px solid #56d53b;
-            -webkit-box-shadow: none;
-            box-shadow: none;
-            color: #000;
-            height: 40px;
-        }
-        ::-webkit-scrollbar {
-    width: 0.25em;
-    height: 9px;
-    cursor: pointer;
-}
-
-        .sidebar.navs-rounded-all .sidebar-body .nav-item .nav-link {
-            -webkit-border-radius: 0.25rem;
-            border-radius: 0.25rem;
-            height: 40px;
-        }
-
-        .sidebar .sidebar-body {
-            padding-right: 0rem;
-            overflow: hidden;
-        }
-
-        .form-control {
-            border: 1px solid #808080;
-            padding: 1px 13px;
-        }
-
-        .card-breadcrumb {
-            padding: 12px;
-            cursor: pointer;
-        }
-
-        .sidebar.sidebar-default .nav-link:not(.static-item).active,
-        .sidebar.sidebar-default .nav-link:not(.static-item)[aria-expanded="true"] {
-            background: #c9e6a1;
-            border-left: 5px solid #56d53b;
-            -webkit-box-shadow: none;
-            box-shadow: none;
-            color: #000000;
-            height: 40px;
-        }
-
-        .text-dark {
-            --bs-text-opacity: 1;
-            color: rgb(53 46 46) !important;
-        }
-
-        .text-muted {
-            --bs-text-opacity: 1;
-            color: rgb(40 41 44 / 75%) !important;
-        }
-
-        .card-body {
-            -webkit-box-flex: 1;
-            -webkit-flex: 1 1 auto;
-            -ms-flex: 1 1 auto;
-            flex: 1 1 auto;
-            padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);
-            color: #000000;
-            /* font-size: 13px!important; */
-        }
-
-        .btn-outline-primary:not(:disabled):not(.disabled).active,
-        .btn-outline-primary:not(:disabled):not(.disabled):active,
-        .show>.btn-outline-primary.dropdown-toggle {
-            color: #fff;
-            background-color: #8dc542;
-            border-color: #683091;
-        }
-
-        .page-item.active .page-link {
-            z-index: 1;
-            color: #fff;
-            background-color: #8dc641;
-            border-color: #8dc641;
-        }
-
-        .table thead tr th {
-            text-transform: Capitalize;
-            letter-spacing: 0.2px;
-            background-color: var(--bs-body-bg);
-            color: #3a3a3a;
-        }
-
-        .sidebar.sidebar-default .nav-link:not(.static-item):hover:not(.active):not([aria-expanded="true"]) {
-            background: #c9e6a1;
-            color: #000000;
-            -webkit-box-shadow: unset;
-            box-shadow: unset;
-        }
-
-        .sidebar-base .nav-item:not(.static-item) {
-            padding-left: 1rem;
-        }
-
-        label {
-            display: inline-block;
-            font-size: 16px;
-            color: #000000;
-            font-weight: 500;
-        }
-
-        .card {
-            -webkit-box-shadow: 0 10px 30px 0 rgba(17, 38, 146, 0.05);
-            box-shadow: 0 0px 4px 3px rgb(0 0 0 / 5%);
-            /* margin-bottom: 2rem; */
-            border: 1px solid #acacac;
-            min-height: 88vh;
-            margin: 0;
-        }
-
-        .table {
-            font-size: 13px;
-            overflow: auto;
-        }
-
-        .dropdown-item {
-            border: 1px solid #828282;
-            border-radius: 9px;
-            margin: 4px;
-        }
-
-        .btn-primary:not(:disabled):not(.disabled).active,
-        .btn-primary:not(:disabled):not(.disabled):active,
-        .show>.btn-primary.dropdown-toggle {
-            color: #fff;
-            background-color: #8dc641;
-            border-color: #8dc641;
-        }
-
-        .badge {
-            font-size: 9px;
-            padding: 8px;
-        }
-
-        .pagination {
-            justify-content: flex-end;
-        }
-
         .btn-primary {
             --bs-btn-bg: #0aa699;
             --bs-btn-border-color: #0aa699;
@@ -274,27 +116,51 @@
             --bs-btn-disabled-bg: #0aa699;
             --bs-btn-disabled-border-color: #0aa699;
         }
+        .btn-primary:not(:disabled):not(.disabled).active,
+        .btn-primary:not(:disabled):not(.disabled):active,
+        .show > .btn-primary.dropdown-toggle { color: #fff; background-color: #8dc641; border-color: #8dc641; }
+        .btn-outline-primary:not(:disabled):not(.disabled).active,
+        .btn-outline-primary:not(:disabled):not(.disabled):active,
+        .show > .btn-outline-primary.dropdown-toggle { color: #fff; background-color: #8dc542; border-color: #683091; }
 
-        .card .card-header {
-            margin-bottom: 0;
-            border: 0;
-            padding-bottom: 0;
-            -webkit-border-radius: var(--bs-border-radius-lg);
-            padding: 7px;
-            background: #8dc542;
-            border-top: 3px solid red;
-            margin: 0px;
-            border-radius: 6px 6px 0px 0;
-            color: white;
+        /* ─── Inputs ─────────────────────────────────────────────── */
+        label { display: inline-block; font-size: 13px; color: #000; font-weight: 500; margin-bottom: 2px; }
+        .form-control { border: 1px solid #808080; padding: 2px 10px; font-size: 13px; height: calc(1.6em + 0.5rem + 2px); }
+        .select2-container .select2-selection--single {
+            box-sizing: border-box; cursor: pointer; display: block;
+            height: 34px; user-select: none; -webkit-user-select: none; padding: 3px;
         }
+
+        /* ─── Card ───────────────────────────────────────────────── */
+        .card { box-shadow: 0 0px 4px 3px rgb(0 0 0 / 5%); border: 1px solid #acacac; min-height: 88vh; margin: 0; }
+        .card .card-header {
+            border: 0; padding: 5px 10px; background: #8dc542;
+            border-top: 3px solid red; margin: 0; border-radius: 6px 6px 0 0; color: white;
+        }
+        .card .card-header h4, .card .card-header h5, .card .card-header h6 { font-size: 14px; margin: 0; line-height: 1.4; }
+        .card-body { flex: 1 1 auto; padding: 10px 12px; color: #000; }
+        .card-breadcrumb { padding: 6px 10px; cursor: pointer; }
+
+        /* ─── Table ──────────────────────────────────────────────── */
+        .table { font-size: 12.5px; overflow: auto; }
+        .table thead tr th { text-transform: capitalize; letter-spacing: 0.2px; background-color: var(--bs-body-bg); color: #3a3a3a; padding: 5px 8px; }
+        .table td, .table th { padding: 4px 8px; vertical-align: middle; }
+
+        /* ─── Misc ───────────────────────────────────────────────── */
+        .badge { font-size: 9px; padding: 4px 7px; }
+        .pagination { justify-content: flex-end; }
+        .page-item.active .page-link { background-color: #8dc641; border-color: #8dc641; color: #fff; }
+        .border { border: var(--bs-border-width) var(--bs-border-style) #4e4e4e !important; }
+        .text-dark { --bs-text-opacity: 1; color: rgb(53 46 46) !important; }
+        .text-muted { --bs-text-opacity: 1; color: rgb(40 41 44 / 75%) !important; }
+        .dropdown-item { border: 1px solid #828282; border-radius: 7px; margin: 3px; font-size: 12.5px; }
     </style>
 
 </head>
 
 
 
-<body style="background: #d6e1ea;
-;">
+<body>
     <!-- loader Start -->
     {{-- <div id="loading">
         <div class="loader simple-loader">
@@ -427,184 +293,108 @@
                                 <a class="py-0 nav-link d-flex align-items-center" href="#" id="navbarDropdown"
                                     role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     @if (Auth::user()->image && file_exists(public_path(Auth::user()->image)))
-                                        <img src="{{ asset(Auth::user()->image) }}" alt="User-Profile"
-                                            class="theme-color-default-img img-fluid avatar avatar-50 avatar-rounded" />
+                                        <img src="{{ asset(Auth::user()->image) }}" alt="Profile"
+                                            class="img-fluid avatar avatar-40 avatar-rounded" style="border-radius:50%;" />
                                     @else
-                                        <img src="{{ asset('assets/images/avatars/01.png') }}" alt="User-Profile"
-                                            class="theme-color-default-img img-fluid avatar avatar-50 avatar-rounded" />
+                                        <img src="{{ asset('assets/images/avatars/01.png') }}" alt="Profile"
+                                            class="img-fluid avatar avatar-40 avatar-rounded" style="border-radius:50%;" />
                                     @endif
-
-
-                                    <div class="caption ms-3 d-none d-md-block">
-                                        <h6 class="mb-0 caption-title" style="color: white;">
+                                    <div class="caption ms-2 d-none d-md-block">
+                                        <h6 class="mb-0" style="color:white; font-size:12.5px;">
                                             {{ Auth::user()->name }} {{ Auth::user()->last_name }}
-                                           
                                         </h6>
-                                        <p class="mb-0 caption-sub-title" style="font-size: 11px;background: white;color: black;padding: 2px 7px;display: inline;border-radius: 7px;font-weight: 500;">
-                                             {{ get_designation()}}
-                                        </p>
+                                        <span style="font-size:10px; background:white; color:#333; padding:1px 6px; border-radius:5px; font-weight:500;">
+                                            {{ get_designation() }}
+                                        </span>
                                     </div>
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-end profile-dropdown"
-                                    aria-labelledby="navbarDropdown">
-                                    <div class="profile-dropdown-body p-3 bg-white rounded shadow-lg"
-                                        style="width: 269px;">
-                                        <div class="d-flex align-items-center mb-3">
+                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <div class="p-3 bg-white rounded shadow-lg" style="width:250px;">
+                                        <div class="d-flex align-items-center mb-2">
                                             @if (Auth::user()->image && file_exists(public_path(Auth::user()->image)))
-                                                <img src="{{ asset(Auth::user()->image) }}" alt="User Profile"
-                                                class="img-fluid rounded-circle me-2" @else <img
-                                                    src="{{ asset('assets/images/avatars/01.png') }}"
-                                                    alt="User Profile" class="img-fluid rounded-circle me-2"
-                                                    @endif
-                                                style="width: 50px; height: 50px;" />
-                                                <div>
-                                                    <h6 class="mb-0">Hi, {{ Auth::user()->name }}
-                                                        {{ Auth::user()->last_name }}
-                                                    </h6>
-                                                    <small class="text-muted">{{ Auth::user()->email }}</small>
-                                                </div>
+                                                <img src="{{ asset(Auth::user()->image) }}" alt="Profile"
+                                                    class="img-fluid rounded-circle me-2" style="width:42px;height:42px;object-fit:cover;" />
+                                            @else
+                                                <img src="{{ asset('assets/images/avatars/01.png') }}" alt="Profile"
+                                                    class="img-fluid rounded-circle me-2" style="width:42px;height:42px;" />
+                                            @endif
+                                            <div>
+                                                <h6 class="mb-0" style="font-size:13px;">{{ Auth::user()->name }} {{ Auth::user()->last_name }}</h6>
+                                                <small class="text-muted" style="font-size:11px;">{{ Auth::user()->email }}</small>
+                                            </div>
                                         </div>
-                                        <hr>
+                                        <hr class="my-2">
                                         <a href="{{ route('logout') }}" class="btn btn-sm btn-danger w-100"
                                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                            <i class="bi bi-box-arrow-right me-1"></i> Logout
+                                            Logout
                                         </a>
-                                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                            style="display: none;">
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
                                             @csrf
                                         </form>
                                     </div>
-
                                 </div>
                             </li>
                         </ul>
                     </div>
-
                 </div>
             </nav>
-            <!-- Nav Header Component End -->
-            <!--Nav End-->
-            <div style="margin: 8px;height: 100%;width: 98%;">
+            <div class="content-wrap" style="margin:6px; width:calc(100% - 12px);">
                 @yield('content')
             </div>
         </div>
-        <!-- Footer Section Start -->
-        {{-- <footer class="footer" style="position: absolute;bottom: 0px;">
-            <div class="footer-body">
-                <ul class="left-panel list-inline mb-0 p-0">
-                    <li class="list-inline-item">
-                        <a href="../dashboard/extra/privacy-policy.html">Privacy Policy</a>
-                    </li>
-                    <li class="list-inline-item">
-                        <a href="../dashboard/extra/terms-of-service.html">Terms of Use</a>
-                    </li>
-                </ul>
-                <div class="right-panel">
-                    ©
-                    <script>
-                        document.write(new Date().getFullYear());
-                    </script>
-                </div>
-            </div>
-        </footer> --}}
-        <!-- Footer Section End -->
     </main>
-    <!-- Wrapper End-->
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
-    </script>
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
-    </script>
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
-    </script>
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="{{ asset('assets/js/core/libs.min.js') }}"></script>
-
-    <!-- External Library Bundle Script -->
     <script src="{{ asset('assets/js/core/external.min.js') }}"></script>
-
-    <!-- Widgetchart Script -->
     <script src="{{ asset('assets/js/charts/widgetcharts.js') }}"></script>
-
-    <!-- mapchart Script -->
     <script src="{{ asset('assets/js/charts/vectore-chart.js') }}"></script>
     <script src="{{ asset('assets/js/charts/dashboard.js') }}"></script>
-
-    <!-- fslightbox Script -->
     <script src="{{ asset('assets/js/plugins/fslightbox.js') }}"></script>
-
-    <!-- Settings Script -->
     <script src="{{ asset('assets/js/plugins/setting.js') }}"></script>
-
-    <!-- Slider-tab Script -->
     <script src="{{ asset('assets/js/plugins/slider-tabs.js') }}"></script>
-
-    <!-- Form Wizard Script -->
     <script src="{{ asset('assets/js/plugins/form-wizard.js') }}"></script>
-
-    <!-- AOS Animation Plugin-->
     <script src="{{ asset('assets/vendor/aos/dist/aos.js') }}"></script>
-
-    <!-- App Script -->
     <script src="{{ asset('assets/js/hope-ui.js') }}" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         function alert(message) {
-            Swal.fire({
-                text: message,
-            });
+            Swal.fire({ text: message });
         }
-    </script>
 
-
-    <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('.select2').select2();
-        });
-    </script>
-@yield('footer_scripts')
-@stack('footer_scripts')
-
-@yield('scripts')
-    @include('layouts/datatables_js')
-
-    <script>
-        $(document).ready(function() {
-            var dateFields = document.querySelectorAll('.date');
-            dateFields.forEach(function(dateField) {
+            // Init date fields
+            document.querySelectorAll('.date').forEach(function (dateField) {
                 date_fixer(dateField.id);
             });
         });
-    </script>
 
-    <script>
         function date_fixer(id) {
             const dateField = document.getElementById(id);
+            if (!dateField) return;
             var dateValue = dateField.value;
-            
-            // Check if the date is already in Y-m-d format (starts with 4 digits for year)
-            // If so, flip to d-m-Y so flatpickr can parse it with dateFormat "d-m-Y"
             if (dateValue && dateValue.match(/^\d{4}-\d{2}-\d{2}/)) {
                 let parts = dateValue.split('-');
-                let timePart = parts[2].split(' '); // in case there's time
+                let timePart = parts[2].split(' ');
                 dateValue = timePart[0] + '-' + parts[1] + '-' + parts[0];
-                dateField.value = dateValue; // Set the input value to correct format
+                dateField.value = dateValue;
             }
-
-            flatpickr(`#${id}`, {
-                dateFormat: "d-m-Y",
-                allowInput: true
-            });
+            flatpickr('#' + id, { dateFormat: 'd-m-Y', allowInput: true });
         }
     </script>
 
-
-
-
+    @yield('footer_scripts')
+    @stack('footer_scripts')
+    @yield('scripts')
+    @include('layouts/datatables_js')
 </body>
 
 </html>

@@ -403,9 +403,9 @@
                                                             class="iq-sub-card">
                                                 @endif
                                                 <div class="d-flex align-items-center">
-                                                    <img class="p-1 avatar-40 rounded-pill bg-primary-subtle"
+                                                    {{-- <img class="p-1 avatar-40 rounded-pill bg-primary-subtle"
                                                         src="{{ $notification->image ? asset($notification->image) : asset('assets/images/avatars/01.png') }}"
-                                                        alt="">
+                                                        alt=""> --}}
                                                     <div class="ms-3 w-100">
                                                         <h6 class="mb-0 text-start iq-text">
                                                             {{ $notification->candidate_name }} Waiting For Approval

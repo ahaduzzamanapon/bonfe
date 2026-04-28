@@ -437,7 +437,7 @@
             <div class="field-row">
                 <span class="field-num">09.</span>
                 <span class="field-label">Mobile Number (মোবাইল নম্বর):</span>
-                <span class="field-underline">{{ $student->mobile_number }}</span>
+                <span class="field-underline">+880{{ $student->mobile_number }}</span>
             </div>
 
             <div class="field-row">
@@ -453,7 +453,7 @@
 
             @php $adate = $student->assessment_date ? \Carbon\Carbon::parse($student->assessment_date) : null; @endphp
             <div class="field-row">
-                <span class="field-num">10.</span>
+                <span class="field-num">11.</span>
                 <span class="field-label">Assessment Date:</span>
                 <div class="dob-row">
                     <span class="dob-cell" style="width:30px;">{{ $adate?->format('d') }}</span>
@@ -465,20 +465,20 @@
             </div>
 
             <div class="field-row">
-                <span class="field-num">11.</span>
+                <span class="field-num">12.</span>
                 <span class="field-label">Assessment Venue:</span>
                 <span class="field-underline">{{ $student->assessment_venue }}</span>
             </div>
 
             <div class="field-row">
-                <span class="field-num">12.</span>
+                <span class="field-num">13.</span>
                 <span class="field-label">Assessment Center:</span>
                 <span
                     class="field-underline">{{ $student->assessment_center_name ?? $student->assessment_center }}</span>
             </div>
 
             <div class="field-row">
-                <span class="field-num">13.</span>
+                <span class="field-num">14.</span>
                 <span class="field-label">Assessment Center Registration No:</span>
                 <span class="field-underline">{{ $student->assessment_center_registration_number }}</span>
             </div>

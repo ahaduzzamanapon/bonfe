@@ -87,6 +87,15 @@
         /* ════════════════════════════════════════════════════════════
            SIDEBAR
         ════════════════════════════════════════════════════════════ */
+        /* Override default sidebar width */
+        .sidebar { width: 230px !important; }
+        @media (min-width: 1200px) {
+            .main-content { margin-left: 230px !important; transition: margin-left 0.3s ease; }
+            /* Handle collapsed state if template uses it */
+            body.sidebar-main .sidebar { width: 73px !important; }
+            body.sidebar-main .main-content { margin-left: 73px !important; }
+        }
+
         /* Header */
         .sidebar-header {
             background: linear-gradient(135deg, #7bb835 0%, #5a9e20 100%) !important;

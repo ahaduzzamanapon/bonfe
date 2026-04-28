@@ -55,9 +55,12 @@
 
 
     <style>
+        /* ─── Google Font ─────────────────────────────────────────── */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
         /* ─── Base ───────────────────────────────────────────────── */
         * { padding: 0; margin: 0; box-sizing: border-box; }
-        body { background: #d6e1ea; font-size: 13px; }
+        body { background: #dde6ee; font-size: 13px; font-family: 'Inter', sans-serif; }
 
         /* ─── Scrollbar ──────────────────────────────────────────── */
         ::-webkit-scrollbar { width: 4px; height: 5px; cursor: pointer; }
@@ -71,89 +74,177 @@
         input[type="number"]::-ms-clear,
         input[type="number"]::-ms-reveal { display: none; }
 
-        /* ─── Sidebar ────────────────────────────────────────────── */
+        /* ─── Scrollbar ──────────────────────────────────────────── */
+        ::-webkit-scrollbar { width: 4px; height: 4px; cursor: pointer; }
+        ::-webkit-scrollbar-thumb { background: #8dc641; border-radius: 1px; }
+        ::-webkit-scrollbar-track { background: #f0f0f0; }
+
+        /* ─── Number inputs ──────────────────────────────────────── */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+
+        /* ════════════════════════════════════════════════════════════
+           SIDEBAR
+        ════════════════════════════════════════════════════════════ */
+        /* Header */
+        .sidebar-header {
+            background: linear-gradient(135deg, #7bb835 0%, #5a9e20 100%) !important;
+            height: 56px !important;
+            border-bottom: 2px solid rgba(0,0,0,.15) !important;
+            padding: 0 12px !important;
+        }
+        .sidebar-header .navbar-brand { gap: 8px; }
+        .sidebar-header .logo-title {
+            font-size: 11.5px; font-weight: 700; color: #fff;
+            line-height: 1.3; text-shadow: 0 1px 2px rgba(0,0,0,.3);
+        }
+
+        /* Nav items */
         .sidebar.sidebar-default .nav-link:not(.static-item).active,
         .sidebar.sidebar-default .nav-link:not(.static-item)[aria-expanded="true"] {
-            background: #c9e6a1;
-            border-left: 4px solid #56d53b;
+            background: rgba(141,198,65,.22);
+            border-left: 3px solid #8dc641;
             box-shadow: none;
-            color: #000;
-            height: 34px;
+            color: #1a5e02;
+            font-weight: 600;
         }
         .sidebar.sidebar-default .nav-link:not(.static-item):hover:not(.active):not([aria-expanded="true"]) {
-            background: #c9e6a1;
-            color: #000;
-            box-shadow: unset;
+            background: rgba(141,198,65,.12);
+            color: #2a6e08;
+            box-shadow: none;
         }
         .sidebar.navs-rounded-all .sidebar-body .nav-item .nav-link {
-            border-radius: 0.2rem;
-            height: 34px;
+            border-radius: 4px;
+            height: 33px;
             font-size: 12.5px;
-            padding: 0 0.6rem;
+            padding: 0 0.65rem;
+            transition: background .15s ease, color .15s ease;
         }
         .sidebar .sidebar-body { padding-right: 0; overflow: hidden; }
-        .sidebar-base .nav-item:not(.static-item) { padding-left: 0.6rem; }
-        .nav-item { margin-top: 3px !important; }
-        #sidebar-menu { height: calc(100vh - 115px); overflow-y: auto; padding-bottom: 8px; }
-
-        /* ─── Buttons ────────────────────────────────────────────── */
-        .btn { padding: 2px 8px !important; font-size: 12.5px; }
-        .btn:hover { color: #fff !important; background-color: #1f9303 !important; border-color: #1f9303 !important; }
-        .btn-check:focus + .btn, .btn:focus {
-            color: var(--bs-btn-hover-color);
-            background-color: #05534c;
-            border-color: var(--bs-btn-hover-border-color);
-            outline: 0;
-            box-shadow: var(--bs-btn-focus-box-shadow);
+        .sidebar-base .nav-item:not(.static-item) { padding-left: 0.5rem; padding-right: 0.3rem; }
+        .nav-item { margin-top: 2px !important; }
+        #sidebar-menu {
+            height: calc(100vh - 96px);
+            overflow-y: auto;
+            padding-bottom: 40px;
         }
+        /* Submenu indent */
+        .sidebar .sub-nav .nav-link { padding-left: 2rem !important; font-size: 12px; }
+
+        /* Footer */
+        .sidebar-footer {
+            position: absolute; bottom: 0; width: 100%;
+            background: linear-gradient(135deg, #7bb835 0%, #5a9e20 100%);
+            padding: 5px 10px;
+            font-size: 11px; font-weight: 600; color: #fff;
+            border-top: 1px solid rgba(255,255,255,.25);
+            text-align: center;
+        }
+        .sidebar-footer a { color: #fff; text-decoration: underline; }
+
+        /* ════════════════════════════════════════════════════════════
+           NAVBAR (top bar)
+        ════════════════════════════════════════════════════════════ */
+        .iq-navbar {
+            background: linear-gradient(90deg, #5a2478 0%, #7c3ca8 100%) !important;
+            padding: 0 !important;
+            min-height: 48px !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,.25);
+        }
+        .iq-navbar .nav-link { padding: 4px 8px !important; }
+
+        /* ════════════════════════════════════════════════════════════
+           BUTTONS
+        ════════════════════════════════════════════════════════════ */
+        .btn { padding: 3px 10px !important; font-size: 12.5px; border-radius: 4px; transition: all .15s ease; }
+        .btn-sm { padding: 2px 8px !important; font-size: 12px !important; }
         .btn-primary {
-            --bs-btn-bg: #0aa699;
-            --bs-btn-border-color: #0aa699;
-            --bs-btn-hover-bg: var(--bs-primary-hover-bg);
-            --bs-btn-hover-border-color: var(--bs-primary-hover-border);
-            --bs-btn-active-bg: var(--bs-primary-active-bg);
-            --bs-btn-active-border-color: var(--bs-primary-active-border);
-            --bs-btn-disabled-bg: #0aa699;
-            --bs-btn-disabled-border-color: #0aa699;
+            background-color: #0aa699 !important; border-color: #0aa699 !important; color: #fff !important;
         }
+        .btn-primary:hover { background-color: #088f83 !important; border-color: #088f83 !important; }
+        .btn-danger  { background-color: #dc3545 !important; border-color: #dc3545 !important; color:#fff !important; }
+        .btn-danger:hover  { background-color: #b82333 !important; border-color: #b82333 !important; }
+        .btn-success { background-color: #28a745 !important; border-color: #28a745 !important; color:#fff !important; }
+        .btn-warning { background-color: #ffc107 !important; border-color: #ffc107 !important; color:#222 !important; }
+        .btn-secondary { background-color: #6c757d !important; border-color: #6c757d !important; color:#fff !important; }
+        .btn-light { background-color: #f8f9fa !important; border-color: #dee2e6 !important; color:#333 !important; }
+        .btn:focus { outline:0; box-shadow: 0 0 0 .2rem rgba(10,166,153,.35); }
         .btn-primary:not(:disabled):not(.disabled).active,
-        .btn-primary:not(:disabled):not(.disabled):active,
-        .show > .btn-primary.dropdown-toggle { color: #fff; background-color: #8dc641; border-color: #8dc641; }
-        .btn-outline-primary:not(:disabled):not(.disabled).active,
-        .btn-outline-primary:not(:disabled):not(.disabled):active,
-        .show > .btn-outline-primary.dropdown-toggle { color: #fff; background-color: #8dc542; border-color: #683091; }
+        .btn-primary:not(:disabled):not(.disabled):active { background-color: #8dc641 !important; border-color: #8dc641 !important; }
 
-        /* ─── Inputs ─────────────────────────────────────────────── */
-        label { display: inline-block; font-size: 13px; color: #000; font-weight: 500; margin-bottom: 2px; }
-        .form-control { border: 1px solid #808080; padding: 2px 10px; font-size: 13px; height: calc(1.6em + 0.5rem + 2px); }
+        /* ════════════════════════════════════════════════════════════
+           INPUTS & FORMS
+        ════════════════════════════════════════════════════════════ */
+        label { display:inline-block; font-size:12.5px; color:#111; font-weight:500; margin-bottom:2px; }
+        .form-control {
+            border: 1px solid #9a9a9a; padding: 3px 10px;
+            font-size: 12.5px; height: calc(1.5em + .6rem + 2px);
+            border-radius: 4px; transition: border-color .15s ease, box-shadow .15s ease;
+        }
+        .form-control:focus { border-color: #8dc641; box-shadow: 0 0 0 .18rem rgba(141,198,65,.25); }
+        .form-group { margin-bottom: 10px; }
         .select2-container .select2-selection--single {
-            box-sizing: border-box; cursor: pointer; display: block;
-            height: 34px; user-select: none; -webkit-user-select: none; padding: 3px;
+            height: 32px; border: 1px solid #9a9a9a; border-radius: 4px;
         }
+        .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 30px; font-size: 12.5px; }
+        .select2-container--default .select2-selection--single .select2-selection__arrow { height: 30px; }
 
-        /* ─── Card ───────────────────────────────────────────────── */
-        .card { box-shadow: 0 0px 4px 3px rgb(0 0 0 / 5%); border: 1px solid #acacac; min-height: 88vh; margin: 0; }
+        /* ════════════════════════════════════════════════════════════
+           CARD
+        ════════════════════════════════════════════════════════════ */
+        .card {
+            box-shadow: 0 1px 6px rgba(0,0,0,.08);
+            border: 1px solid #c4c4c4;
+            border-radius: 6px;
+            min-height: auto; /* ← removed 88vh that caused dashboard overflow */
+            margin: 0;
+            background: #fff;
+        }
+        /* pages with a single main card (index/edit/create) should fill height */
+        .content > .card { min-height: calc(100vh - 80px); }
         .card .card-header {
-            border: 0; padding: 5px 10px; background: #8dc542;
-            border-top: 3px solid red; margin: 0; border-radius: 6px 6px 0 0; color: white;
+            border: 0;
+            padding: 7px 12px;
+            background: linear-gradient(90deg, #7bb835 0%, #5a9e20 100%);
+            border-bottom: 3px solid #e44;
+            margin: 0;
+            border-radius: 6px 6px 0 0;
+            color: #fff;
         }
-        .card .card-header h4, .card .card-header h5, .card .card-header h6 { font-size: 14px; margin: 0; line-height: 1.4; }
-        .card-body { flex: 1 1 auto; padding: 10px 12px; color: #000; }
-        .card-breadcrumb { padding: 6px 10px; cursor: pointer; }
+        .card .card-header h4,
+        .card .card-header h5,
+        .card .card-header h6 { font-size: 13.5px; margin: 0; line-height: 1.4; font-weight: 600; }
+        .card-body { flex: 1 1 auto; padding: 10px 14px; color: #111; }
+        .card-footer { padding: 6px 12px; background: #f9f9f9; border-top: 1px solid #ddd; }
 
-        /* ─── Table ──────────────────────────────────────────────── */
-        .table { font-size: 12.5px; overflow: auto; }
-        .table thead tr th { text-transform: capitalize; letter-spacing: 0.2px; background-color: var(--bs-body-bg); color: #3a3a3a; padding: 5px 8px; }
-        .table td, .table th { padding: 4px 8px; vertical-align: middle; }
+        /* ════════════════════════════════════════════════════════════
+           TABLE
+        ════════════════════════════════════════════════════════════ */
+        .table { font-size: 12.5px; }
+        .table thead tr th {
+            text-transform: capitalize; letter-spacing: .2px;
+            background: #f3f6f9; color: #333; padding: 6px 8px;
+            border-bottom: 2px solid #ddd; font-weight: 600;
+        }
+        .table td, .table th { padding: 5px 8px; vertical-align: middle; }
+        .table-hover tbody tr:hover { background-color: rgba(141,198,65,.08); }
 
-        /* ─── Misc ───────────────────────────────────────────────── */
-        .badge { font-size: 9px; padding: 4px 7px; }
+        /* ════════════════════════════════════════════════════════════
+           MISC
+        ════════════════════════════════════════════════════════════ */
+        .badge { font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
+        .bg-success { background-color: #28a745 !important; }
+        .bg-danger  { background-color: #dc3545 !important; }
+        .bg-warning { background-color: #ffc107 !important; }
+        .bg-info    { background-color: #17a2b8 !important; }
         .pagination { justify-content: flex-end; }
         .page-item.active .page-link { background-color: #8dc641; border-color: #8dc641; color: #fff; }
-        .border { border: var(--bs-border-width) var(--bs-border-style) #4e4e4e !important; }
-        .text-dark { --bs-text-opacity: 1; color: rgb(53 46 46) !important; }
-        .text-muted { --bs-text-opacity: 1; color: rgb(40 41 44 / 75%) !important; }
-        .dropdown-item { border: 1px solid #828282; border-radius: 7px; margin: 3px; font-size: 12.5px; }
+        .page-link { color: #5a9e20; font-size: 12.5px; padding: 3px 8px; }
+        .text-muted { color: #666 !important; }
+        .dropdown-item { font-size: 12.5px; padding: 5px 12px; }
+        .dropdown-menu { border: 1px solid #ddd; box-shadow: 0 4px 16px rgba(0,0,0,.12); border-radius: 6px; }
+        .content-wrap { padding: 8px; }
     </style>
 
 </head>
@@ -171,40 +262,29 @@
     @include('all_modal')
 
     <aside class="sidebar sidebar-default sidebar-white sidebar-base navs-rounded-all">
-        <div class="sidebar-header d-flex align-items-center justify-content-start"
-            style="background: #8dc641;height: 58px;border-bottom: 2px solid;">
-            <a href="{{ url('/') }}" class="navbar-brand">
-                <div class="logo-main">
-                    <img src="{{ asset('assets/images/logo.png') }}" alt="logo" class="logo-default" style="height: 50px;">
-                </div>
-                <span class="logo-title"> উপানুষ্ঠানিক শিক্ষা
-                    <br> বোর্ড, বাংলাদেশ</span>
+        <div class="sidebar-header d-flex align-items-center justify-content-start">
+            <a href="{{ url('/') }}" class="navbar-brand d-flex align-items-center" style="gap:8px;">
+                <img src="{{ asset('assets/images/logo.png') }}" alt="logo" style="height:44px; flex-shrink:0;">
+                <span class="logo-title">উপানুষ্ঠানিক শিক্ষা<br>বোর্ড, বাংলাদেশ</span>
             </a>
-            <div class="sidebar-toggle" data-toggle="sidebar" data-active="true">
+            <div class="sidebar-toggle ms-auto" data-toggle="sidebar" data-active="true" style="cursor:pointer; color:#fff; padding:4px;">
                 <i class="icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4.25 12.2744L19.25 12.2744" stroke="currentColor" stroke-width="1.5"
-                            stroke-linecap="round" stroke-linejoin="round"></path>
-                        <path d="M10.2998 18.2988L4.2498 12.2748L10.2998 6.24976" stroke="currentColor"
-                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4.25 12.2744L19.25 12.2744" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M10.2998 18.2988L4.2498 12.2748L10.2998 6.24976" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                     </svg>
                 </i>
             </div>
         </div>
         <div class="sidebar-body pt-0">
             <div class="sidebar-list">
-                <!-- Sidebar Menu Start -->
-                <ul class="navbar-nav iq-main-menu" id="sidebar-menu" style="height: 82vh;overflow-y: scroll;">
+                <ul class="navbar-nav iq-main-menu" id="sidebar-menu">
                     @include('layouts/leftmenu')
                 </ul>
-                <!-- Sidebar Menu End -->
             </div>
         </div>
-        <div class="sidebar-footer"
-            style="bottom: 0;position: absolute;border: 1px solid #8dc641;width: 100%;padding: 7px;color: black;font-size: 12px;background: #8dc641;font-weight: bold;">
-            Developed by - <a href="https://mysoftheaven.com" target="_blank" style="color: white;">Mysoftheaven (BD)
-                Ltd.</a>
+        <div class="sidebar-footer">
+            Developed by &mdash; <a href="https://mysoftheaven.com" target="_blank">Mysoftheaven (BD) Ltd.</a>
         </div>
     </aside>
     <main class="main-content">
@@ -338,7 +418,7 @@
                     </div>
                 </div>
             </nav>
-            <div class="content-wrap" style="margin:6px; width:calc(100% - 12px);">
+            <div class="content-wrap">
                 @yield('content')
             </div>
         </div>

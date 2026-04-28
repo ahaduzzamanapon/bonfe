@@ -245,6 +245,72 @@
         .dropdown-item { font-size: 12.5px; padding: 5px 12px; }
         .dropdown-menu { border: 1px solid #ddd; box-shadow: 0 4px 16px rgba(0,0,0,.12); border-radius: 6px; }
         .content-wrap { padding: 8px; }
+
+        /* ════════════════════════════════════════════════════════════
+           SIDEBAR SECTION LABELS
+        ════════════════════════════════════════════════════════════ */
+        .nav-section-label {
+            font-size: 10px; font-weight: 700; letter-spacing: 1px;
+            text-transform: uppercase; color: #8dc641;
+            padding: 10px 14px 3px;
+            display: block;
+        }
+        .nav-divider {
+            border: none; border-top: 1px solid rgba(141,198,65,.2);
+            margin: 4px 10px;
+        }
+        /* Sub-nav chevron rotate */
+        .nav-link[aria-expanded="true"] .right-icon { transform: rotate(90deg); }
+        .nav-link .right-icon { transition: transform .2s ease; }
+
+        /* ════════════════════════════════════════════════════════════
+           NAVBAR ENHANCEMENTS
+        ════════════════════════════════════════════════════════════ */
+        .navbar-page-title {
+            color: rgba(255,255,255,.9);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: .3px;
+            line-height: 1;
+        }
+        .navbar-page-subtitle {
+            font-size: 10.5px;
+            color: rgba(255,255,255,.6);
+            margin-top: 1px;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.25); }
+        }
+        .notif-dot { animation: pulse-dot 1.8s ease-in-out infinite; display: inline-block; }
+
+        /* ════════════════════════════════════════════════════════════
+           PAGE TRANSITION
+        ════════════════════════════════════════════════════════════ */
+        #page-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(90deg, #8dc641, #0aa699, #683091);
+            z-index: 99999;
+            transform: scaleX(0); transform-origin: left;
+            transition: transform .4s ease;
+        }
+        #page-loader.loading { transform: scaleX(1); }
+
+        /* ════════════════════════════════════════════════════════════
+           FLASH MESSAGE
+        ════════════════════════════════════════════════════════════ */
+        #message {
+            position: fixed; top: 56px; right: 12px; z-index: 9999;
+            min-width: 260px; max-width: 380px;
+            border-radius: 6px; padding: 10px 14px;
+            font-size: 13px; font-weight: 500;
+            box-shadow: 0 4px 16px rgba(0,0,0,.2);
+            animation: slideInRight .35s ease;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(120%); opacity:0; }
+            to   { transform: translateX(0);    opacity:1; }
+        }
     </style>
 
 </head>
@@ -290,18 +356,15 @@
     <main class="main-content">
         <div class="position-relative iq-banner">
             <!--Nav Start-->
-            <nav class="nav navbar navbar-expand-xl navbar-light iq-navbar" style="background: #683091;padding: 0;">
+            <nav class="nav navbar navbar-expand-xl navbar-light iq-navbar">
                 <div class="container-fluid navbar-inner">
                     <a href="../dashboard/index.html" class="navbar-brand">
                         <h4 class="logo-title"></h4>
                     </a>
-                    <div class="sidebar-toggle" data-toggle="sidebar" data-active="true">
-                        <i class="icon">
-                            <svg width="20px" class="icon-20" viewBox="0 0 24 24">
-                                <path fill="currentColor"
-                                    d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z" />
-                            </svg>
-                        </i>
+                    <div class="sidebar-toggle" data-toggle="sidebar" data-active="true" style="cursor:pointer; color:#fff;">
+                        <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="currentColor" d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z"/>
+                        </svg>
                     </div>
                     <!-- Navbar Toggle Button -->
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"

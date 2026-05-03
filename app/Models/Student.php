@@ -49,7 +49,9 @@ class Student extends Model
         'candidate_name_bn',
         'brn',
         'father_name',
+        'father_name_bn',
         'mother_name',
+        'mother_name_bn',
         'nid',
         'district_id',
         'upajila_id',
@@ -96,7 +98,9 @@ class Student extends Model
         'candidate_name' => 'string',
 
         'father_name' => 'string',
+        'father_name_bn' => 'string',
         'mother_name' => 'string',
+        'mother_name_bn' => 'string',
         'nid' => 'string',
         'district_id' => 'string',
         'upajila_id' => 'string',
@@ -182,9 +186,12 @@ class Student extends Model
         return in_array($key, $dateColumns);
     }
 
-
-
-
-
-
+    // ── Relationships ─────────────────────────────────────────────────────────
+    public function district()      { return $this->belongsTo(\App\Models\District::class, 'district_id'); }
+    public function upazila()       { return $this->belongsTo(\App\Models\Upazila::class, 'upajila_id'); }
+    public function occupation()    { return $this->belongsTo(\App\Models\Occupation::class, 'occupation_id'); }
+    public function institute()     { return $this->belongsTo(\App\Models\Insatitute::class, 'institutionName'); }
+    public function reassessments() { return $this->hasMany(\App\Models\Reassessment::class, 'student_id')->orderBy('attempt_number'); }
+    public function certificateCorrections() { return $this->hasMany(\App\Models\CertificateCorrection::class, 'student_id'); }
+    public function certificateVersions()    { return $this->hasMany(\App\Models\CertificateVersion::class, 'student_id'); }
 }

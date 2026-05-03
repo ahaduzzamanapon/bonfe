@@ -184,12 +184,28 @@
     </div>
 </div>
 
+<!-- Mother Name Bangla Field -->
+<div class="col-md-3">
+    <div class="form-group">
+        {!! Form::label('mother_name_bn', "মাতার নাম (বাংলায়)", ['class' => 'control-label']) !!}
+        {!! Form::text('mother_name_bn', null, ['class' => 'form-control', 'oninput' => 'allowBanglaOnly(event)', 'placeholder' => 'বাংলায় লিখুন']) !!}
+    </div>
+</div>
+
 <!-- Father Name Field -->
 <div class="col-md-3">
     <div class="form-group">
         {!! Form::label('father_name', "Father's Name (English)", ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
         {!! Form::text('father_name', null, ['class' => 'form-control', 'oninput' => 'allowEnglishOnly(event)']) !!}
+    </div>
+</div>
+
+<!-- Father Name Bangla Field -->
+<div class="col-md-3">
+    <div class="form-group">
+        {!! Form::label('father_name_bn', "পিতার নাম (বাংলায়)", ['class' => 'control-label']) !!}
+        {!! Form::text('father_name_bn', null, ['class' => 'form-control', 'oninput' => 'allowBanglaOnly(event)', 'placeholder' => 'বাংলায় লিখুন']) !!}
     </div>
 </div>
 

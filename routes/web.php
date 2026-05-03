@@ -125,6 +125,48 @@ Route::group(['middleware' => 'auth'], function () {
     // Registration Card
     Route::get('students/{id}/registration-card', 'StudentController@registrationCard')->name('students.registration_card');
 
+    // ── Reports ──────────────────────────────────────────────────────────────
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', 'ReportController@index')->name('index');
+        Route::get('/project-wise', 'ReportController@projectWise')->name('project_wise');
+        Route::get('/district-wise', 'ReportController@districtWise')->name('district_wise');
+        Route::get('/upazila-wise', 'ReportController@upazilaWise')->name('upazila_wise');
+        Route::get('/gender-wise', 'ReportController@genderWise')->name('gender_wise');
+        Route::get('/occupation-wise', 'ReportController@occupationWise')->name('occupation_wise');
+        Route::get('/student-id', 'ReportController@studentId')->name('student_id');
+        Route::get('/certificate-distribution', 'ReportController@certificateDistribution')->name('certificate_distribution');
+        Route::get('/nyc-students', 'ReportController@nycStudents')->name('nyc_students');
+        Route::get('/export-excel', 'ReportController@exportExcel')->name('export_excel');
+        Route::get('/export-pdf', 'ReportController@exportPdf')->name('export_pdf');
+    });
+
+    // ── Re-Assessment ─────────────────────────────────────────────────────────
+    Route::prefix('reassessments')->name('reassessments.')->group(function () {
+        Route::get('/', 'ReassessmentController@index')->name('index');
+        Route::post('/apply', 'ReassessmentController@apply')->name('apply');
+        Route::post('/schedule', 'ReassessmentController@schedule')->name('schedule');
+        Route::post('/enter-result', 'ReassessmentController@enterResult')->name('enter_result');
+        Route::post('/chairman-approve', 'ReassessmentController@chairmanApprove')->name('chairman_approve');
+        Route::get('/{id}/certificate', 'ReassessmentController@generateCertificate')->name('certificate');
+    });
+
+    // ── Certificate Corrections ───────────────────────────────────────────────
+    Route::prefix('certificate-corrections')->name('certificate_corrections.')->group(function () {
+        Route::get('/', 'CertificateCorrectionController@index')->name('index');
+        Route::get('/create/{studentId}', 'CertificateCorrectionController@create')->name('create');
+        Route::post('/store', 'CertificateCorrectionController@store')->name('store');
+        Route::get('/versions/{studentId}', 'CertificateCorrectionController@versions')->name('versions');
+        Route::get('/{id}', 'CertificateCorrectionController@show')->name('show');
+        Route::post('/{id}/controller-approve', 'CertificateCorrectionController@controllerApprove')->name('controller_approve');
+        Route::post('/{id}/chairman-approve', 'CertificateCorrectionController@chairmanApprove')->name('chairman_approve');
+    });
+
+    // ── Audit Logs ────────────────────────────────────────────────────────────
+    Route::prefix('audit-logs')->name('audit_logs.')->group(function () {
+        Route::get('/', 'AuditLogController@index')->name('index');
+        Route::get('/{id}', 'AuditLogController@show')->name('show');
+    });
+
 });
 Route::get('empty_table', 'JoshController@emptyTable');
 Route::get('remove_all_files', 'JoshController@remove_all_files');

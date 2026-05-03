@@ -343,3 +343,53 @@ $occupation = \App\Models\Occupation::find($occupation_id);
         </ul>
     </li>
 @endif
+
+{{-- Reports --}}
+@if(can('student') || can('chairman') || can('district_admin'))
+<li class="nav-item">
+    <a class="nav-link {!! Request::is('reports*') ? 'active' : '' !!}" data-bs-toggle="collapse" href="#reports_menu" role="button" aria-expanded="false" aria-controls="reports_menu">
+        <i class="icon im im-icon-File-ClipboardFileText"></i>
+        <span class="item-name">Reports</span>
+        <i class="right-icon im im-icon-Arrow-Right"></i>
+    </a>
+    <ul class="sub-nav collapse {!! Request::is('reports*') ? 'show' : '' !!}" id="reports_menu" data-bs-parent="#sidebar-menu">
+        <li class="nav-item"><a class="nav-link {!! Request::is('reports') ? 'active' : '' !!}" href="{{ route('reports.index') }}"><i class="icon im im-icon-Book"></i><span class="item-name">All Reports</span></a></li>
+        <li class="nav-item"><a class="nav-link {!! Request::is('reports/district*') ? 'active' : '' !!}" href="{{ route('reports.district_wise') }}"><i class="icon im im-icon-Structure"></i><span class="item-name">District-wise</span></a></li>
+        <li class="nav-item"><a class="nav-link {!! Request::is('reports/upazila*') ? 'active' : '' !!}" href="{{ route('reports.upazila_wise') }}"><i class="icon im im-icon-Map2"></i><span class="item-name">Upazila-wise</span></a></li>
+        <li class="nav-item"><a class="nav-link {!! Request::is('reports/gender*') ? 'active' : '' !!}" href="{{ route('reports.gender_wise') }}"><i class="icon im im-icon-User"></i><span class="item-name">Gender-wise</span></a></li>
+        <li class="nav-item"><a class="nav-link {!! Request::is('reports/occupation*') ? 'active' : '' !!}" href="{{ route('reports.occupation_wise') }}"><i class="icon im im-icon-Diploma-2"></i><span class="item-name">Occupation-wise</span></a></li>
+        <li class="nav-item"><a class="nav-link {!! Request::is('reports/nyc*') ? 'active' : '' !!}" href="{{ route('reports.nyc_students') }}"><i class="icon im im-icon-Student-Hat"></i><span class="item-name">NYC / Failed</span></a></li>
+        <li class="nav-item"><a class="nav-link {!! Request::is('reports/certificate*') ? 'active' : '' !!}" href="{{ route('reports.certificate_distribution') }}"><i class="icon im im-icon-Diploma-1"></i><span class="item-name">Certificate Distribution</span></a></li>
+    </ul>
+</li>
+@endif
+
+{{-- Re-Assessment --}}
+@if(can('student') || can('chairman') || can('district_admin') || can('assessment_controller') || can('assessment_centers_controller'))
+<li class="nav-item">
+    <a class="nav-link {!! Request::is('reassessments*') ? 'active' : '' !!}" href="{{ route('reassessments.index') }}">
+        <i class="icon im im-icon-Student-Hat"></i>
+        <span class="item-name">Re-Assessment</span>
+    </a>
+</li>
+@endif
+
+{{-- Certificate Corrections --}}
+@if(can('student') || can('chairman') || can('district_admin') || can('assessment_controller'))
+<li class="nav-item">
+    <a class="nav-link {!! Request::is('certificate-corrections*') ? 'active' : '' !!}" href="{{ route('certificate_corrections.index') }}">
+        <i class="icon im im-icon-Diploma-1"></i>
+        <span class="item-name">Cert. Corrections</span>
+    </a>
+</li>
+@endif
+
+{{-- Audit Logs (admin only) --}}
+@if(can('settings'))
+<li class="nav-item">
+    <a class="nav-link {!! Request::is('audit-logs*') ? 'active' : '' !!}" href="{{ route('audit_logs.index') }}">
+        <i class="icon im im-icon-Security-Settings"></i>
+        <span class="item-name">Audit Logs</span>
+    </a>
+</li>
+@endif

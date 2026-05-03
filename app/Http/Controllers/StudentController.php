@@ -23,6 +23,7 @@ use DateTime;
 
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ExcelDataImport;
+use App\Models\AuditLog;
 
 
 
@@ -540,6 +541,7 @@ class StudentController extends AppBaseController
 
         $student->certificate_number = $request->certificate_number;
         $student->save();
+        AuditLog::log('certificate.number_assigned', Student::class, $student->id, [], ['certificate_number' => $request->certificate_number], 'Certificate number assigned to student: '.$student->candidate_name);
         return response()->json([
             'success' => true,
             'message' => "Result submitted successfully",

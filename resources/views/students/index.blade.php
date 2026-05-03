@@ -365,6 +365,17 @@
                                                     ${student.registration_number ? `
                                                         <a class="dropdown-item" target="_blank" href="/students/${student.id}/registration-card"><i class="im im-icon-ID-Card"></i> Registration Card</a>` : ''
                                                     }
+
+                                                    ${student.exam_status === 'Fail' ? `
+                                                        <div class="dropdown-divider"></div>
+                                                        <a class="dropdown-item text-warning" href="/reassessments?search=${student.registration_number}"><i class="im im-icon-Student-Hat"></i> Re-Assessment</a>` : ''
+                                                    }
+
+                                                    ${student.status === 'Chairman Approved' && student.certificate_number ? `
+                                                        <div class="dropdown-divider"></div>
+                                                        <a class="dropdown-item text-info" href="/certificate-corrections/create/${student.id}"><i class="im im-icon-Diploma-1"></i> Apply Cert. Correction</a>
+                                                        <a class="dropdown-item text-secondary" href="/certificate-corrections/versions/${student.id}"><i class="im im-icon-File"></i> Cert. History</a>` : ''
+                                                    }
                                                 </div>
                                             </div>
                                         </td>

@@ -880,15 +880,20 @@ class StudentController extends AppBaseController
     }
 
 
-    public function forwardToAssessmentController_modal()
+    public function forwardToAssessmentController_modal(Request $request)
     {
         $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
             ->join('districts', 'students.district_id', '=', 'districts.id')
             ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
-            ->orderBy('id', 'desc')
+            ->orderBy('students.id', 'desc')
             ->where('students.status', '=', 'Waiting for District Admin Approval')
-            ->where('students.district_id', '=', auth()->user()->district_id)
-            ->get();
+            ->where('students.district_id', '=', auth()->user()->district_id);
+
+        if ($request->has('filter_program') && $request->filter_program != null && $request->filter_program != '') {
+            $students = $students->where('students.program_id', $request->filter_program);
+        }
+
+        $students = $students->get();
         $html = '';
         $html .= '<table class="table table-bordered table-striped table-hover" id="example1">
             <thead>

@@ -557,9 +557,15 @@
         $('#forwardToAssessmentController_modal').modal('show');
         $('#forwardToAssessmentController_modal_button').prop('disabled', true);
         forwardToAssessmentController_modal_body_loader_on();
+        
+        var filter_program = $('#filter_program').val();
+
         $.ajax({
             url: '{{ route('forwardToAssessmentController_modal') }}',
             type: 'GET',
+            data: {
+                filter_program: filter_program
+            },
             success: function (data) {
                 $('#forwardToAssessmentController_modal_body').html(data);
             }

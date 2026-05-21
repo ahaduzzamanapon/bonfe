@@ -172,7 +172,7 @@ class ReportController extends Controller
     {
         AuditLog::log('report.exported', Student::class, null, [], ['type' => $request->type ?? 'excel'], 'Excel report exported');
         $filename = 'report_' . ($request->type ?? 'general') . '_' . now()->format('Ymd_His') . '.xlsx';
-        return Excel::download(new ReportExport($this->typedQuery($request)->get()), $filename);
+        return Excel::download(new ReportExport($this->typedQuery($request)->get(), $request->type ?? 'project_wise'), $filename);
     }
 
     public function exportPdf(Request $request)
@@ -180,7 +180,8 @@ class ReportController extends Controller
         AuditLog::log('report.exported', Student::class, null, [], ['type' => $request->type ?? 'pdf'], 'PDF report exported');
         $students = $this->typedQuery($request)->get();
         $title    = $request->input('title', 'Report');
-        $pdf      = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.pdf.report_pdf', compact('students', 'title'));
+        $type     = $request->input('type', 'project_wise');
+        $pdf      = \Barryvdh\DomPDF\Facade\Pdf::loadView('reports.pdf.report_pdf', compact('students', 'title', 'type'));
         $pdf->setPaper('A4', 'landscape');
         return $pdf->download('report_' . now()->format('Ymd_His') . '.pdf');
     }

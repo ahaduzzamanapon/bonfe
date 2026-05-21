@@ -323,15 +323,33 @@
 
 
 
-                                        <td><span class="badge badge-${student.exam_status === 'Fail' ? 'danger' : student.exam_status === 'Pending' ? 'warning' : 'success'}">${
-                                            programType === 'General'
-                                                ? student.exam_status === 'Fail' ? 'Optainane ' : student.exam_status === 'Pending' ? 'Pending' : 'Promising'
-                                                : student.exam_status === 'Fail' ? 'Not Competent yet ' : student.exam_status === 'Pending' ? 'Pending' : 'Competent'
-                                        }</span>
-                                        <br>
-                                        <br>
-                                        <a style="background: #ffc107;padding: 4px;color: black;border-radius: 4px;cursor: pointer;" onclick="viewResult(${student.id})">View result sheet</a>
-                                        </td>
+                                        <td>
+    <!-- Status Badge -->
+    <span class="badge badge-${
+        student.exam_status === 'Fail' ? 'danger' : 
+        (student.exam_status === 'Pending' || student.exam_status === 'Ready for Assessment') ? 'warning' : 
+        'success'
+    }">
+        ${
+            programType === 'General'
+                ? student.exam_status === 'Fail' ? 'Obtained' 
+                : student.exam_status === 'Ready for Assessment' ? 'Ready for Assessment'
+                : student.exam_status === 'Pending' ? 'Pending' : 'Promising'
+                
+                : student.exam_status === 'Fail' ? 'Not Competent yet' 
+                : student.exam_status === 'Ready for Assessment' ? 'Ready for Assessment'
+                : student.exam_status === 'Pending' ? 'Pending' : 'Competent'
+        }
+    </span>
+    
+    <br><br>
+    
+    <!-- Action Button -->
+    <a style="background: #ffc107; padding: 4px; color: black; border-radius: 4px; cursor: pointer;" 
+       onclick="viewResult(${student.id})">
+       View result sheet
+    </a>
+</td>
                                         <td><span class="badge badge-${student.districts_admin_status === 'Pending' ? 'warning' : 'success'}">${student.districts_admin_status}</span></td>
                                         <td><span class="badge badge-${student.chairmen_status === 'Pending' ? 'warning' : 'success'}">${student.chairmen_status}</span></td>
                                         <td>
@@ -344,7 +362,7 @@
                                                     ${student.status !== 'Chairman Approved' || student.program_id === 1 ? `
                                                         <a class="dropdown-item" href="/students/${student.id}/edit"><i class="im im-icon-Pen"></i> Edit</a>` : ''
                                                     }
-                                                    ${student.status === 'Waiting for the exam results from the Assessment Center' && can_give_exam_result ? `
+                                                    ${student.exam_status === 'Ready for Assessment' && can_give_exam_result ? `
                                                         <a class="dropdown-item" onclick="give_exam_result(${student.id})" href="javascript:void(0);"><i class="im im-icon-Pencil-Ruler"></i> Give Exam Result</a>` : ''
                                                     }
                                                    

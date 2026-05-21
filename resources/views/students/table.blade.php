@@ -43,7 +43,7 @@
                 <td>
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-primary btn-xs dropdown-toggle"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            data-toggle="dropdown" data-boundary="viewport" aria-haspopup="true" aria-expanded="false">
                             <i class="im im-icon-List2" data-placement="top" title="Actions">Action</i>
                         </button>
                         <div class="dropdown-menu">

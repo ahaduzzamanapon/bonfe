@@ -887,6 +887,7 @@ class StudentController extends AppBaseController
             ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
             ->orderBy('id', 'desc')
             ->where('students.status', '=', 'Waiting for District Admin Approval')
+            ->where('students.district_id', '=', auth()->user()->district_id)
             ->get();
         $html = '';
         $html .= '<table class="table table-bordered table-striped table-hover" id="example1">

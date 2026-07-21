@@ -146,6 +146,7 @@
                         $programs = \App\Models\Program::where('program_type', 'Technical')->latest()->get();
                     }
                     $occupations = \App\Models\Occupation::latest()->get();
+                    $insatitutes = \App\Models\Insatitute::where('district', auth()->user()->district_id)->orderBy('insatitute_name')->get();
                     @endphp
                     <div class="col-sm-12 col-md-12">
                         <div class="row">
@@ -168,6 +169,17 @@
                                         <option value="">All</option>
                                         @foreach ($occupations as $occupation)
                                             <option value="{{ $occupation->id }}">{{ $occupation->title }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="filter_institution">Institution:</label>
+                                    <select id="filter_institution" class="form-control">
+                                        <option value="">All</option>
+                                        @foreach ($insatitutes as $inst)
+                                            <option value="{{ $inst->id }}">{{ $inst->insatitute_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -269,6 +281,7 @@
                         const district_id = $('#district_id').val();
                         const upajila_id = $('#upajila_id').val();
                         const search_term = $('#search_term').val();
+                        const institution_id = $('#filter_institution').val();
                         const programType = '{{ Request::is('general_students') ? "General" : "Technical" }}';
                         console.log('loadStudents');
 
@@ -284,7 +297,8 @@
                                 program_type: programType,
                                 district_id: district_id,
                                 upajila_id: upajila_id,
-                                search_term: search_term
+                                search_term: search_term,
+                                institution_id: institution_id
 
                             },
                             success: function(data) {
@@ -305,6 +319,7 @@
                                                 <p style="font-weight: bold;color: #000">${student.candidate_name_bn}</p>
                                                 <div style="line-height: 2px;">
                                                     <p style="font-size: 10px;"><strong>Trade(Course):</strong> ${student.occupation}</p>
+                                                    <p style="font-size: 10px;"><strong>Institution:</strong> ${student.insatitute_name ?? ''}</p>
                                                     <p style="font-size: 10px;"><strong>Regis. No:</strong> ${student.registration_number}</p>
                                                     <p style="font-size: 10px;"><strong>Candidate. No:</strong> ${student.candidate_id}</p>
                                                     <p style="font-size: 10px;"><strong>District:</strong> ${student.district}</p>
@@ -327,10 +342,12 @@
     <!-- Status Badge -->
     <span class="badge badge-${
         student.exam_status === 'Fail' ? 'danger' : 
+        student.exam_status === 'Absent' ? 'secondary' :
         (student.exam_status === 'Pending' || student.exam_status === 'Ready for Assessment') ? 'warning' : 
         'success'
     }">
         ${
+            student.exam_status === 'Absent' ? 'Absent' :
             programType === 'General'
                 ? student.exam_status === 'Fail' ? 'Obtained' 
                 : student.exam_status === 'Ready for Assessment' ? 'Ready for Assessment'
@@ -466,7 +483,7 @@
                     }
 
                     $(document).ready(function() {
-                        $('#filter_program, #filter_occupation, #district_id, #upajila_id, #search_term').change(function() {
+                        $('#filter_program, #filter_occupation, #district_id, #upajila_id, #search_term, #filter_institution').change(function() {
                             createTable();
                         });
                         createTable();

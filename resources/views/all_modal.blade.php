@@ -22,6 +22,7 @@
                             @else
                                 <option value="Passed"> Competent </option>
                                 <option value="Fail"> Not Yet Competent </option>
+                                <option value="Absent"> Absent </option>
                             @endif
                         </select>
                     </div>
@@ -33,14 +34,23 @@
                     </div>
                     <script>
                         document.getElementById('ExamResult_field').addEventListener('change', function () {
-                            if (this.value === 'Passed') {
-                                document.getElementsByName('competence_ids[]').forEach(input => {
-                                    input.checked = true;
-                                })
-                            } else {
+                            var competenceDiv = document.getElementById('competence_pass_div').parentElement;
+                            if (this.value === 'Absent') {
+                                competenceDiv.style.display = 'none';
                                 document.getElementsByName('competence_ids[]').forEach(input => {
                                     input.checked = false;
-                                })
+                                });
+                            } else {
+                                competenceDiv.style.display = '';
+                                if (this.value === 'Passed') {
+                                    document.getElementsByName('competence_ids[]').forEach(input => {
+                                        input.checked = true;
+                                    });
+                                } else {
+                                    document.getElementsByName('competence_ids[]').forEach(input => {
+                                        input.checked = false;
+                                    });
+                                }
                             }
                         });
                     </script>
@@ -66,12 +76,13 @@
         const examResult = $('#ExamResult_field').val();
         const examResultSheet = $('#ExamResultSheet_field')[0].files[0];
         const allowedExtensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'];
-        const fileExtension = examResultSheet.name.split('.').pop().toLowerCase();
 
-        if (!allowedExtensions.includes(fileExtension)) {
-            alert('Invalid file type. Please upload a file with one of the following extensions: ' + allowedExtensions
-                .join(', '));
-            return false;
+        if (examResultSheet) {
+            const fileExtension = examResultSheet.name.split('.').pop().toLowerCase();
+            if (!allowedExtensions.includes(fileExtension)) {
+                alert('Invalid file type. Please upload a file with one of the following extensions: ' + allowedExtensions.join(', '));
+                return false;
+            }
         }
 
         const studentId = localStorage.getItem('student_id_for_exam_result');
@@ -90,7 +101,9 @@
         formData.append('_token', '{{ csrf_token() }}');
         formData.append('examResult', examResult);
         formData.append('studentId', studentId);
-        formData.append('examResultSheet', examResultSheet);
+        if (examResultSheet) {
+            formData.append('examResultSheet', examResultSheet);
+        }
         formData.append('checkedCompetences', checkedCompetences);
 
         $.ajax({
@@ -516,7 +529,7 @@
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Forward to Assessment Center</h5>
+                <h5 class="modal-title">Forward to Assessment Controller</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"
                     onclick="$('#forwardToAssessmentController_modal').modal('hide')">
                     <span aria-hidden="true">&times;</span>
@@ -538,7 +551,7 @@
                     onclick="$('#forwardToAssessmentController_modal').modal('hide')">Close</button>
                 <button type="button" class="btn btn-primary" id="forwardToAssessmentController_modal_button"
                     onclick="forwardToAssessmentController_submit()">Forward
-                    to Assessment Center</button>
+                    to Assessment Controller</button>
             </div>
         </div>
     </div>

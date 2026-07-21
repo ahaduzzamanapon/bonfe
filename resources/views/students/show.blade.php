@@ -79,7 +79,7 @@
                 {{-- Assessment Tab --}}
                 <div class="tab-pane fade" id="tab-assessment">
                     <table class="table table-sm info-table">
-                        <tr><td>Assessment Center</td><td>{{ $student->assessment_center ?? '—' }}</td></tr>
+                        <tr><td>Assessment Center</td><td>{{ $student->assessment_center_name ?? $student->assessment_center ?? '—' }}</td></tr>
                         <tr><td>Center Reg. No</td><td>{{ $student->assessment_center_registration_number ?: '—' }}</td></tr>
                         <tr><td>Assessment Date</td><td>{{ $student->assessment_date ? \Carbon\Carbon::parse($student->assessment_date)->format('d M Y') : '—' }}</td></tr>
                         <tr><td>Exam Status</td><td>{{ $student->exam_status ?: '—' }}</td></tr>

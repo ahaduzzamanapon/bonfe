@@ -102,11 +102,12 @@ class StudentController extends AppBaseController
     {
         $limit = $request->input('limit', 50); // default 50
         $offset = $request->input('offset', 0);
-        $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
+        $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation', 'insatitutes.insatitute_name')
             ->join('districts', 'students.district_id', '=', 'districts.id')
             ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
             ->join('programs', 'students.program_id', '=', 'programs.id')
-            ->orderBy('id', 'desc');
+            ->leftJoin('insatitutes', 'students.institutionName', '=', 'insatitutes.id')
+            ->orderBy('students.id', 'desc');
         if (!can('chairman') && can('district_admin')) {
             $students = $students->where('students.district_id', auth()->user()->district_id);
         }
@@ -158,6 +159,10 @@ class StudentController extends AppBaseController
             $students = $students->where('programs.program_type', 'General');
         } else {
             $students = $students->where('programs.program_type', 'Technical');
+        }
+
+        if ($request->has('institution_id') && $request->institution_id != null && $request->institution_id != '') {
+            $students = $students->where('students.institutionName', $request->institution_id);
         }
 
 
@@ -344,9 +349,17 @@ class StudentController extends AppBaseController
     public function show($id)
     {
         /** @var Student $student */
-        $student = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
-            ->join('districts', 'students.district_id', '=', 'districts.id')
-            ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
+        $student = Student::select(
+            'students.*',
+            'districts.name_en as district',
+            'occupations.title as occupation',
+            'programs.program_title',
+            'assessment_centers.center_name as assessment_center_name'
+        )
+            ->leftJoin('districts', 'students.district_id', '=', 'districts.id')
+            ->leftJoin('occupations', 'students.occupation_id', '=', 'occupations.id')
+            ->leftJoin('programs', 'students.program_id', '=', 'programs.id')
+            ->leftJoin('assessment_centers', 'students.assessment_center', '=', 'assessment_centers.id')
             ->where('students.id', $id)
             ->first();
 
@@ -469,22 +482,22 @@ class StudentController extends AppBaseController
 
     public function submit_exam_result(Request $request)
     {
-
+        $input = [];
 
         if ($request->hasFile('examResultSheet')) {
             $file = $request->file('examResultSheet');
             $folder = 'results/examResultSheet';
             $customName = 'examResultSheet-' . time();
             $input['examResultSheet'] = uploadFile($file, $folder, $customName);
-        } else {
-            unset($input['examResultSheet']);
         }
 
         $student = Student::find($request->studentId);
         $student->exam_status = $request->examResult;
-        $student->exam_result_sheet = $input['examResultSheet'];
+        if (isset($input['examResultSheet'])) {
+            $student->exam_result_sheet = $input['examResultSheet'];
+        }
         $student->save();
-        $checkedCompetences = explode(',', $request->checkedCompetences);
+        $checkedCompetences = array_filter(explode(',', $request->checkedCompetences), fn($v) => $v !== '');
 
         StudentCompetenceModel::where('student_id', $request->studentId)->delete();
 
@@ -1777,6 +1790,9 @@ class StudentController extends AppBaseController
         $student_id = $request->student_id;
         $student = Student::find($student_id);
         $exam_result_sheet = $student->exam_result_sheet;
+        if (empty($exam_result_sheet)) {
+            return response()->json(['html' => 'No File Found']);
+        }
         $html = asset($exam_result_sheet);
         return response()->json(['html' => $html]);
     }

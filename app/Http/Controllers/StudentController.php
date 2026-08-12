@@ -123,6 +123,8 @@ class StudentController extends AppBaseController
                 $students = $students->where('students.status', 'Waiting for Chairman Approval');
             } elseif ($request->status_filter == 'waiting_for_assessment_center_approval') {
                 $students = $students->where('students.status', 'Waiting for the exam results from the Assessment Center');
+            } elseif ($request->status_filter == 'waiting_for_assessment_controller_approval') {
+                $students = $students->where('students.status', 'Waiting for Assessment Controller Approval');
             } elseif ($request->status_filter == 'back_to_district_approval') {
                 $students = $students->where('students.status', 'Waiting for District Admin Approval');
                 $students = $students->whereNotNull('students.controller_back_comments');
@@ -829,13 +831,16 @@ class StudentController extends AppBaseController
     }
 
 
-    public function forwardToChairman_modal()
+    public function forwardToChairman_modal(Request $request)
     {
         $students = Student::select('students.*', 'districts.name_en as district', 'occupations.title as occupation')
             ->join('districts', 'students.district_id', '=', 'districts.id')
             ->join('occupations', 'students.occupation_id', '=', 'occupations.id')
-            ->orderBy('id', 'desc')
-            ->where('students.status', '=', 'Waiting for Assessment Controller Approval')
+            ->orderBy('id', 'desc');
+            if ($request->has('filter_program') && $request->filter_program != null && $request->filter_program != '') {
+            $students = $students->where('students.program_id', $request->filter_program);
+        };
+            $students = $students->where('students.status', '=', 'Waiting for Assessment Controller Approval')
             ->get();
         $html = '';
         $html .= '<table class="table table-bordered table-striped table-hover" id="example1">

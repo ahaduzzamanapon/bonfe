@@ -12,6 +12,19 @@
     color: #212529!important;
     background-color: #ffc107;
 }
+.btn:focus-visible {
+    color: #74b331;
+    background-color: var(--bs-btn-hover-bg);
+    border-color: var(--bs-btn-hover-border-color);
+    outline: 0;
+    -webkit-box-shadow: var(--bs-btn-focus-box-shadow);
+    box-shadow: var(--bs-btn-focus-box-shadow);
+}
+.btn:hover {
+    color: #74b331;
+    background-color: var(--bs-btn-hover-bg);
+    border-color: var(--bs-btn-hover-border-color);
+}
 </style>
     <!-- Content Header (Page header) -->
     {{-- <section class="content-header">
@@ -37,7 +50,7 @@
 
                         @if (can('district_admin') || can('chairman'))
                             <a class="btn btn-warning btn-sm" onclick="setAssessmentStatus_modal()" title="Set Ready/Dropout/Absent">Set Status</a>
-                            <a class="btn btn-info btn-sm" onclick="forwardToAssistantRegistrar_modal()" title="Forward Ready students to Registrar">→ Registrar</a>
+                            <a class="btn btn-primary btn-sm" onclick="forwardToAssistantRegistrar_modal()" title="Forward Ready students to Registrar">→ Registrar</a>
                         @endif
                         @if (can('assistant_registrar'))
                         <a class="btn btn-success btn-sm" onclick="giveRegistrationNumber_modal()">Give Reg. No.</a>
@@ -98,6 +111,17 @@
                                     </label>
                                 @endif
 
+                                @if (can('assessment_controller'))
+                                    <label
+                                        class="btn btn-outline-primary {{ Request::is('students_waiting_for_assessment_controller_approval') ? 'active' : '' }}">
+                                        <input onchange="createTable()" class="form-check-input" type="radio"
+                                            name="status_filter" id="waiting_for_assessment_controller_approval"
+                                            value="waiting_for_assessment_controller_approval" autocomplete="off"
+                                            {{ Request::is('students_waiting_for_assessment_controller_approval') ? 'checked' : '' }}>
+                                        Waiting for Assessment Controller Approval
+                                    </label>
+                                @endif
+
                                 @if (can('district_admin'))
                                     <label
                                         class="btn btn-outline-primary {{ Request::is('students_waiting_for_district_approval') ? 'active' : '' }}">
@@ -117,6 +141,16 @@
                                     </label>
                                 @endif
 
+                                @if (can('chairman'))
+                                    <label
+                                        class="btn btn-outline-primary {{ Request::is('students_waiting_for_chairman_approval') ? 'active' : '' }}">
+                                        <input onchange="createTable()" class="form-check-input" type="radio"
+                                            name="status_filter" id="waiting_for_chairman_approval"
+                                            value="waiting_for_chairman_approval" autocomplete="off"
+                                            {{ Request::is('students_waiting_for_chairman_approval') ? 'checked' : '' }}>
+                                        Waiting for Chairman Approval
+                                    </label>
+                                @endif
                                 @if (can('chairman'))
                                     <label
                                         class="btn btn-outline-primary {{ Request::is('students_waiting_for_chairman_approval') ? 'active' : '' }}">
@@ -342,12 +376,13 @@
     <!-- Status Badge -->
     <span class="badge badge-${
         student.exam_status === 'Fail' ? 'danger' : 
-        student.exam_status === 'Absent' ? 'secondary' :
+        (student.exam_status === 'Absent' || student.exam_status === 'Dropout') ? 'secondary' :
         (student.exam_status === 'Pending' || student.exam_status === 'Ready for Assessment') ? 'warning' : 
         'success'
     }">
         ${
             student.exam_status === 'Absent' ? 'Absent' :
+            student.exam_status === 'Dropout' ? 'Dropout' :
             programType === 'General'
                 ? student.exam_status === 'Fail' ? 'Obtained' 
                 : student.exam_status === 'Ready for Assessment' ? 'Ready for Assessment'

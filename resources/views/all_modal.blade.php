@@ -686,6 +686,9 @@
         $.ajax({
             url: '{{ route('forwardToChairman_modal') }}',
             type: 'GET',
+             data: {
+                filter_program: filter_program
+            },
             success: function (data) {
                 $('#forwardToChairman_modal_body').html(data);
             }

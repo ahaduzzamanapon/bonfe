@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -45,6 +46,14 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+
+        $this->renderable(function (DecryptException $e, $request) {
+            $cookieName = config('session.cookie');
+            if ($cookieName) {
+                return redirect()->route('login')->withCookie(cookie()->forget($cookieName));
+            }
+            return redirect()->route('login');
         });
     }
 }

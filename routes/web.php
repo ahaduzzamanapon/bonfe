@@ -20,34 +20,27 @@ include 'demo.php';
 
 Auth::routes();
 
-// login2, register2 pages
+// Public login/register style preview routes & public QR details
 Route::view('login2', 'auth.login2');
 Route::view('login3', 'auth.login3');
 Route::view('register2', 'auth.register2');
 Route::view('register3', 'auth.register3');
+Route::get('qr_details/{id}', 'StudentController@qr_details')->name('students.qr_details');
 
-Route::get('/', function () {
-    return view('index');
-})->middleware('auth');
-
-
-
-Route::get('/getStudentsjson', [StudentController::class, 'getStudentsjson']);
-
-
-
-// GUI crud builder routes
+// Authenticated Routes
 Route::group(['middleware' => 'auth'], function () {
+    Route::get('/', function () {
+        return view('index');
+    });
+    Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/getStudentsjson', [StudentController::class, 'getStudentsjson']);
+
+    // GUI crud builder routes
     Route::get('builder', '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@builder')->name('io_generator_builder');
-
     Route::get('field_template', '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@fieldTemplate')->name('io_field_template');
-
     Route::get('relation_field_template', '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@relationFieldTemplate')->name('io_relation_field_template');
-
     Route::post('generator_builder/generate', '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@generate')->name('io_generator_builder_generate');
-
     Route::post('generator_builder/rollback', '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@rollback')->name('io_generator_builder_rollback');
-
     Route::post(
         'generator_builder/generate-from-file',
         '\InfyOm\GeneratorBuilder\Controllers\GeneratorBuilderController@generateFromFile'
@@ -65,15 +58,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('chairman_approve/{id}', 'StudentController@chairman_approve')->name('students.chairman_approve');
     Route::get('/students/{id}/generate-certificate', 'StudentController@generate_certificate')->name('students.generate_certificate');
 
-
-
     Route::get('students_waiting_for_district_approval', 'StudentController@students_waiting_for_district_approval')->name('students.students_waiting_for_district_approval');
     Route::get('students_back_to_district_approval', 'StudentController@students_back_to_district_approval')->name('students.students_back_to_district_approval');
     Route::get('students_waiting_for_chairman_approval', 'StudentController@students_waiting_for_chairman_approval')->name('students.students_waiting_for_chairman_approval');
     
     Route::get('general_students_waiting_for_district_approval', 'StudentController@students_waiting_for_district_approval')->name('general_students.students_waiting_for_district_approval');
     Route::get('general_students_waiting_for_chairman_approval', 'StudentController@students_waiting_for_chairman_approval')->name('general_students.students_waiting_for_chairman_approval');
-
 
     Route::get('get_upazilas', 'HomeController@get_upazilas')->name('get_upazilas');
     Route::get('get_table', 'StudentController@get_table')->name('students.get_table');
@@ -167,23 +157,20 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/{id}', 'AuditLogController@show')->name('show');
     });
 
+    // Excel & User Import Routes
+    Route::get('/upload_exell', function () {
+        return view('upload_exell');
+    });
+    Route::post('/import-users', [StudentController::class, 'import'])->name('import.users');
+    Route::get('/upload_users', [UserController::class, 'upload_users_page'])->name('users.upload_page');
+    Route::post('/users/import', [UserController::class, 'import_users'])->name('users.import');
+
+    // Utility & Fallback Routes
+    Route::get('empty_table', 'JoshController@emptyTable');
+    Route::get('remove_all_files', 'JoshController@remove_all_files');
+    Route::get('{name?}', 'JoshController@showView');
 });
-Route::get('empty_table', 'JoshController@emptyTable');
-Route::get('remove_all_files', 'JoshController@remove_all_files');
-Route::get('/home', 'HomeController@index')->name('home');
-Route::get('{name?}', 'JoshController@showView');
 
-Route::get('qr_details/{id}', 'StudentController@qr_details')->name('students.qr_details');
-
-
-Route::get('/upload_exell', function () {
-    return view('upload_exell');
-});
-
-Route::post('/import-users', [StudentController::class, 'import'])->name('import.users');
-
-Route::get('/upload_users', [UserController::class, 'upload_users_page'])->name('users.upload_page');
-Route::post('/users/import', [UserController::class, 'import_users'])->name('users.import');
 
 
 

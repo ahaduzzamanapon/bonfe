@@ -104,9 +104,10 @@ if ($occupation_id == null) {
     $occupation_id = 1;
 }
 $occupation = \App\Models\Occupation::find($occupation_id);
+$occupationTitle = $occupation->title ?? '';
 @endphp
 
- @if (can('student') && $occupation->title != 'General')
+ @if (can('student') && $occupationTitle != 'General')
         <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#student_menu" role="button" aria-expanded="false"
                 aria-controls="student_menu">
@@ -146,7 +147,7 @@ $occupation = \App\Models\Occupation::find($occupation_id);
 
 
     @endif
-    @if (can('student') && $occupation->title == 'General')
+    @if (can('student') && $occupationTitle == 'General')
         <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#general_student_menu" role="button" aria-expanded="false"
                 aria-controls="student_menu">

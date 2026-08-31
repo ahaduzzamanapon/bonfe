@@ -175,15 +175,16 @@ class Student extends Model
 
     private function isDateColumn($key)
     {
-        static $dateColumns;
+        static $dateColumns = [
+            'date_of_birth',
+            'assessment_date',
+            'training_start_date',
+            'training_end_date',
+            'created_at',
+            'updated_at'
+        ];
 
-        if (!$dateColumns) {
-            $dateColumns = array_filter(Schema::getColumnListing($this->getTable()), function ($column) {
-                return in_array(Schema::getColumnType($this->getTable(), $column), ['date', 'datetime', 'timestamp']);
-            });
-        }
-
-        return in_array($key, $dateColumns);
+        return in_array($key, $dateColumns, true);
     }
 
     // ── Relationships ─────────────────────────────────────────────────────────

@@ -158,12 +158,12 @@
                             $assessment_centers = DB::table('assessment_centers')
                                 ->where('id', $student->assessment_center)
                                 ->first();
-                                $nameass= $assessment_centers->center_name;
+                                $nameass= $assessment_centers ? $assessment_centers->center_name : "....................";
                         }elseif(!empty($student->institutionName)){
                              $assessment_centers = DB::table('insatitutes')
                                 ->where('id', $student->institutionName)
                                 ->first();
-                                $nameass= $assessment_centers->insatitute_name;
+                                $nameass= $assessment_centers ? $assessment_centers->insatitute_name : "....................";
                         }else{
                                 $nameass= "....................";
                         }

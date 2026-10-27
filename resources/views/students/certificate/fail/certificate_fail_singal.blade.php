@@ -152,14 +152,28 @@
                 Birth:
                 {{ \Carbon\Carbon::parse($student->date_of_birth)->format('d M Y') }}, has <strong>partially completed 460 hours’</strong>
                 Prevocational Level course in <strong>{{$student->occupation}}  </strong>
-                under the Bangladesh National Qualification Framework (BNQF)
-                assessed by
-                <b>
-                    @php
+                under the Bangladesh National Qualification Framework (BNQF),
+                @php
+                    if(!empty($student->assessment_center)){
                         $assessment_centers = DB::table('assessment_centers')
                             ->where('id', $student->assessment_center)
                             ->first();
-                    
+                        $nameass= $assessment_centers ? $assessment_centers->center_name : "....................";
+                    }elseif(!empty($student->institutionName)){
+                         $assessment_centers = DB::table('insatitutes')
+                            ->where('id', $student->institutionName)
+                            ->first();
+                        $nameass= $assessment_centers ? $assessment_centers->insatitute_name : "....................";
+                    }else{
+                        $nameass= "....................";
+                    }
+
+                    if(empty($student->assessment_date)){
+                        $assessment_date= "....................";
+                    }else{
+                        $assessment_date= date('d M Y', strtotime($student->assessment_date));
+                    }
+
                     $student_competence_models = DB::table('student_competence_models')
                         ->selectRaw('MIN(student_competence_models.id) as id, student_competence_models.competence_id, competences.title')
                         ->join('competences', 'student_competence_models.competence_id', '=', 'competences.id')
@@ -180,12 +194,8 @@
 
 
                     $total = count($notYetCompetentCompetences);
-                   
-
-
-                    @endphp
-                    {{ $assessment_centers->center_name ? $assessment_centers->center_name : '.....................' }}
-                </b> on  {{ date('d M Y', strtotime($student->assessment_date)) }}. The learner was assessed in a total of {{  $total + count($student_competence_models) }} units of competency
+                @endphp
+                assessed by <b>{{ $nameass }}</b> on {{ $assessment_date }}. The learner was assessed in a total of {{  $total + count($student_competence_models) }} units of competency
                 and
                 has been found Competent/ Not Yet Competent in the following unit(s):
             </div>

@@ -75,6 +75,7 @@
                         @endif
 
                         <a class="btn btn-secondary btn-sm" onclick="generateCertificate_modal()">Certificate</a>
+                        <a class="btn btn-info btn-sm text-white" href="{{ route('students.update_assessment_date_page') }}" title="Update Assessment Date from Excel"><i class="fa fa-calendar"></i> Update Assessment Date</a>
                     </span>
 
                     @if (can('student_add'))
@@ -141,16 +142,6 @@
                                     </label>
                                 @endif
 
-                                @if (can('chairman'))
-                                    <label
-                                        class="btn btn-outline-primary {{ Request::is('students_waiting_for_chairman_approval') ? 'active' : '' }}">
-                                        <input onchange="createTable()" class="form-check-input" type="radio"
-                                            name="status_filter" id="waiting_for_chairman_approval"
-                                            value="waiting_for_chairman_approval" autocomplete="off"
-                                            {{ Request::is('students_waiting_for_chairman_approval') ? 'checked' : '' }}>
-                                        Waiting for Chairman Approval
-                                    </label>
-                                @endif
                                 @if (can('chairman'))
                                     <label
                                         class="btn btn-outline-primary {{ Request::is('students_waiting_for_chairman_approval') ? 'active' : '' }}">

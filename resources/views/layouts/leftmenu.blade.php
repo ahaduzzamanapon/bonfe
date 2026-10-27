@@ -16,13 +16,14 @@
                 <span class="item-name">Pre vocational</span>
                 <i class="right-icon im im-icon-Arrow-Right"></i>
             </a>
-            <ul class="sub-nav collapse {!! Request::is('students*') || Request::is('roleAndPermissions*') ? 'show' : '' !!}" id="student_menu" data-bs-parent="#sidebar-menu">
+            <ul class="sub-nav collapse {!! Request::is('students*') || Request::is('roleAndPermissions*') || Request::is('update_assessment_date*') || Request::is('update-assessment-date*') ? 'show' : '' !!}" id="student_menu" data-bs-parent="#sidebar-menu">
                 <li class="nav-item">
                     <a class="nav-link {!! Request::is('students') ? 'active' : '' !!}" aria-current="page" href="{{ route('students.index') }}">
                         <i class="icon im im-icon-Student-Hat"></i>
                         <span class="item-name">Learner</span>
                     </a>
                 </li>
+              
                 @if (can('district_admin'))
                     <li class="nav-item">
                         <a class="nav-link {!! Request::is('students_waiting_for_district_approval') ? 'active' : '' !!}" aria-current="page"

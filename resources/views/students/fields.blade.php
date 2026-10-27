@@ -48,6 +48,12 @@
             }
         }
     }
+
+    $hasIncompleteCandidateId = !isset($student)
+        || empty($student->candidate_id)
+        || str_contains((string)$student->candidate_id, 'XXXX')
+        || str_contains((string)$student->candidate_id, 'XXX')
+        || str_contains((string)$student->candidate_id, 'empty');
 @endphp
 
 <script>
@@ -71,11 +77,28 @@
 </script>
 
 
-<!-- Candidate ID Preview: only show on create, not edit -->
-@if(!isset($student) || !$student->exists)
+<!-- Candidate ID Section -->
+@if($hasIncompleteCandidateId)
     <div class="col-md-12">
         <div class="alert alert-info" style="text-align: center;">
-            <h3>Candidate ID Preview: <span id="candidate_number_preview" style="font-weight: bold; color: #000;">--</span></h3>
+            <h3 class="mb-1">Candidate ID Preview: <span id="candidate_number_preview" style="font-weight: bold; color: #000;">{{ isset($student) && $student->candidate_id ? $student->candidate_id : '--' }}</span></h3>
+            @if(isset($student) && $student->exists)
+                <small class="text-danger font-weight-bold"><i class="fa fa-info-circle"></i> Candidate ID contains incomplete info (XXXX) — it will update automatically when you change Institute / Trade / District.</small>
+            @endif
+        </div>
+    </div>
+@else
+    <div class="col-md-12">
+        <div class="alert alert-light border d-flex justify-content-between align-items-center mb-3" style="background:#f8f9fa;">
+            <div>
+                <strong>Candidate ID:</strong> 
+                <span class="badge badge-success px-2 py-1" style="font-size: 1rem;">{{ $student->candidate_id }}</span>
+                @if(!empty($student->registration_number))
+                    &nbsp;&nbsp;<strong>Registration No:</strong> 
+                    <span class="badge badge-info px-2 py-1" style="font-size: 1rem;">{{ $student->registration_number }}</span>
+                @endif
+            </div>
+            <small class="text-muted"><i class="fa fa-lock text-success mr-1"></i> Candidate ID & Registration No are fixed and will not change.</small>
         </div>
     </div>
 @endif
@@ -116,12 +139,12 @@
 </div>
 
 
-<!-- Registration Number Field -->
+<!-- Candidate Id Field -->
 <div class="col-md-3 d-none">
     <div class="form-group">
         {!! Form::label('candidate_id', 'Candidate Id', ['class' => 'control-label']) !!}
         <span style="color: red">*</span>
-        {!! Form::text('candidate_id', null, ['class' => 'form-control']) !!}
+        {!! Form::text('candidate_id', null, ['class' => 'form-control', 'id' => 'candidate_id_input']) !!}
     </div>
 </div>
 
@@ -240,7 +263,14 @@
             ->toArray();
     } else {
         $districts = \App\Models\District::all()->pluck('name_en', 'id')->prepend('Select District', '')->toArray();
-        $upazilas = \App\Models\Upazila::all()->pluck('name_en', 'id')->prepend('Select Upazila', '')->toArray();
+        if (isset($student) && $student->district_id) {
+            $upazilas = \App\Models\Upazila::where('dis_id', $student->district_id)
+                ->pluck('name_en', 'id')
+                ->prepend('Select Upazila', '')
+                ->toArray();
+        } else {
+            $upazilas = \App\Models\Upazila::all()->pluck('name_en', 'id')->prepend('Select Upazila', '')->toArray();
+        }
     }
 @endphp
 <!-- district_id Field -->
@@ -553,8 +583,15 @@ training_end_date
 
         
 
+        var canUpdateCandidateId = {{ $hasIncompleteCandidateId ? 'true' : 'false' }};
+        var currentStudentId = {{ isset($student) ? $student->id : 'null' }};
+
         // Candidate ID Preview Script
         function updateCandidateIdPreview() {
+            if (!canUpdateCandidateId) {
+                return;
+            }
+
             var instituteId = $('select[name="institutionName"]').val();
             var occupationId = $('#occupation_id').val();
             var districtId = $('#district_id').val();
@@ -569,23 +606,47 @@ training_end_date
                     institutionName: instituteId,
                     occupation_id: occupationId,
                     district_id: districtId,
-                    program_id: programId
+                    program_id: programId,
+                    student_id: currentStudentId
                 },
                 success: function (data) {
                     $('#candidate_number_preview').text(data.candidate_id);
+                    $('#candidate_id_input').val(data.candidate_id);
                 },
                 error: function() {
-                        $('#candidate_number_preview').text('Error fetching ID');
+                    $('#candidate_number_preview').text('Error fetching ID');
                 }
             });
         }
 
         $(document).ready(function () {
-             $('#institutionName, #occupation_id, #district_id, #program_id').change(function () {
-                 updateCandidateIdPreview();
-             });
-             // Trigger once on load in case of edit or default values
-             // updateCandidateIdPreview(); 
+            // When dropdowns change, update Candidate ID Preview (if allowed)
+            $('select[name="institutionName"], #occupation_id, #district_id, #program_id').change(function () {
+                if (canUpdateCandidateId) {
+                    updateCandidateIdPreview();
+                }
+            });
+
+            $('#district_id').change(function () {
+                var districtId = $(this).val();
+                if (districtId) {
+                    $.ajax({
+                        url: "{{ route('get_upazilas') }}",
+                        type: "GET",
+                        data: {
+                            district_id: districtId
+                        },
+                        success: function (data) {
+                            $('#upajila_id').empty();
+                            $('#upajila_id').append('<option value="">Select Upazila</option>');
+                            $.each(data, function (index, upajila) {
+                                $('#upajila_id').append('<option value="' + upajila.id + '">' + upajila.name + '</option>');
+                            });
+                        }
+                    });
+                }
+            });
+
             $('#filter_institute_type').change(function() {
                 var type = $(this).val();
                 var district_id = $('#district_id').val();
@@ -602,8 +663,8 @@ training_end_date
                         $.each(data, function(index, item) {
                             $instSelect.append('<option value="' + item.id + '">' + item.text + '</option>');
                         });
-                        // Trigger change to update Select2 if used, or candidate preview
-                        $instSelect.change();
+                        // Trigger change to update candidate preview
+                        $instSelect.trigger('change');
                     }
                 });
             });
@@ -624,8 +685,8 @@ training_end_date
                         $.each(data, function(index, item) {
                             $instSelect.append('<option value="' + item.id + '">' + item.text + '</option>');
                         });
-                        // Trigger change to update Select2 if used, or candidate preview
-                        $instSelect.change();
+                        // Trigger change to update candidate preview
+                        $instSelect.trigger('change');
                     }
                 });
             });

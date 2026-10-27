@@ -206,6 +206,8 @@ class StudentController extends AppBaseController
         $instituteId = $request->institutionName;
         $occupationId = $request->occupation_id;
         $districtId = $request->district_id;
+        $programId = $request->program_id;
+        $studentId = $request->student_id;
 
         $type = 'empty';
         $tradeCode = 'empty';
@@ -217,7 +219,11 @@ class StudentController extends AppBaseController
             $institute = Insatitute::find($instituteId);
             if ($institute) {
                 $type = $institute->type ?? 'empty';
-                $instCode = $institute->code ?? 'empty';
+                $code = $institute->code ?? 'empty';
+                if ($code !== 'empty' && is_numeric($code) && strlen((string)$code) < 4) {
+                    $code = str_pad($code, 4, '0', STR_PAD_LEFT);
+                }
+                $instCode = $code;
             }
         }
 
@@ -241,8 +247,12 @@ class StudentController extends AppBaseController
                 ->where('occupation_id', $occupationId)
                 ->where('institutionName', $instituteId);
 
-            if ($request->has('program_id')) {
-                $query->where('program_id', $request->program_id);
+            if ($programId) {
+                $query->where('program_id', $programId);
+            }
+
+            if ($studentId) {
+                $query->where('id', '!=', $studentId);
             }
 
             $count = $query->count();
@@ -411,13 +421,18 @@ class StudentController extends AppBaseController
      */
     public function update($id, UpdateStudentRequest $request)
     {
-
-
         /** @var Student $student */
         $student = Student::find($id);
 
-        $input = $request->all();
+        if (empty($student)) {
+            Flash::error('Student not found');
+            if (request()->is('general_students*')) {
+                return redirect(route('general_students.index'));
+            }
+            return redirect(route('students.index'));
+        }
 
+        $input = $request->all();
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
@@ -428,7 +443,6 @@ class StudentController extends AppBaseController
             unset($input['image']);
         }
 
-
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
             $folder = 'images/attachment';
@@ -438,16 +452,64 @@ class StudentController extends AppBaseController
             unset($input['attachment']);
         }
 
+        // Never modify registration_number on edit
+        unset($input['registration_number']);
 
+        // Check if existing candidate_id is empty or contains XXXX/XXX/empty
+        $existingCandidateId = $student->candidate_id;
+        $needsCandidateId = empty($existingCandidateId)
+            || str_contains($existingCandidateId, 'XXXX')
+            || str_contains($existingCandidateId, 'XXX')
+            || str_contains($existingCandidateId, 'empty');
 
+        if ($needsCandidateId) {
+            $instituteId = $input['institutionName'] ?? $student->institutionName;
+            $occupationId = $input['occupation_id'] ?? $student->occupation_id;
+            $districtId = $input['district_id'] ?? $student->district_id;
+            $programId = $input['program_id'] ?? $student->program_id;
 
+            if ($instituteId && $occupationId && $districtId) {
+                $institute = Insatitute::find($instituteId);
+                $occupation = Occupation::find($occupationId);
+                $district = District::find($districtId);
+
+                if ($institute && $occupation && $district) {
+                    $type = $institute->type ?? 'XXX';
+                    $tradeCode = $occupation->code ?? 'XXX';
+                    $distCode = $district->code ?? 'XX';
+                    $instCode = $institute->code ?? 'XXXX';
+                    if (is_numeric($instCode) && strlen((string)$instCode) < 4) {
+                        $instCode = str_pad($instCode, 4, '0', STR_PAD_LEFT);
+                    }
+
+                    $query = Student::where('district_id', $districtId)
+                        ->where('occupation_id', $occupationId)
+                        ->where('institutionName', $instituteId)
+                        ->where('id', '!=', $student->id);
+
+                    if ($programId) {
+                        $query->where('program_id', $programId);
+                    }
+
+                    $count = $query->count();
+                    $serial = str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+                    $input['candidate_id'] = "{$type}-{$tradeCode}-{$distCode}-{$instCode}-{$serial}";
+                }
+            }
+        } else {
+            // Keep existing valid candidate_id intact!
+            unset($input['candidate_id']);
+        }
+
+        $student_type = $input['student_type'] ?? null;
+        unset($input['student_type']);
 
         $student->fill($input);
         $student->save();
 
         Flash::success('Student updated successfully.');
 
-        if (request()->is('general_students*')) {
+        if (request()->is('general_students*') || $student_type == 'general') {
             return redirect(route('general_students.index'));
         }
         return redirect(route('students.index'));
@@ -581,8 +643,8 @@ class StudentController extends AppBaseController
         $student->status = 'Chairman Approved';
         $student->save();
         Flash::success('Operation completed successfully.');
-        $massage = 'প্রিয় ' . $student->candidate_name_bn . ', আপনার প্রশিক্ষণ কোর্সের সার্টিফিকেট প্রস্তুত। অনুগ্রহ করে নির্ধারিত সময়ে আপনার জেলা উপানুষ্ঠানিক শিক্ষা ব্যুরো অফিস থেকে এটি সংগ্রহ করুন।';
-        $send = send_sms_new($student->mobile_number, $massage);
+        // $massage = 'প্রিয় ' . $student->candidate_name_bn . ', আপনার প্রশিক্ষণ কোর্সের সার্টিফিকেট প্রস্তুত। অনুগ্রহ করে নির্ধারিত সময়ে আপনার জেলা উপানুষ্ঠানিক শিক্ষা ব্যুরো অফিস থেকে এটি সংগ্রহ করুন।';
+        // $send = send_sms_new($student->mobile_number, $massage);
         return back();
     }
     public function generate_certificate($studentId)
@@ -1376,7 +1438,7 @@ class StudentController extends AppBaseController
                 $student->chairmen_id = auth()->user()->id;
                 $student->save();
                 $massage = 'প্রিয় ' . $student->candidate_name_bn . ', আপনার প্রশিক্ষণ কোর্সের সার্টিফিকেট প্রস্তুত। অনুগ্রহ করে নির্ধারিত সময়ে আপনার জেলা উপানুষ্ঠানিক শিক্ষা ব্যুরো অফিস থেকে এটি সংগ্রহ করুন।';
-                $send = send_sms_new($student->mobile_number, $massage);
+                // $send = send_sms_new($student->mobile_number, $massage);
             }
             DB::commit();
             return response()->json([
@@ -2377,5 +2439,213 @@ class StudentController extends AppBaseController
     public function download_import_sample()
     {
         return Excel::download(new \App\Exports\SampleStudentExport, 'sample_students.xlsx');
+    }
+
+    public function update_assessment_date_page()
+    {
+        return view('students.update_assessment_date');
+    }
+
+    public function update_assessment_date_submit(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|max:51200',
+        ]);
+
+        ini_set('memory_limit', '1024M');
+        ini_set('max_execution_time', 600);
+
+        $file = $request->file('file');
+        $filePath = $file->getRealPath();
+
+        try {
+            $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($filePath);
+            $reader->setReadDataOnly(true);
+            $spreadsheet = $reader->load($filePath);
+            $sheet = $spreadsheet->getActiveSheet();
+            $rows = $sheet->toArray(null, true, false, true);
+
+            if (empty($rows)) {
+                Flash::error('Uploaded file is empty.');
+                return redirect()->back();
+            }
+
+            // Extract header row
+            $header = array_shift($rows);
+            $headerMap = [];
+            foreach ($header as $col => $name) {
+                if ($name !== null && trim((string)$name) !== '') {
+                    $cleanName = strtolower(trim(preg_replace('/[^a-zA-Z0-9_]/', '', str_replace(' ', '_', (string)$name))));
+                    $headerMap[$cleanName] = $col;
+                }
+            }
+
+            // Detect ID column
+            $idCol = null;
+            $possibleIdKeys = ['student_id', 'studentid', 'id', 'learner_id', 'std_id', 'student'];
+            foreach ($possibleIdKeys as $key) {
+                if (isset($headerMap[$key])) {
+                    $idCol = $headerMap[$key];
+                    break;
+                }
+            }
+
+            // Detect Assessment Date column
+            $dateCol = null;
+            $possibleDateKeys = ['assessment_date', 'date_of_assessment', 'exam_date', 'assessmentdate', 'date'];
+            foreach ($possibleDateKeys as $key) {
+                if (isset($headerMap[$key])) {
+                    $dateCol = $headerMap[$key];
+                    break;
+                }
+            }
+
+            // Fallback if headers are not detected by name
+            if (!$idCol) {
+                $idCol = 'A';
+            }
+            if (!$dateCol) {
+                $headerKeys = array_keys($header);
+                $dateCol = $headerKeys[6] ?? ($headerKeys[1] ?? 'B');
+            }
+
+            // Collect all student IDs present in file
+            $allIdsInFile = [];
+            foreach ($rows as $r) {
+                if (isset($r[$idCol]) && is_numeric($r[$idCol])) {
+                    $allIdsInFile[] = (int)$r[$idCol];
+                }
+            }
+            $allIdsInFile = array_unique($allIdsInFile);
+
+            // Fetch existing student IDs from DB in chunks for fast O(1) checks
+            $existingDbIds = [];
+            if (!empty($allIdsInFile)) {
+                foreach (array_chunk($allIdsInFile, 2000) as $idChunk) {
+                    $found = DB::table('students')->whereIn('id', $idChunk)->pluck('id')->toArray();
+                    foreach ($found as $fId) {
+                        $existingDbIds[$fId] = true;
+                    }
+                }
+            }
+
+            $updatedCount = 0;
+            $notFoundIds = [];
+            $invalidDateRows = [];
+            $skippedEmptyRows = 0;
+            $sampleUpdated = [];
+            $now = date('Y-m-d H:i:s');
+
+            DB::beginTransaction();
+
+            foreach ($rows as $rowIndex => $row) {
+                $rawId = $row[$idCol] ?? null;
+                $rawDate = $row[$dateCol] ?? null;
+
+                if ((empty($rawId) && $rawId !== 0 && $rawId !== '0') || empty($rawDate)) {
+                    $skippedEmptyRows++;
+                    continue;
+                }
+
+                $studentId = (int)$rawId;
+                if ($studentId <= 0) {
+                    $skippedEmptyRows++;
+                    continue;
+                }
+
+                // Check student exists
+                if (!isset($existingDbIds[$studentId])) {
+                    $notFoundIds[] = $studentId;
+                    continue;
+                }
+
+                // Parse date
+                $parsedDate = null;
+                if (is_numeric($rawDate)) {
+                    try {
+                        $parsedDate = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($rawDate)->format('Y-m-d');
+                    } catch (\Exception $e) {
+                        $parsedDate = null;
+                    }
+                } else {
+                    $cleanedDateStr = trim(str_replace('.', '-', (string)$rawDate));
+                    try {
+                        $parsedDate = \Carbon\Carbon::parse($cleanedDateStr)->format('Y-m-d');
+                    } catch (\Exception $e) {
+                        $parsedDate = null;
+                    }
+                }
+
+                if (!$parsedDate) {
+                    $invalidDateRows[] = "Row " . ($rowIndex + 1) . " (ID: {$studentId}, Value: '{$rawDate}')";
+                    continue;
+                }
+
+                // Update ONLY assessment_date in database
+                DB::table('students')->where('id', $studentId)->update([
+                    'assessment_date' => $parsedDate,
+                    'updated_at' => $now,
+                ]);
+
+                $updatedCount++;
+                if (count($sampleUpdated) < 10) {
+                    $sampleUpdated[] = [
+                        'id' => $studentId,
+                        'name' => $row[$headerMap['student_name'] ?? 'D'] ?? '',
+                        'assessment_date' => $parsedDate
+                    ];
+                }
+            }
+
+            DB::commit();
+
+            if (class_exists(AuditLog::class)) {
+                AuditLog::log(
+                    'students.assessment_date_bulk_updated',
+                    Student::class,
+                    null,
+                    [],
+                    ['updated_count' => $updatedCount, 'file' => $file->getClientOriginalName()],
+                    "Bulk updated assessment dates for {$updatedCount} students via Excel upload"
+                );
+            }
+
+            $message = "Successfully updated assessment dates for {$updatedCount} students.";
+            Flash::success($message);
+
+            return redirect()->back()->with('update_results', [
+                'success' => true,
+                'total_rows' => count($rows),
+                'updated_count' => $updatedCount,
+                'not_found_count' => count($notFoundIds),
+                'not_found_ids' => array_slice($notFoundIds, 0, 50),
+                'invalid_date_count' => count($invalidDateRows),
+                'invalid_date_rows' => array_slice($invalidDateRows, 0, 20),
+                'skipped_empty' => $skippedEmptyRows,
+                'sample_updated' => $sampleUpdated,
+            ]);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            \Log::error('Assessment Date Excel Update Error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+            Flash::error('Failed to update assessment dates: ' . $e->getMessage());
+            return redirect()->back();
+        }
+    }
+
+    public function download_assessment_date_sample()
+    {
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="sample_assessment_date.csv"',
+        ];
+
+        return response()->streamDownload(function () {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['student_id', 'assessment_date']);
+            fputcsv($handle, ['8848', '2026-04-24']);
+            fputcsv($handle, ['8856', '2026-04-24']);
+            fclose($handle);
+        }, 'sample_assessment_date.csv', $headers);
     }
 }

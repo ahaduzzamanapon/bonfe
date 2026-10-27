@@ -98,6 +98,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('students_import_preview', 'StudentController@import_students_preview')->name('students.import_preview');
     Route::post('students_import_store', 'StudentController@import_students_store')->name('students.import_store');
     Route::get('students_import_sample', 'StudentController@download_import_sample')->name('students.import_sample');
+
+    // Update Assessment Date Routes
+    Route::get('update_assessment_date', 'StudentController@update_assessment_date_page')->name('students.update_assessment_date_page');
+    Route::post('update_assessment_date', 'StudentController@update_assessment_date_submit')->name('students.update_assessment_date_submit');
+    Route::get('update-assessment-date', 'StudentController@update_assessment_date_page');
+    Route::post('update-assessment-date', 'StudentController@update_assessment_date_submit');
+    Route::get('download_assessment_date_sample', 'StudentController@download_assessment_date_sample')->name('students.download_assessment_date_sample');
+
     Route::get('get_institutes_by_type', 'InsatituteController@get_institutes_by_type')->name('get_institutes_by_type');
 
     // District Admin: Set Assessment Status (Ready for Assessment / Dropout / Absent)

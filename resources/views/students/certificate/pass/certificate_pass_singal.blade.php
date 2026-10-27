@@ -154,12 +154,27 @@
                     Bangladesh National
                     Qualification Framework (BNQF),
                     @php
-                        $assessment_centers = DB::table('assessment_centers')
-                            ->where('id', $student->assessment_center)
-                            ->first();
+                        if(!empty($student->assessment_center)){
+                            $assessment_centers = DB::table('assessment_centers')
+                                ->where('id', $student->assessment_center)
+                                ->first();
+                                $nameass= $assessment_centers->center_name;
+                        }elseif(!empty($student->institutionName)){
+                             $assessment_centers = DB::table('insatitutes')
+                                ->where('id', $student->institutionName)
+                                ->first();
+                                $nameass= $assessment_centers->insatitute_name;
+                        }else{
+                                $nameass= "....................";
+                        }
 
+                        if(empty($student->assessment_date)){
+                            $assessment_date= "....................";
+                        }else{
+                            $assessment_date= date('d M Y', strtotime($student->assessment_date));
+                        }
                     @endphp
-                assessed by <b>{{ $assessment_centers->center_name }}</b> on {{ date('d M Y', strtotime($student->assessment_date)) }}. The
+                assessed by <b>{{ $nameass }}</b> on {{ $assessment_date }}. The
                     learner  demonstrated satisfactory participation and performance on all the following competencies:
                 </div>
 
